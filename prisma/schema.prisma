@@ -15,6 +15,7 @@ model SkateShop {
   name    String // Name of the shop, required
   headers String // Headers stored as serialized JSON (TEXT)
   state   String // State stored as a string
+  lastUpdated DateTime
   Product Product[]
 }
 
