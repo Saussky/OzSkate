@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SkateShop {
+  id      Int       @id @default(autoincrement()) // Primary key, auto-increments
+  name    String // Name of the shop, required
+  headers String // Headers stored as serialized JSON (TEXT)
+  state   String // State stored as a string
+  Product Product[]
+}
+
+model Product {
+  id          Int       @id @default(autoincrement()) // Primary key
+  shopId      Int // Foreign key referencing the shop
+  title       String // Product title
+  handle      String // Unique handle/slug for the product
+  description String? // Product description (body_html)
+  publishedAt DateTime // Publication date
+  createdAt   DateTime // Creation date
+  updatedAt   DateTime // Last update date
+  vendor      String // Vendor or brand
+  productType String // Type of product
+  tags        String // Tags stored as a comma-separated string
+  images      String // Image URLs stored as a JSON string
+  options     String // Product options stored as a JSON string
+  variants    String // Product variants stored as a JSON string
+  shop        SkateShop @relation(fields: [shopId], references: [id]) // Relation to SkateShop
+
+  @@index([shopId]) // Index for shopId for better performance in queries
+}
