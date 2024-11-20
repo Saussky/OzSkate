@@ -22,10 +22,10 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Prisma
 
-# To create migration
+### To create migration
 
 npx prisma db push
 
-# To create types from schema.prisma
+### To create types from schema.prisma
 
 npx prisma generate
