@@ -1,3 +1,10 @@
+import HomeComponent from "@/modules/home";
+
 export default function Home() {
-  return <div>Long live the thing</div>;
+  return (
+    <div>
+      <div>Long live the thing</div>
+      <HomeComponent />
+    </div>
+  );
 }

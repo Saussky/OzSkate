@@ -9,32 +9,65 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-
 model SkateShop {
-  id      Int       @id @default(autoincrement()) // Primary key, auto-increments
-  name    String // Name of the shop, required
-  headers String // Headers stored as serialized JSON (TEXT)
-  state   String // State stored as a string
-  lastUpdated DateTime
-  Product Product[]
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  url      String    @unique
+  state    String
+  since_id String?
+  products Product[] // Renamed to plural for clarity
 }
 
 model Product {
-  id          Int       @id @default(autoincrement()) // Primary key
-  shopId      Int // Foreign key referencing the shop
-  title       String // Product title
-  handle      String // Unique handle/slug for the product
-  description String? // Product description (body_html)
-  publishedAt DateTime // Publication date
-  createdAt   DateTime // Creation date
-  updatedAt   DateTime // Last update date
-  vendor      String // Vendor or brand
-  productType String // Type of product
-  tags        String // Tags stored as a comma-separated string
-  images      String // Image URLs stored as a JSON string
-  options     String // Product options stored as a JSON string
-  variants    String // Product variants stored as a JSON string
-  shop        SkateShop @relation(fields: [shopId], references: [id]) // Relation to SkateShop
+  id          String    @id @default(cuid())
+  shopId      Int
+  skateShop   SkateShop @relation(fields: [shopId], references: [id])
+  title       String
+  handle      String
+  description String?
+  vendor      String?
+  productType String?
+  tags        String?
+  images      String?   // Store JSON string for image URLs
+  variants    Variant[] // One-to-many relationship with Variant
+  options     Option[]  // One-to-many relationship with Option
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime
 
-  @@index([shopId]) // Index for shopId for better performance in queries
+  @@index([shopId])
+}
+
+model Variant {
+  id               String    @id @default(cuid())
+  productId        String
+  product          Product   @relation(fields: [productId], references: [id])
+  title            String?
+  option1          String?
+  option2          String?
+  option3          String?
+  sku              String?   // SKU field
+  price            String?    // Price in floating-point // Shopify loves strings
+  compareAtPrice   String?    // Original price (if discounted)
+  grams            Int       // Weight in grams
+  position         Int
+  requiresShipping Boolean?  // Whether shipping is required
+  taxable          Boolean?  // Whether the item is taxable
+  featuredImage    String?   // URL of the featured image
+  available        Boolean   // Availability of the variant
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([productId])
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  name       String
+  position   Int
+  values     String    // Store values as a comma-separated string
+
+  @@index([productId])
 }
