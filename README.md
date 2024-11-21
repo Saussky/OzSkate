@@ -22,7 +22,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Prisma
 
-### To create migration
+### To update DB
 
 npx prisma db push
 
