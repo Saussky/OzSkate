@@ -1,17 +1,14 @@
 "use server";
 import { fetchPaginatedProducts, transformProducts } from "../helpers";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { prisma } from "../prisma"; // Adjust the import path accordingly
+import { prisma } from "../prisma";
 
 export async function processShop(shop: any) {
   console.log(`Processing shop: ${shop.name}`);
 
   const baseUrl = shop.url;
-
-  // Get since_id from the shop (use "0" if not set)
   const sinceId = shop.since_id || "0";
 
-  // Fetch products
   const allPaginatedProducts = await fetchPaginatedProducts(baseUrl, sinceId);
 
   if (allPaginatedProducts.length === 0) {

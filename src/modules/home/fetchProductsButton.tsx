@@ -22,10 +22,18 @@ export default function FetchProductsButton() {
 
   return (
     <div>
-      <button onClick={handleClick} disabled={isPending}>
+      <button
+        onClick={handleClick}
+        disabled={isPending}
+        className={`px-6 py-3 text-white font-bold rounded-lg ${
+          isPending
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-700"
+        }`}
+      >
         {isPending ? "Fetching Products..." : "Fetch All Products"}
       </button>
-      {message && <p>{message}</p>}
+      {message && <p className="mt-2 text-sm text-gray-600">{message}</p>}
     </div>
   );
 }

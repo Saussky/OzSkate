@@ -48,3 +48,18 @@ export async function getShopCount() {
     await prisma.$disconnect();
   }
 }
+
+export async function deleteAllProducts() {
+  try {
+    // TODO: Cascading deletes would be better
+    await prisma.variant.deleteMany();
+    await prisma.option.deleteMany();
+    await prisma.product.deleteMany();
+
+    console.log("All products, variants, and options have been deleted.");
+  } catch (error) {
+    console.error("Error deleting all products:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
