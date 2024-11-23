@@ -1,11 +1,8 @@
-import { getProductCount, getShopCount } from "@/lib/actions";
+"use client";
 import FetchProductsButton from "./fetchProductsButton";
 import DeleteAllProductsButton from "./deleteAllProductsButton";
 
-export default async function HomeComponent() {
-  const productCount = await getProductCount();
-  const shopCount = await getShopCount();
-
+export default function HomeComponent({ shopCount, productCount }) {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-center text-4xl font-bold text-gray-800 my-12">
