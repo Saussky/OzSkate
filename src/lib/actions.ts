@@ -52,6 +52,13 @@ export const fetchPaginatedProducts = async (
       take: limit,
       orderBy: { createdAt: "desc" },
       include: {
+        skateShop: {
+          // Include related shop data
+          select: {
+            name: true,
+            state: true,
+          },
+        },
         variants: true,
         options: true,
       },

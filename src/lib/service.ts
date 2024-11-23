@@ -14,13 +14,21 @@ export async function getProductCount() {
 }
 
 export async function fetchProducts(page: number, limit: number = 40) {
+  const skip = (page - 1) * limit;
+
   try {
-    const skip = (page - 1) * limit;
     const products = await prisma.product.findMany({
       skip,
       take: limit,
       orderBy: { createdAt: "desc" }, // Example sorting logic
       include: {
+        skateShop: {
+          // Include related shop data
+          select: {
+            name: true,
+            state: true,
+          },
+        },
         variants: true, // Include related data as needed
         options: true,
       },
@@ -46,6 +54,49 @@ export async function fetchProducts(page: number, limit: number = 40) {
     await prisma.$disconnect();
   }
 }
+
+export const fetchPaginatedProducts = async (
+  page: number,
+  limit: number = 40
+) => {
+  const skip = (page - 1) * limit;
+
+  try {
+    const products = await prisma.product.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        skateShop: {
+          // Include related shop data
+          select: {
+            name: true,
+            state: true,
+          },
+        },
+        variants: true,
+        options: true,
+      },
+    });
+
+    const totalProducts = await prisma.product.count();
+
+    return {
+      products,
+      totalProducts,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+    };
+  } catch (error) {
+    console.error("Error fetching paginated products:", error);
+    return {
+      products: [],
+      totalProducts: 0,
+      currentPage: page,
+      totalPages: 0,
+    };
+  }
+};
 
 export async function getShopCount() {
   try {

@@ -14,6 +14,7 @@ export default function ProductGrid({
   totalPages,
   onPageChange,
 }: ProductGridProps) {
+  console.log(products[0]);
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
@@ -36,6 +37,7 @@ export default function ProductGrid({
             title={product.title}
             price={product.variants?.[0]?.price || "N/A"}
             imageSrc={product.images?.[0] || "/placeholder.png"}
+            skateShop={product.skateShop}
           />
         ))}
       </div>

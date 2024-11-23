@@ -1,11 +1,16 @@
 "use client";
 import Image from "next/image";
 
+interface SkateShop {
+  name: string;
+  state: string;
+}
 interface ProductCardProps {
   id: string;
   title: string;
   price: string;
   imageSrc: string;
+  skateShop: SkateShop;
 }
 
 export default function ProductCard({
@@ -13,9 +18,11 @@ export default function ProductCard({
   title,
   price,
   imageSrc,
+  skateShop,
 }: ProductCardProps) {
   return (
     <div className="border rounded-lg shadow-md p-4" key={id}>
+      <p>{skateShop.name}</p>
       {/* <Image
         src={imageSrc}
         alt={title}
