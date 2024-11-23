@@ -7,12 +7,11 @@ export const fetchPaginatedProducts = async (
   headers: Record<string, string> = {}
 ) => {
   let allProducts: any[] = [];
-  const limit = 250; // Maximum number of products per page
-  let page = 1; // Start pagination from page 1
+  const limit = 250;
+  let page = 1;
 
   while (true) {
     const url = `${baseUrl}?limit=${limit}&page=${page}`;
-    console.log(`Fetching: ${url}`);
 
     const res = await fetch(url, {
       headers: {
@@ -31,7 +30,6 @@ export const fetchPaginatedProducts = async (
 
     const data: any = await res.json();
 
-    // Check if the products array exists and contains items
     const products = data.products;
     if (!products || products.length === 0) {
       console.log("No more products to fetch.");
