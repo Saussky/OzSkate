@@ -11,7 +11,6 @@ export const buildWhereClause = (
   if (filters.category) {
     whereClause.productType = {
       contains: filters.category,
-      mode: "insensitive",
     };
   }
 
@@ -20,7 +19,7 @@ export const buildWhereClause = (
     whereClause.variants = {
       some: {
         price: {
-          lte: maxPrice, // Direct numeric comparison
+          lte: maxPrice,
         },
       },
     };
@@ -53,7 +52,6 @@ export async function processShop(shop: any) {
       create: productData,
     });
 
-    // Ensure variants is an array before iterating
     if (Array.isArray(variants)) {
       for (const variant of variants) {
         await prisma.variant.upsert({
@@ -64,7 +62,6 @@ export async function processShop(shop: any) {
       }
     }
 
-    // Ensure options is an array before iterating
     if (Array.isArray(options)) {
       for (const option of options) {
         if (option.id) {
