@@ -46,15 +46,13 @@ model Variant {
   option1          String?
   option2          String?
   option3          String?
-  sku              String?   // SKU field
-  price            Int    // Price in floating-point // Shopify loves strings
-  compareAtPrice   String?    // Original price (if discounted)
-  grams            Int       // Weight in grams
+  sku              String?   
+  price            Float    
+  compareAtPrice   Float?    // Original price (if discounted)
   position         Int
-  requiresShipping Boolean?  // Whether shipping is required
-  taxable          Boolean?  // Whether the item is taxable
-  featuredImage    String?   // URL of the featured image
-  available        Boolean   // Availability of the variant
+  taxable          Boolean?
+  featuredImage    String?
+  available        Boolean
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -67,7 +65,7 @@ model Option {
   product    Product  @relation(fields: [productId], references: [id])
   name       String
   position   Int
-  values     String    // Store values as a comma-separated string
+  values     String    // Comma-separated string
 
   @@index([productId])
 }

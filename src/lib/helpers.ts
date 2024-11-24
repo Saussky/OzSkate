@@ -132,7 +132,6 @@ export const transformProducts = (
   return allPaginatedProducts.map((product) => {
     let firstImage = null;
 
-    // Cut down the image data to essentials
     if (
       product.images &&
       Array.isArray(product.images) &&
@@ -165,7 +164,7 @@ export const transformProducts = (
       vendor: product.vendor,
       productType: product.product_type,
       tags: product.tags ? product.tags.join(",") : "",
-      image: JSON.stringify(firstImage),
+      image: JSON.stringify(firstImage), // Store image as JSON string
       variants: product.variants
         ? product.variants.map((variant: any) => ({
             id: variant.id.toString(),
@@ -175,14 +174,14 @@ export const transformProducts = (
             option2: variant.option2 || null,
             option3: variant.option3 || null,
             sku: variant.sku,
-            requiresShipping: variant.requires_shipping,
+            price: parseFloat(variant.price),
+            compareAtPrice: variant.compare_at_price
+              ? parseFloat(variant.compare_at_price)
+              : null,
+            position: variant.position,
             taxable: variant.taxable,
             featuredImage: variant.featured_image || null,
             available: variant.available,
-            price: Number(variant.price),
-            grams: variant.grams,
-            compareAtPrice: variant.compare_at_price || null,
-            position: variant.position,
             createdAt: new Date(variant.created_at),
             updatedAt: new Date(variant.updated_at),
           }))
@@ -190,10 +189,10 @@ export const transformProducts = (
       options: product.options
         ? product.options.map((option: any) => ({
             id: option.id ? option.id.toString() : null,
-            productId: product.id ? product.id.toString() : null,
+            productId: product.id.toString(),
             name: option.name || "Unnamed Option",
             position: option.position || 0,
-            values: option.values ? option.values.join(",") : "",
+            values: option.values ? option.values.join(",") : "", // Convert array of values to comma-separated string
           }))
         : [],
     };
