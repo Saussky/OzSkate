@@ -17,6 +17,8 @@ export async function fetchAllProducts() {
       }
     }
 
+    await updateProducts();
+
     console.log("Product import completed.");
   } catch (error) {
     console.error("Error fetching all products:", error);
@@ -99,5 +101,30 @@ export const fetchPaginatedProducts = async (
       currentPage: page,
       totalPages: 0,
     };
+  }
+};
+
+export const updateProducts = async () => {
+  const products = await prisma.product.findMany({
+    include: {
+      variants: true,
+    },
+  });
+
+  for (const product of products) {
+    const onSaleVariant = product.variants.find(
+      (variant) => variant.compareAtPrice !== null
+    );
+
+    const onSale = !!onSaleVariant;
+    const onSaleVariantId = onSaleVariant ? onSaleVariant.id : null;
+
+    await prisma.product.update({
+      where: { id: product.id },
+      data: {
+        onSale,
+        on_sale_variant_id: onSaleVariantId,
+      },
+    });
   }
 };

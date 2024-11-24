@@ -35,6 +35,9 @@ model Product {
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime
 
+  onSale             Boolean
+  on_sale_variant_id String? // Can be null if no variants are on sale
+
   @@index([shopId])
 }
 
