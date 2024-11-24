@@ -47,7 +47,7 @@ model Variant {
   option2          String?
   option3          String?
   sku              String?   // SKU field
-  price            String?    // Price in floating-point // Shopify loves strings
+  price            Int    // Price in floating-point // Shopify loves strings
   compareAtPrice   String?    // Original price (if discounted)
   grams            Int       // Weight in grams
   position         Int

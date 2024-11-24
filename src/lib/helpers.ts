@@ -109,7 +109,7 @@ export const transformProducts = (
               ? variant.featured_image
               : null,
             available: variant.available,
-            price: variant.price,
+            price: Number(variant.price),
             grams: variant.grams,
             compareAtPrice: variant.compare_at_price || null,
             position: variant.position,

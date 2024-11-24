@@ -54,17 +54,20 @@ export const fetchPaginatedProducts = async (
     if (filters.category) {
       whereClause.productType = {
         contains: filters.category,
-      }; // Case-insensitive search
-    }
-    if (filters.maxPrice) {
-      whereClause.variants = {
-        some: {
-          price: { lte: filters.maxPrice.toString() }, // Match products with variants <= maxPrice
-        },
       };
     }
 
-    console.log("Where Clause:", whereClause); // Debugging output for verification
+    if (filters.maxPrice) {
+      const maxPrice = Number(filters.maxPrice);
+      whereClause.variants = {
+        some: {
+          price: {
+            lte: maxPrice,
+          },
+        },
+      };
+    }
+    console.log("Where Clause:", whereClause);
 
     const products = await prisma.product.findMany({
       skip,
@@ -85,13 +88,33 @@ export const fetchPaginatedProducts = async (
 
     const totalProducts = await prisma.product.count({ where: whereClause });
 
-    const formattedProducts = products.map((product) => ({
-      ...product,
-      image: product.image ? JSON.parse(product.image) : null,
-    }));
+    // Calculate the cheapest price from variants
+    const formattedProducts = products.map((product) => {
+      const cheapestVariant = product.variants.reduce(
+        (cheapest, variant) => {
+          const cheapestPrice = cheapest.price ?? Infinity; // Default to a very high number
+          return variant.price < cheapestPrice ? variant : cheapest;
+        },
+        { price: Infinity } // Initial value for reduce
+      );
+
+      return {
+        ...product,
+        cheapestPrice: cheapestVariant.price, // Direct numeric price
+        image: product.image ? JSON.parse(product.image) : null,
+      };
+    });
+
+    // Ensure additional filtering for cheapest price if necessary
+    const filteredProducts = formattedProducts.filter((product) => {
+      if (filters.maxPrice) {
+        return product.cheapestPrice <= Number(filters.maxPrice); // Direct numeric comparison
+      }
+      return true;
+    });
 
     return {
-      products: formattedProducts,
+      products: filteredProducts,
       totalProducts,
       currentPage: page,
       totalPages: Math.ceil(totalProducts / limit),
