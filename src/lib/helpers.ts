@@ -1,6 +1,83 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fetch from "node-fetch";
 import { prisma } from "./prisma";
+import { Prisma } from "@prisma/client";
+
+export const buildWhereClause = (
+  filters: Record<string, string | number | undefined>
+) => {
+  const whereClause: Record<string, any> = {};
+
+  if (filters.category) {
+    whereClause.productType = {
+      contains: filters.category,
+      mode: "insensitive",
+    };
+  }
+
+  if (filters.maxPrice) {
+    const maxPrice = Number(filters.maxPrice);
+    whereClause.variants = {
+      some: {
+        price: {
+          lte: maxPrice, // Direct numeric comparison
+        },
+      },
+    };
+  }
+
+  return whereClause;
+};
+
+export async function processShop(shop: any) {
+  console.log(`Processing shop: ${shop.name}`);
+
+  const baseUrl = shop.url;
+  const sinceId = shop.since_id || "0";
+
+  const allPaginatedProducts = await fetchShopifyProducts(baseUrl, sinceId);
+
+  if (allPaginatedProducts.length === 0) {
+    console.log(`No new products found for shop: ${shop.name}`);
+    return;
+  }
+
+  const transformedProducts = transformProducts(allPaginatedProducts, shop.id);
+
+  for (const product of transformedProducts) {
+    const { variants, options, ...productData } = product;
+
+    await prisma.product.upsert({
+      where: { id: productData.id },
+      update: productData,
+      create: productData,
+    });
+
+    // Ensure variants is an array before iterating
+    if (Array.isArray(variants)) {
+      for (const variant of variants) {
+        await prisma.variant.upsert({
+          where: { id: variant.id },
+          update: variant,
+          create: variant,
+        });
+      }
+    }
+
+    // Ensure options is an array before iterating
+    if (Array.isArray(options)) {
+      for (const option of options) {
+        if (option.id) {
+          await prisma.option.upsert({
+            where: { id: option.id },
+            update: option,
+            create: option,
+          });
+        }
+      }
+    }
+  }
+}
 
 export const fetchShopifyProducts = async (
   baseUrl: string,
@@ -36,12 +113,10 @@ export const fetchShopifyProducts = async (
       break;
     }
 
-    // Accumulate fetched products
     allProducts = allProducts.concat(products);
 
     console.log(`Fetched ${products.length} products from page ${page}.`);
 
-    // Increment page for the next iteration
     page++;
 
     // If fewer products than the limit were returned, we've reached the end
@@ -56,17 +131,17 @@ export const fetchShopifyProducts = async (
 export const transformProducts = (
   allPaginatedProducts: any[],
   shopId: number
-): any[] => {
+): Prisma.ProductUncheckedCreateInput[] => {
   return allPaginatedProducts.map((product) => {
     let firstImage = null;
 
-    // Ensure `images` is a valid array before extracting the first image's details
+    // Cut down the image data to essentials
     if (
       product.images &&
       Array.isArray(product.images) &&
       product.images.length > 0
     ) {
-      const [firstImageCandidate] = product.images;
+      const firstImageCandidate = product.images[0];
       if (
         firstImageCandidate &&
         typeof firstImageCandidate.src === "string" &&
@@ -77,7 +152,7 @@ export const transformProducts = (
           src: firstImageCandidate.src,
           width: firstImageCandidate.width,
           height: firstImageCandidate.height,
-        }; // Assign the first image's src, width, and height
+        };
       }
     }
 
@@ -92,8 +167,8 @@ export const transformProducts = (
       updatedAt: new Date(product.updated_at),
       vendor: product.vendor,
       productType: product.product_type,
-      tags: product.tags ? product.tags.join(",") : "", // Convert tags array to comma-separated string
-      image: JSON.stringify(firstImage), // Use the first image URL or null if none exists
+      tags: product.tags ? product.tags.join(",") : "",
+      image: JSON.stringify(firstImage),
       variants: product.variants
         ? product.variants.map((variant: any) => ({
             id: variant.id.toString(),
@@ -105,9 +180,7 @@ export const transformProducts = (
             sku: variant.sku,
             requiresShipping: variant.requires_shipping,
             taxable: variant.taxable,
-            featuredImage: variant.featured_image
-              ? variant.featured_image
-              : null,
+            featuredImage: variant.featured_image || null,
             available: variant.available,
             price: Number(variant.price),
             grams: variant.grams,
@@ -118,99 +191,14 @@ export const transformProducts = (
           }))
         : [],
       options: product.options
-        ? product.options
-            .map((option: any) => ({
-              id: option.id ? option.id.toString() : null, // Handle undefined `id`
-              productId: product.id ? product.id.toString() : null, // Ensure product.id is valid
-              name: option.name || "Unnamed Option", // Provide a default name if missing
-              position: option.position || 0, // Default to 0 if position is missing
-              values: option.values ? option.values.join(",") : "", // Convert values array to comma-separated string
-            }))
-            .filter((option: any) => option.id !== null) // Filter out options with null ids
+        ? product.options.map((option: any) => ({
+            id: option.id ? option.id.toString() : null,
+            productId: product.id ? product.id.toString() : null,
+            name: option.name || "Unnamed Option",
+            position: option.position || 0,
+            values: option.values ? option.values.join(",") : "",
+          }))
         : [],
     };
   });
-};
-
-export async function processShop(shop: any) {
-  console.log(`Processing shop: ${shop.name}`);
-
-  const baseUrl = shop.url;
-  const sinceId = shop.since_id || "0";
-
-  const allPaginatedProducts = await fetchShopifyProducts(baseUrl, sinceId);
-
-  if (allPaginatedProducts.length === 0) {
-    console.log(`No new products found for shop: ${shop.name}`);
-    return;
-  }
-
-  // Transform products
-  const transformedProducts = transformProducts(allPaginatedProducts, shop.id);
-
-  // Insert products into the database
-  for (const product of transformedProducts) {
-    // Destructure variants and options from product
-    const { variants, options, ...productData } = product;
-
-    // Upsert the product
-    await prisma.product.upsert({
-      where: { id: productData.id },
-      update: productData,
-      create: productData,
-    });
-
-    // Upsert variants
-    for (const variant of variants) {
-      await prisma.variant.upsert({
-        where: { id: variant.id },
-        update: variant,
-        create: variant,
-      });
-    }
-
-    // Upsert options
-    for (const option of options) {
-      await prisma.option.upsert({
-        where: { id: option.id },
-        update: option,
-        create: option,
-      });
-    }
-  }
-
-  // Update the since_id with the ID of the last product
-  const lastProduct = allPaginatedProducts[allPaginatedProducts.length - 1];
-  await prisma.skateShop.update({
-    where: { id: shop.id },
-    data: { since_id: lastProduct.id.toString() },
-  });
-
-  console.log(`Finished processing shop: ${shop.name}`);
-}
-
-export const buildWhereClause = (
-  filters: Record<string, string | number | undefined>
-) => {
-  const whereClause: Record<string, any> = {};
-
-  if (filters.category) {
-    whereClause.productType = {
-      contains: filters.category,
-      mode: "insensitive",
-    };
-  }
-
-  if (filters.maxPrice) {
-    const maxPrice = Number(filters.maxPrice);
-    whereClause.variants = {
-      some: {
-        price: {
-          lte: maxPrice, // Direct numeric comparison
-        },
-      },
-    };
-  }
-
-  return whereClause;
 };
