@@ -42,18 +42,37 @@ export async function deleteAllProducts() {
 
 export const fetchPaginatedProducts = async (
   page: number,
-  limit: number = 40
+  limit: number = 40,
+  filters: Record<string, string | number | undefined> = {}
 ) => {
   const skip = (page - 1) * limit;
 
   try {
+    const whereClause: Record<string, any> = {};
+
+    // Apply filters dynamically
+    if (filters.category) {
+      whereClause.productType = {
+        contains: filters.category,
+      }; // Case-insensitive search
+    }
+    if (filters.maxPrice) {
+      whereClause.variants = {
+        some: {
+          price: { lte: filters.maxPrice.toString() }, // Match products with variants <= maxPrice
+        },
+      };
+    }
+
+    console.log("Where Clause:", whereClause); // Debugging output for verification
+
     const products = await prisma.product.findMany({
       skip,
       take: limit,
+      where: whereClause,
       orderBy: { createdAt: "desc" },
       include: {
         skateShop: {
-          // Include related shop data
           select: {
             name: true,
             state: true,
@@ -64,7 +83,7 @@ export const fetchPaginatedProducts = async (
       },
     });
 
-    const totalProducts = await prisma.product.count();
+    const totalProducts = await prisma.product.count({ where: whereClause });
 
     const formattedProducts = products.map((product) => ({
       ...product,

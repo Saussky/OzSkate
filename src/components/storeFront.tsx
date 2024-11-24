@@ -1,4 +1,3 @@
-// components/storeFront.tsx
 "use client";
 
 import { useState, useTransition } from "react";
@@ -12,19 +11,31 @@ export default function StoreFront({ initialData }: { initialData: any }) {
   const [currentPage, setCurrentPage] = useState(initialData.currentPage || 1);
   const [totalPages, setTotalPages] = useState(initialData.totalPages || 1);
   const [isPending, startTransition] = useTransition();
+  const [filters, setFilters] = useState<Record<string, string | number>>({}); // Track active filters
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const loadProducts = (
+    page: number,
+    newFilters?: Record<string, string | number>
+  ) => {
     startTransition(async () => {
-      const data = await fetchPaginatedProducts(page); // Direct server action call
+      const data = await fetchPaginatedProducts(
+        page,
+        40,
+        newFilters || filters
+      ); // Pass filters
       setProducts(data.products);
       setTotalPages(data.totalPages);
+      setCurrentPage(page);
     });
   };
 
-  const handleFilterChange = (filters: Record<string, any>) => {
-    console.log("Filters applied:", filters);
-    // Implement backend integration for filters
+  const handlePageChange = (page: number) => {
+    loadProducts(page);
+  };
+
+  const handleFilterChange = (newFilters: Record<string, string | number>) => {
+    setFilters(newFilters); // Update the filter state
+    loadProducts(1, newFilters); // Fetch filtered products from the first page
   };
 
   const handleSortChange = (sortOption: string) => {
