@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
 import { fetchPaginatedProducts } from "@/lib/actions";
 
-export default function StoreFront({ initialData }: { initialData: any }) {
-  const [products, setProducts] = useState(initialData.products || []);
-  const [currentPage, setCurrentPage] = useState(initialData.currentPage || 1);
-  const [totalPages, setTotalPages] = useState(initialData.totalPages || 1);
+export default function StoreFront() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [isPending, startTransition] = useTransition();
-  const [filters, setFilters] = useState<Record<string, string | number>>({}); // Track active filters
+  const [filters, setFilters] = useState<Record<string, string | number>>({});
+
+  // Fetch all products on initial load
+  useEffect(() => {
+    loadProducts(1, filters);
+  }, [filters]);
 
   const loadProducts = (
     page: number,
@@ -22,7 +27,7 @@ export default function StoreFront({ initialData }: { initialData: any }) {
         page,
         40,
         newFilters || filters
-      ); // Pass filters
+      );
       setProducts(data.products);
       setTotalPages(data.totalPages);
       setCurrentPage(page);
@@ -34,13 +39,12 @@ export default function StoreFront({ initialData }: { initialData: any }) {
   };
 
   const handleFilterChange = (newFilters: Record<string, string | number>) => {
-    setFilters(newFilters); // Update the filter state
-    loadProducts(1, newFilters); // Fetch filtered products from the first page
+    setFilters(newFilters);
   };
 
   const handleSortChange = (sortOption: string) => {
     console.log("Sort option:", sortOption);
-    // Implement backend integration for sorting
+    // Implement backend integration for sorting if needed
   };
 
   return (
@@ -54,7 +58,6 @@ export default function StoreFront({ initialData }: { initialData: any }) {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
-        // isLoading={isPending}
       />
     </div>
   );

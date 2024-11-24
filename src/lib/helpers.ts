@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fetch from "node-fetch";
 
-export const fetchPaginatedProducts = async (
+export const fetchShopifyProducts = async (
   baseUrl: string,
   headers: Record<string, string> = {}
 ) => {

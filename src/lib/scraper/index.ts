@@ -1,5 +1,5 @@
 "use server";
-import { fetchPaginatedProducts, transformProducts } from "../helpers";
+import { fetchShopifyProducts, transformProducts } from "../helpers";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "../prisma";
 
@@ -9,7 +9,7 @@ export async function processShop(shop: any) {
   const baseUrl = shop.url;
   const sinceId = shop.since_id || "0";
 
-  const allPaginatedProducts = await fetchPaginatedProducts(baseUrl, sinceId);
+  const allPaginatedProducts = await fetchShopifyProducts(baseUrl, sinceId);
 
   if (allPaginatedProducts.length === 0) {
     console.log(`No new products found for shop: ${shop.name}`);
