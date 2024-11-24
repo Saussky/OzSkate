@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
@@ -13,26 +13,26 @@ export default function StoreFront() {
   const [isPending, startTransition] = useTransition();
   const [filters, setFilters] = useState<Record<string, string | number>>({});
 
-  // Fetch all products on initial load
-  useEffect(() => {
-    loadProducts(1, filters);
-  }, [filters]);
+  const loadProducts = useCallback(
+    (page: number, newFilters?: Record<string, string | number>) => {
+      startTransition(async () => {
+        const data = await fetchPaginatedProducts(
+          page,
+          40,
+          newFilters || filters
+        );
+        setProducts(data.products);
+        setTotalPages(data.totalPages);
+        setCurrentPage(page);
+      });
+    },
+    [filters] // Dependencies: re-memoize if filters change
+  );
 
-  const loadProducts = (
-    page: number,
-    newFilters?: Record<string, string | number>
-  ) => {
-    startTransition(async () => {
-      const data = await fetchPaginatedProducts(
-        page,
-        40,
-        newFilters || filters
-      );
-      setProducts(data.products);
-      setTotalPages(data.totalPages);
-      setCurrentPage(page);
-    });
-  };
+  // Fetch all products on initial load and when filters change
+  useEffect(() => {
+    loadProducts(1);
+  }, [filters, loadProducts]);
 
   const handlePageChange = (page: number) => {
     loadProducts(page);
