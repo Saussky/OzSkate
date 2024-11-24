@@ -197,7 +197,7 @@ export const transformProducts = (
             productId: product.id.toString(),
             name: option.name || "Unnamed Option",
             position: option.position || 0,
-            values: option.values ? option.values.join(",") : "", // Convert array of values to comma-separated string
+            values: option.values ? option.values.join(",") : "",
           }))
         : [],
     };

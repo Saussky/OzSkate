@@ -10,7 +10,7 @@ interface FilterOptionsProps {
 export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
   const [category, setCategory] = useState("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
-  const [onSale, setOnSale] = useState(false); // New state for onSale filter
+  const [onSale, setOnSale] = useState(false);
 
   const handleApplyFilters = () => {
     onFilterChange({ category, maxPrice, onSale });
