@@ -15,7 +15,7 @@ model SkateShop {
   url      String    @unique
   state    String
   since_id String?
-  products Product[] // Renamed to plural for clarity
+  products Product[]
 }
 
 model Product {
@@ -28,7 +28,7 @@ model Product {
   vendor      String?
   productType String?
   tags        String?
-  images      String?   // Store JSON string for image URLs
+  image      String?   // Store JSON string for image URLs
   variants    Variant[] // One-to-many relationship with Variant
   options     Option[]  // One-to-many relationship with Option
   createdAt   DateTime  @default(now())
