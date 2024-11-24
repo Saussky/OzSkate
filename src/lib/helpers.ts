@@ -131,3 +131,29 @@ export const transformProducts = (
     };
   });
 };
+
+export const buildWhereClause = (
+  filters: Record<string, string | number | undefined>
+) => {
+  const whereClause: Record<string, any> = {};
+
+  if (filters.category) {
+    whereClause.productType = {
+      contains: filters.category,
+      mode: "insensitive",
+    };
+  }
+
+  if (filters.maxPrice) {
+    const maxPrice = Number(filters.maxPrice);
+    whereClause.variants = {
+      some: {
+        price: {
+          lte: maxPrice, // Direct numeric comparison
+        },
+      },
+    };
+  }
+
+  return whereClause;
+};
