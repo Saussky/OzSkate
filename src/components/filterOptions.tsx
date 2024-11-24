@@ -1,6 +1,5 @@
 "use client";
 
-// components/FilterOptions.tsx
 import { useState } from "react";
 
 interface FilterOptionsProps {

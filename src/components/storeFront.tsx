@@ -5,13 +5,16 @@ import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
 import { fetchPaginatedProducts } from "@/lib/actions";
+import { Product } from "@prisma/client";
 
 export default function StoreFront() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isPending, startTransition] = useTransition();
-  const [filters, setFilters] = useState<Record<string, string | number>>({});
+  const [filters, setFilters] = useState<
+    Record<string, string | number | boolean>
+  >({});
 
   const loadProducts = useCallback(
     (page: number, newFilters?: Record<string, string | number>) => {
@@ -26,10 +29,9 @@ export default function StoreFront() {
         setCurrentPage(page);
       });
     },
-    [filters] // Dependencies: re-memoize if filters change
+    [filters]
   );
 
-  // Fetch all products on initial load and when filters change
   useEffect(() => {
     loadProducts(1);
   }, [filters, loadProducts]);
@@ -38,13 +40,15 @@ export default function StoreFront() {
     loadProducts(page);
   };
 
-  const handleFilterChange = (newFilters: Record<string, string | number>) => {
+  const handleFilterChange = (
+    newFilters: Record<string, string | number | boolean>
+  ) => {
     setFilters(newFilters);
   };
 
   const handleSortChange = (sortOption: string) => {
     console.log("Sort option:", sortOption);
-    // Implement backend integration for sorting if needed
+    // TODO: Implement
   };
 
   return (

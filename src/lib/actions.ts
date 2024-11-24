@@ -45,7 +45,7 @@ export async function deleteAllProducts() {
 export const fetchPaginatedProducts = async (
   page: number,
   limit: number = 40,
-  filters: Record<string, string | number | undefined> = {}
+  filters: Record<string, string | number | boolean | undefined> = {}
 ) => {
   const skip = (page - 1) * limit;
 
