@@ -4,15 +4,16 @@
 import { useState } from "react";
 
 interface FilterOptionsProps {
-  onFilterChange: (filters: Record<string, string | number>) => void;
+  onFilterChange: (filters: Record<string, string | number | boolean>) => void;
 }
 
 export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
   const [category, setCategory] = useState("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
+  const [onSale, setOnSale] = useState(false); // New state for onSale filter
 
   const handleApplyFilters = () => {
-    onFilterChange({ category, maxPrice });
+    onFilterChange({ category, maxPrice, onSale });
   };
 
   return (
@@ -31,6 +32,15 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         onChange={(e) => setMaxPrice(Number(e.target.value) || "")}
         className="border rounded p-2"
       />
+      <label className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          checked={onSale}
+          onChange={(e) => setOnSale(e.target.checked)}
+          className="w-4 h-4"
+        />
+        <span>On Sale</span>
+      </label>
       <button
         onClick={handleApplyFilters}
         className="bg-blue-500 text-white px-4 py-2 rounded"

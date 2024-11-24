@@ -4,7 +4,7 @@ import { prisma } from "./prisma";
 import { Prisma } from "@prisma/client";
 
 export const buildWhereClause = (
-  filters: Record<string, string | number | undefined>
+  filters: Record<string, string | number | boolean | undefined> = {}
 ) => {
   const whereClause: Record<string, any> = {};
 
@@ -23,6 +23,10 @@ export const buildWhereClause = (
         },
       },
     };
+  }
+
+  if (filters.onSale !== undefined) {
+    whereClause.onSale = filters.onSale === true;
   }
 
   return whereClause;
