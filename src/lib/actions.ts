@@ -45,7 +45,8 @@ export async function deleteAllProducts() {
 export const fetchPaginatedProducts = async (
   page: number,
   limit: number = 40,
-  filters: Record<string, string | number | boolean | undefined> = {}
+  filters: Record<string, string | number | boolean | undefined> = {},
+  sortOptions?: string
 ) => {
   const skip = (page - 1) * limit;
 
@@ -86,6 +87,12 @@ export const fetchPaginatedProducts = async (
         image: product.image ? JSON.parse(product.image) : null,
       };
     });
+
+    if (sortOptions === "price-asc") {
+      formattedProducts.sort((a, b) => a.cheapestPrice - b.cheapestPrice);
+    } else if (sortOptions === "price-desc") {
+      formattedProducts.sort((a, b) => b.cheapestPrice - a.cheapestPrice);
+    }
 
     return {
       products: formattedProducts,

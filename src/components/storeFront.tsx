@@ -15,26 +15,28 @@ export default function StoreFront() {
   const [filters, setFilters] = useState<
     Record<string, string | number | boolean>
   >({});
+  const [sortOption, setSortOption] = useState<string | undefined>();
 
   const loadProducts = useCallback(
-    (page: number, newFilters?: Record<string, string | number>) => {
+    (page: number, newFilters?: Record<string, string | number | boolean>) => {
       startTransition(async () => {
         const data = await fetchPaginatedProducts(
           page,
           40,
-          newFilters || filters
+          newFilters || filters,
+          sortOption // Pass the current sortOption
         );
         setProducts(data.products);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
       });
     },
-    [filters]
+    [filters, sortOption] // Re-run when filters or sortOption change
   );
 
   useEffect(() => {
-    loadProducts(1);
-  }, [filters, loadProducts]);
+    loadProducts(1); // Load the first page when filters or sortOption change
+  }, [filters, sortOption, loadProducts]);
 
   const handlePageChange = (page: number) => {
     loadProducts(page);
@@ -43,12 +45,11 @@ export default function StoreFront() {
   const handleFilterChange = (
     newFilters: Record<string, string | number | boolean>
   ) => {
-    setFilters(newFilters);
+    setFilters(newFilters); // Update filters
   };
 
-  const handleSortChange = (sortOption: string) => {
-    console.log("Sort option:", sortOption);
-    // TODO: Implement
+  const handleSortChange = (option: string) => {
+    setSortOption(option); // Update sortOption
   };
 
   return (

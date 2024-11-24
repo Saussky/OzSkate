@@ -11,9 +11,9 @@ export default function SortOptions({ onSortChange }: SortOptionsProps) {
         onChange={(e) => onSortChange(e.target.value)}
         className="border rounded p-2"
       >
+        <option value="latest">Latest</option>
         <option value="price-asc">Price: Low to High</option>
         <option value="price-desc">Price: High to Low</option>
-        <option value="popularity">Popularity</option>
       </select>
     </div>
   );
