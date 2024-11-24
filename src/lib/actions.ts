@@ -1,8 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { processShop } from "@/lib/scraper";
-import { buildWhereClause } from "./helpers";
+import { buildWhereClause, processShop } from "./helpers";
 
 export async function fetchAllProducts() {
   try {
