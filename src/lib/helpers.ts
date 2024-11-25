@@ -129,6 +129,22 @@ export const fetchShopifyProducts = async (
   return allProducts;
 };
 
+const processFeaturedImage = (image: any) => {
+  if (
+    image &&
+    typeof image === "object" &&
+    typeof image.src === "string" &&
+    typeof image.width === "number" &&
+    typeof image.height === "number"
+  ) {
+    return {
+      src: image.src,
+      width: image.width,
+      height: image.height,
+    };
+  } else if (image) return null;
+};
+
 export const transformProducts = (
   allPaginatedProducts: any[],
   shopId: number
@@ -185,7 +201,7 @@ export const transformProducts = (
               : null,
             position: variant.position,
             taxable: variant.taxable,
-            featuredImage: variant.featured_image || null,
+            featuredImage: processFeaturedImage(variant.featuredImage),
             available: variant.available,
             createdAt: new Date(variant.created_at),
             updatedAt: new Date(variant.updated_at),
