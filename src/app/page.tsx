@@ -1,5 +1,4 @@
 "use server";
-
 import { getProductCount, getShopCount } from "@/lib/service";
 import HomeComponent from "@/modules/home";
 import "./globals.css";
