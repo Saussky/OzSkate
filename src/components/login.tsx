@@ -7,16 +7,21 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    if (res.ok) {
-      console.log("router push something");
-    } else {
-      console.log("no res ok");
-      // Handle error
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        console.log("Signup successful!");
+      } else {
+        console.log("res", res);
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
     }
   };
 
