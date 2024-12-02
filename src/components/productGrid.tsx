@@ -1,4 +1,3 @@
-// components/ProductGrid.tsx
 import ProductCard from "./ui/productCard";
 
 interface ProductGridProps {

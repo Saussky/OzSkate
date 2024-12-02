@@ -27,6 +27,8 @@ model Product {
   description String?
   vendor      String?
   productType String?
+  parentProductType String?
+  childProductType String?
   tags        String?
   image      String?   // Store JSON string for image URLs
   variants    Variant[] // One-to-many relationship with Variant

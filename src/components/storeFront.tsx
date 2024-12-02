@@ -58,12 +58,14 @@ export default function StoreFront() {
         <FilterOptions onFilterChange={handleFilterChange} />
         <SortOptions onSortChange={handleSortChange} />
       </div>
-      <ProductGrid
-        products={products}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <div>
+        <ProductGrid
+          products={products}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }

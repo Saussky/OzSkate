@@ -2,6 +2,7 @@
 import fetch from "node-fetch";
 import { prisma } from "./prisma";
 import { Prisma } from "@prisma/client";
+import { mapProductType } from "./transform";
 
 export const buildWhereClause = (
   filters: Record<string, string | number | boolean | undefined> = {}
@@ -172,6 +173,10 @@ export const transformProducts = (
       }
     }
 
+    const { parentProductType, childProductType } = mapProductType(
+      product.product_type
+    );
+
     return {
       id: product.id.toString(),
       shopId: shopId,
@@ -183,6 +188,8 @@ export const transformProducts = (
       updatedAt: new Date(product.updated_at),
       vendor: product.vendor,
       productType: product.product_type,
+      parentProductType,
+      childProductType,
       tags: product.tags ? product.tags.join(",") : "",
       image: JSON.stringify(firstImage), // Store image as JSON string
       onSale: false,

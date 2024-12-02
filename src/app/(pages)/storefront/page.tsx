@@ -1,4 +1,4 @@
-// pages/storefront/page.tsx
+"use server";
 import StoreFront from "@/components/storeFront";
 
 export default async function StorefrontPage() {
