@@ -15,6 +15,7 @@ export default function Login() {
     if (res.ok) {
       console.log("router push something");
     } else {
+      console.log("no res ok");
       // Handle error
     }
   };
