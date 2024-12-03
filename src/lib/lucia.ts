@@ -1,4 +1,3 @@
-// src/lib/lucia.ts
 import { Lucia, TimeSpan } from "lucia";
 import { cache } from "react";
 import { cookies } from "next/headers";

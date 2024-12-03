@@ -2,7 +2,7 @@
 import fetch from "node-fetch";
 import { prisma } from "./prisma";
 import { Prisma } from "@prisma/client";
-import { mapProductType } from "./transform";
+import { categoriseProduct } from "./transform";
 
 export const buildWhereClause = (
   filters: Record<string, string | number | boolean | undefined> = {}
@@ -173,9 +173,20 @@ export const transformProducts = (
       }
     }
 
-    const { parentProductType, childProductType } = mapProductType(
-      product.product_type
-    );
+    const tagsArray =
+      typeof product.tags === "string" && product.tags.length > 0
+        ? product.tags.split(",").map((tag: string) => tag.trim()) // Trim each tag
+        : [];
+
+    const parseProduct = {
+      title: product.title,
+      description: product.description,
+      ogProductType: product.type,
+      tags: tagsArray,
+    };
+
+    const { parentProductType, childProductType } =
+      categoriseProduct(parseProduct);
 
     return {
       id: product.id.toString(),

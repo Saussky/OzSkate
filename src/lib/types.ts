@@ -27,6 +27,8 @@ export type ChildProductType =
   | "Trucks"
   | "Wheels"
   | "Bearings"
+  | "Tools"
+  | "Hardware"
   // Protective Gear Children
   | "Pads"
   | "Helmets"

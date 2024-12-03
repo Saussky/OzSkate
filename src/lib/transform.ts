@@ -1,218 +1,216 @@
 import { ParentProductType, ChildProductType } from "./types";
 
-export function mapProductType(productType: string): {
-  parentProductType: ParentProductType;
-  childProductType: ChildProductType;
-} {
-  const normalizedProductType = productType.trim().toLowerCase();
+type Product = {
+  title: string;
+  description: string;
+  ogProductType: string;
+  tags: string[];
+};
 
-  console.log("normalised product", normalizedProductType);
+type CategorisedProduct = {
+  parentProductType: ParentProductType | null;
+  childProductType: ChildProductType | null;
+};
 
-  // Clothing
-  if (
-    /shirt|tee|t-shirt|t shirt|longsleeve|l\/s|polo|singlet|tank|jersey/.test(
-      normalizedProductType
-    )
-  ) {
-    if (/women|womens|ladies|female/.test(normalizedProductType)) {
-      if (/longsleeve|l\/s/.test(normalizedProductType)) {
-        return {
-          parentProductType: "Clothing",
-          childProductType: "Womens Shirts",
-        };
-      }
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Womens T-Shirts",
-      };
-    } else if (/men|mens|male/.test(normalizedProductType)) {
-      if (/longsleeve|l\/s/.test(normalizedProductType)) {
-        return {
-          parentProductType: "Clothing",
-          childProductType: "Mens Shirts",
-        };
-      }
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Mens T-Shirts",
-      };
-    }
-    return {
-      parentProductType: "Clothing",
-      childProductType: "Mens T-Shirts",
-    };
-  }
+const parentTypeKeywords: Record<ParentProductType, string[]> = {
+  Clothing: [
+    "shirt",
+    "jumper",
+    "jacket",
+    "t-shirt",
+    "pant",
+    "pants",
+    "shorts",
+    "hat",
+    "beanie",
+    "sock",
+    "hoodie",
+    "fleece",
+    "crew",
+    "pullover",
+  ],
+  Skateboards: [
+    "deck",
+    "skateboard",
+    "truck",
+    "wheel",
+    "bearing",
+    "tool",
+    "hardware",
+    "complete",
+    "longboard",
+    "cruiser",
+    "surf skate",
+  ],
+  "Protective Gear": [
+    "pad",
+    "helmet",
+    "protective",
+    "safety",
+    "saftey",
+    "guard",
+  ],
+  Shoes: [
+    "shoe",
+    "shoes",
+    "footwear",
+    "boot",
+    "sneaker",
+    "trainer",
+    "slip on",
+    "slides",
+    "sandals",
+  ],
+  Bags: [
+    "backpack",
+    "tote",
+    "bag",
+    "luggage",
+    "duffel",
+    "bum bag",
+    "hip bag",
+    "shoulder bag",
+  ],
+  Accessories: [
+    "belt",
+    "watch",
+    "sunglass",
+    "sunnies",
+    "literature",
+    "book",
+    "magazine",
+    "poster",
+    "dvd",
+    "vinyl",
+    "wax",
+    "keychain",
+    "jewellery",
+    "ring",
+    "necklace",
+    "bracelet",
+    "earring",
+    "patch",
+    "pin",
+    "wallet",
+  ],
+};
 
-  if (
-    /hoodie|jumper|crew|sweatshirt|pullover|fleece|zip hoodie/.test(
-      normalizedProductType
-    )
-  ) {
-    if (/women|womens|ladies|female/.test(normalizedProductType)) {
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Womens Jumpers",
-      };
-    } else if (/men|mens|male/.test(normalizedProductType)) {
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Mens Jumpers",
-      };
-    }
-    return {
-      parentProductType: "Clothing",
-      childProductType: "Mens Jumpers",
-    };
-  }
+const childTypeKeywords: Record<ChildProductType, string[]> = {
+  // Clothing Children
+  "Mens Jumpers": [
+    "men's jumper",
+    "mens jumper",
+    "mens hoodie",
+    "men's hoodie",
+  ],
+  "Mens Shirts": [
+    "men's shirt",
+    "mens shirt",
+    "men's long sleeve",
+    "mens long sleeve",
+  ],
+  "Mens T-Shirts": ["men's t-shirt", "mens t-shirt", "men's tee", "mens tee"],
+  "Mens Pants": ["men's pants", "mens pants", "men's denim", "mens denim"],
+  "Mens Shorts": ["men's shorts", "mens shorts"],
+  "Womens Jumpers": [
+    "women's jumper",
+    "womens jumper",
+    "women's hoodie",
+    "womens hoodie",
+  ],
+  "Womens Shirts": [
+    "women's shirt",
+    "womens shirt",
+    "women's long sleeve",
+    "womens long sleeve",
+  ],
+  "Womens T-Shirts": [
+    "women's t-shirt",
+    "womens t-shirt",
+    "women's tee",
+    "womens tee",
+  ],
+  "Womens Pants": [
+    "women's pants",
+    "womens pants",
+    "women's denim",
+    "womens denim",
+  ],
+  "Womens Shorts": ["women's shorts", "womens shorts"],
+  Hats: ["hat", "cap", "bucket hat", "balaclava", "ski mask"],
+  Beanies: ["beanie"],
+  Socks: ["sock"],
+  // Skateboards Children
+  Decks: ["deck", "decks"],
+  Completes: ["complete", "longboard", "cruiser", "surf skate"],
+  Trucks: ["truck"],
+  Wheels: ["wheel", "wheels"],
+  Bearings: ["bearing", "bearings"],
+  Tools: ["tool", "tools"],
+  Hardware: ["hardware", "bolts"],
+  // Protective Gear Children
+  Pads: ["pad", "pads", "guard", "protective", "safety", "saftey"],
+  Helmets: ["helmet"],
+  Other: ["other"],
+  // Shoes Children
+  Shoes: ["shoe", "shoes", "sneaker", "sneakers", "footwear", "boot", "boots"],
+  // Bags Children
+  Backpacks: ["backpack", "backpacks"],
+  "Tote Bags": ["tote bag", "tote bags", "tote"],
+  // Accessories Children
+  Belts: ["belt", "belts"],
+  Watches: ["watch", "watches"],
+  Sunglasses: ["sunglass", "sunglasses", "sunnies"],
+  Literature: ["literature", "book", "magazine", "poster", "dvd", "vinyl"],
+  Wax: ["wax"],
+  Keychains: ["keychain", "key chain", "keychains"],
+  Jewellery: [
+    "jewellery",
+    "jewelry",
+    "ring",
+    "necklace",
+    "bracelet",
+    "earring",
+    "patch",
+    "pin",
+  ],
+};
 
-  if (/pant|jean|denim|cord/.test(normalizedProductType)) {
-    if (/women|womens|ladies|female/.test(normalizedProductType)) {
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Womens Pants",
-      };
-    } else if (/men|mens|male/.test(normalizedProductType)) {
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Mens Pants",
-      };
-    }
-    return {
-      parentProductType: "Clothing",
-      childProductType: "Mens Pants",
-    };
-  }
+export function categoriseProduct(product: Product): CategorisedProduct {
+  const { title, description, ogProductType, tags } = product;
 
-  if (/short/.test(normalizedProductType)) {
-    if (/women|womens|ladies|female/.test(normalizedProductType)) {
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Womens Shorts",
-      };
-    } else if (/men|mens|male/.test(normalizedProductType)) {
-      return {
-        parentProductType: "Clothing",
-        childProductType: "Mens Shorts",
-      };
-    }
-    return {
-      parentProductType: "Clothing",
-      childProductType: "Mens Shorts",
-    };
-  }
+  const combinedText = `${title} ${description} ${ogProductType} ${tags.join(
+    " "
+  )}`.toLowerCase();
 
-  if (
-    /hat|cap|beanie|headwear|bucket hat|boonie|balaclava|ski mask/.test(
-      normalizedProductType
-    )
-  ) {
-    if (/beanie/.test(normalizedProductType)) {
-      return { parentProductType: "Clothing", childProductType: "Beanies" };
-    }
-    return { parentProductType: "Clothing", childProductType: "Hats" };
-  }
+  // Find Parent Product Type
+  const parentProductType =
+    (Object.keys(parentTypeKeywords) as ParentProductType[]).find(
+      (parentType) =>
+        parentTypeKeywords[parentType].some((keyword) =>
+          combinedText.includes(keyword.toLowerCase())
+        )
+    ) || null;
 
-  if (/sock/.test(normalizedProductType)) {
-    return { parentProductType: "Clothing", childProductType: "Socks" };
-  }
+  // Find Child Product Type
+  const childProductType =
+    (Object.keys(childTypeKeywords) as ChildProductType[]).find((childType) =>
+      childTypeKeywords[childType].some((keyword) =>
+        combinedText.includes(keyword.toLowerCase())
+      )
+    ) || null;
 
-  // Skateboards
-  if (/skateboarding/.test(normalizedProductType)) {
-    return { parentProductType: "Skateboards", childProductType: "Decks" };
-  }
-
-  if (/deck/.test(normalizedProductType)) {
-    return { parentProductType: "Skateboards", childProductType: "Decks" };
-  }
-
-  if (/complete|longboard|cruiser|surf skate/.test(normalizedProductType)) {
-    return { parentProductType: "Skateboards", childProductType: "Completes" };
-  }
-
-  if (/truck/.test(normalizedProductType)) {
-    return { parentProductType: "Skateboards", childProductType: "Trucks" };
-  }
-
-  if (/wheel/.test(normalizedProductType)) {
-    return { parentProductType: "Skateboards", childProductType: "Wheels" };
-  }
-
-  if (/bearing/.test(normalizedProductType)) {
-    return { parentProductType: "Skateboards", childProductType: "Bearings" };
-  }
-
-  // Protective Gear
-  if (/helmet/.test(normalizedProductType)) {
-    return {
-      parentProductType: "Protective Gear",
-      childProductType: "Helmets",
-    };
-  }
-
-  if (/pad|guard|protective|safety/.test(normalizedProductType)) {
-    return { parentProductType: "Protective Gear", childProductType: "Pads" };
-  }
-
-  // Shoes
-  if (
-    /shoe|footwear|boot|sneaker|trainer|slip on|slides|sandals/.test(
-      normalizedProductType
-    )
-  ) {
-    return { parentProductType: "Shoes", childProductType: "Shoes" };
-  }
-
-  // Bags
-  if (
-    /backpack|bag|luggage|duffel|tote|bum bag|hip bag|shoulder bag/.test(
-      normalizedProductType
-    )
-  ) {
-    if (/backpack/.test(normalizedProductType)) {
-      return { parentProductType: "Bags", childProductType: "Backpacks" };
-    } else if (/tote/.test(normalizedProductType)) {
-      return { parentProductType: "Bags", childProductType: "Tote Bags" };
-    }
-    return { parentProductType: "Bags", childProductType: "Backpacks" };
-  }
-
-  // Accessories
-  if (/belt/.test(normalizedProductType)) {
-    return { parentProductType: "Accessories", childProductType: "Belts" };
-  }
-
-  if (/watch/.test(normalizedProductType)) {
-    return { parentProductType: "Accessories", childProductType: "Watches" };
-  }
-
-  if (/sunglass|sunnies/.test(normalizedProductType)) {
-    return { parentProductType: "Accessories", childProductType: "Sunglasses" };
-  }
-
-  if (
-    /book|magazine|publication|literature|poster|dvd|vinyl/.test(
-      normalizedProductType
-    )
-  ) {
-    return { parentProductType: "Accessories", childProductType: "Literature" };
-  }
-
-  if (/wax/.test(normalizedProductType)) {
-    return { parentProductType: "Accessories", childProductType: "Wax" };
-  }
-
-  if (/keychain|key chain/.test(normalizedProductType)) {
-    return { parentProductType: "Accessories", childProductType: "Keychains" };
-  }
-
-  if (
-    /jewellery|jewelry|ring|necklace|bracelet|earring|patch|pin/.test(
-      normalizedProductType
-    )
-  ) {
-    return { parentProductType: "Accessories", childProductType: "Jewellery" };
-  }
-
-  // Default to Accessories -> Other
-  return { parentProductType: "Accessories", childProductType: "Other" };
+  return { parentProductType, childProductType };
 }
+
+// Example Usage
+const exampleProduct: Product = {
+  title: "Men's Classic Skate Shoes",
+  description: "High-quality shoes perfect for skateboarding.",
+  ogProductType: "Footwear",
+  tags: ["skate", "footwear", "mens"],
+};
+
+const categorised = categoriseProduct(exampleProduct);
+console.log(categorised);
+// Output: { parentProductType: "Shoes", childProductType: "Shoes" }
