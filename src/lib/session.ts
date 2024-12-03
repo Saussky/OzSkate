@@ -1,7 +1,6 @@
 import { prisma } from "./prisma";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import auth from "./lucia";
 
 export async function createSession(token: string, userId: string) {
   const sessionId = encodeHexLowerCase(sha256(Buffer.from(token)));
