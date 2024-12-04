@@ -217,6 +217,19 @@ const childTypeKeywordsPerParent: {
   },
 };
 
+function safeString(value: unknown): string {
+  return typeof value === "string" ? value.toLowerCase() : "";
+}
+
+function isMensFootwear(product: Product): boolean {
+  const { ogProductType, tags } = product;
+  console.log("product", product);
+  return (
+    safeString(ogProductType).includes("mens") &&
+    tags.some((tag) => safeString(tag) === "footwear")
+  );
+}
+
 function findParentProductType(
   searchFields: string[]
 ): ParentProductType | null {
@@ -278,9 +291,6 @@ function findChildProductTypeAcrossParents(
 export function categoriseProduct(product: Product): CategorisedProduct {
   const { title, description, ogProductType, tags } = product;
 
-  const safeString = (value: unknown): string =>
-    typeof value === "string" ? value.toLowerCase() : "";
-
   const searchFields = [
     safeString(ogProductType),
     tags.map(safeString).join(" "),
@@ -290,6 +300,10 @@ export function categoriseProduct(product: Product): CategorisedProduct {
 
   let parentProductType = findParentProductType(searchFields);
   let childProductType: ChildProductType | null = null;
+
+  if (isMensFootwear(product)) {
+    return { parentProductType: "Shoes", childProductType: "Shoes" };
+  }
 
   if (parentProductType) {
     childProductType = findChildProductTypeForParent(
@@ -302,10 +316,6 @@ export function categoriseProduct(product: Product): CategorisedProduct {
       parentProductType = result.parent;
       childProductType = result.child;
     }
-  }
-
-  if (childProductType === "Shoes") {
-    parentProductType = "Shoes";
   }
 
   return { parentProductType, childProductType } as CategorisedProduct;

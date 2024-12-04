@@ -91,7 +91,7 @@ export const fetchShopifyProducts = async (
   const limit = 250;
   let page = 1;
 
-  while (page < 2) {
+  while (true) {
     // WHILE TRUE
     const url = `${baseUrl}?limit=${limit}&page=${page}`;
 
@@ -176,10 +176,9 @@ export const transformProducts = (
       }
     }
 
-    const tagsArray =
-      typeof product.tags === "string" && product.tags.length > 0
-        ? product.tags.split(",").map((tag: string) => tag.trim()) // Trim each tag
-        : [];
+    const tagsArray = Array.isArray(product.tags)
+      ? product.tags.map((tag: string) => tag.trim())
+      : [];
 
     const parseProduct = {
       title: product.title,
