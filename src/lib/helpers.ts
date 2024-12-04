@@ -9,10 +9,12 @@ export const buildWhereClause = (
 ) => {
   const whereClause: Record<string, any> = {};
 
-  if (filters.category) {
-    whereClause.productType = {
-      contains: filters.category,
-    };
+  if (filters.parentType) {
+    whereClause.parentProductType = filters.parentType;
+  }
+
+  if (filters.childType) {
+    whereClause.childProductType = filters.childType;
   }
 
   if (filters.maxPrice) {
@@ -89,7 +91,7 @@ export const fetchShopifyProducts = async (
   const limit = 250;
   let page = 1;
 
-  while (page <= 2) {
+  while (true) {
     const url = `${baseUrl}?limit=${limit}&page=${page}`;
 
     const res = await fetch(url, {
@@ -181,7 +183,7 @@ export const transformProducts = (
     const parseProduct = {
       title: product.title,
       description: product.description,
-      ogProductType: product.type,
+      ogProductType: product.product_type,
       tags: tagsArray,
     };
 
