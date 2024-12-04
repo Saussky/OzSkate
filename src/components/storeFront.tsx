@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useState, useTransition } from "react";
 import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
@@ -24,18 +23,18 @@ export default function StoreFront() {
           page,
           40,
           newFilters || filters,
-          sortOption // Pass the current sortOption
+          sortOption
         );
         setProducts(data.products);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
       });
     },
-    [filters, sortOption] // Re-run when filters or sortOption change
+    [filters, sortOption]
   );
 
   useEffect(() => {
-    loadProducts(1); // Load the first page when filters or sortOption change
+    loadProducts(1);
   }, [filters, sortOption, loadProducts]);
 
   const handlePageChange = (page: number) => {
@@ -45,11 +44,11 @@ export default function StoreFront() {
   const handleFilterChange = (
     newFilters: Record<string, string | number | boolean>
   ) => {
-    setFilters(newFilters); // Update filters
+    setFilters(newFilters);
   };
 
   const handleSortChange = (option: string) => {
-    setSortOption(option); // Update sortOption
+    setSortOption(option);
   };
 
   return (
