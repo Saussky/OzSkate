@@ -132,7 +132,7 @@ const childTypeKeywordsPerParent: {
       "tee",
     ],
     "Mens Pants": ["men's pants", "mens pants", "men's denim", "mens denim"],
-    "Mens Shorts": ["men's shorts", "mens shorts"],
+    "Mens Shorts": ["men's shorts", "mens shorts", "shorts"],
     "Womens Jumpers": [
       "women's jumper",
       "womens jumper",
@@ -217,6 +217,64 @@ const childTypeKeywordsPerParent: {
   },
 };
 
+function findParentProductType(
+  searchFields: string[]
+): ParentProductType | null {
+  return (
+    (Object.keys(parentTypeKeywords) as ParentProductType[]).find(
+      (parentType) =>
+        searchFields.some((field) =>
+          parentTypeKeywords[parentType].some((keyword) =>
+            field.includes(keyword.toLowerCase())
+          )
+        )
+    ) || null
+  );
+}
+
+function findChildProductTypeForParent(
+  parentProductType: ParentProductType,
+  searchFields: string[]
+): ChildProductType | null {
+  const childKeywords = childTypeKeywordsPerParent[parentProductType];
+
+  return (
+    (Object.keys(childKeywords) as Array<keyof typeof childKeywords>).find(
+      (childType) =>
+        searchFields.some((field) =>
+          (childKeywords[childType] as string[]).some((keyword: string) =>
+            field.includes(keyword.toLowerCase())
+          )
+        )
+    ) || null
+  );
+}
+
+function findChildProductTypeAcrossParents(
+  searchFields: string[]
+): { parent: ParentProductType; child: ChildProductType } | null {
+  for (const parent of Object.keys(
+    childTypeKeywordsPerParent
+  ) as ParentProductType[]) {
+    const childKeywords = childTypeKeywordsPerParent[parent];
+
+    const foundChildType = (
+      Object.keys(childKeywords) as Array<keyof typeof childKeywords>
+    ).find((childType) =>
+      searchFields.some((field) =>
+        (childKeywords[childType] as string[]).some((keyword: string) =>
+          field.includes(keyword.toLowerCase())
+        )
+      )
+    );
+
+    if (foundChildType) {
+      return { parent, child: foundChildType as ChildProductType };
+    }
+  }
+  return null;
+}
+
 export function categoriseProduct(product: Product): CategorisedProduct {
   const { title, description, ogProductType, tags } = product;
 
@@ -230,32 +288,24 @@ export function categoriseProduct(product: Product): CategorisedProduct {
     safeString(description),
   ];
 
-  // Find Parent Product Type
-  const parentProductType =
-    (Object.keys(parentTypeKeywords) as ParentProductType[]).find(
-      (parentType) =>
-        searchFields.some((field) =>
-          parentTypeKeywords[parentType].some((keyword) =>
-            field.includes(keyword.toLowerCase())
-          )
-        )
-    ) || null;
-
-  // Find Child Product Type
+  let parentProductType = findParentProductType(searchFields);
   let childProductType: ChildProductType | null = null;
 
   if (parentProductType) {
-    const childKeywords = childTypeKeywordsPerParent[parentProductType];
+    childProductType = findChildProductTypeForParent(
+      parentProductType,
+      searchFields
+    );
+  } else {
+    const result = findChildProductTypeAcrossParents(searchFields);
+    if (result) {
+      parentProductType = result.parent;
+      childProductType = result.child;
+    }
+  }
 
-    childProductType =
-      (Object.keys(childKeywords) as Array<keyof typeof childKeywords>).find(
-        (childType) =>
-          searchFields.some((field) =>
-            (childKeywords[childType] as string[]).some((keyword) =>
-              field.includes(keyword.toLowerCase())
-            )
-          )
-      ) || null;
+  if (childProductType === "Shoes") {
+    parentProductType = "Shoes";
   }
 
   return { parentProductType, childProductType } as CategorisedProduct;
