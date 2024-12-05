@@ -106,6 +106,7 @@ const parentTypeKeywords: Record<ParentProductType, string[]> = {
   ],
 };
 
+// TODO: Implement logic separating t-shirts from shirts
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
   [P in ParentProductType]: Record<ChildProductTypePerParent[P], string[]>;
@@ -188,7 +189,6 @@ function safeString(value: unknown): string {
 
 function isMensFootwear(product: Product): boolean {
   const { ogProductType, tags } = product;
-  console.log("product", product);
   return (
     safeString(ogProductType).includes("mens") &&
     tags.some((tag) => safeString(tag) === "footwear")

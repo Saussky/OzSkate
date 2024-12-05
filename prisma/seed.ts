@@ -3,11 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const skateboardShops = [
-  // {
-  //   name: "335 Skate Supply",
-  //   url: "https://www.335skatesupply.com.au/products.json",
-  //   state: "NSW",
-  // },
+  {
+    name: "335 Skate Supply",
+    url: "https://www.335skatesupply.com.au/products.json",
+    state: "NSW",
+  },
   // {
   //   name: "Beyond Skate",
   //   url: "https://www.beyondskate.com.au/products.json",
@@ -28,11 +28,11 @@ const skateboardShops = [
   //   url: "https://www.skateboard.com.au/products.json",
   //   state: "VIC",
   // },
-  {
-    name: "Hemley Skateboarding",
-    url: "https://hemleyskateboarding.com.au/products.json",
-    state: "VIC",
-  },
+  // {
+  //   name: "Hemley Skateboarding",
+  //   url: "https://hemleyskateboarding.com.au/products.json",
+  //   state: "VIC",
+  // },
   // {
   //   name: "Jimmy's Skate",
   //   url: "https://jimmysskate.com/products.json",

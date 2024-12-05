@@ -11,7 +11,7 @@ interface ProductCardProps {
   id: string;
   title: string;
   price: string;
-  imageSrc: string;
+  imageSrc?: string;
   skateShop: SkateShop;
 }
 
@@ -22,11 +22,13 @@ export default function ProductCard({
   imageSrc,
   skateShop,
 }: ProductCardProps) {
+  const fallbackImageSrc = "/placeholder-image.png";
+
   return (
     <div className="border rounded-lg shadow-md p-4" key={id}>
       <p>{skateShop.name}</p>
       <Image
-        src={imageSrc}
+        src={imageSrc || fallbackImageSrc}
         alt={title}
         width={300}
         height={300}
