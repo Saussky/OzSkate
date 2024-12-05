@@ -10,16 +10,13 @@ export type ParentProductType =
 // Define the ChildProductType mapping per ParentProductType
 export type ChildProductTypePerParent = {
   Clothing:
-    | "Mens Jumpers"
-    | "Mens Shirts"
-    | "Mens T-Shirts"
-    | "Mens Pants"
-    | "Mens Shorts"
-    | "Womens Jumpers"
-    | "Womens Shirts"
-    | "Womens T-Shirts"
-    | "Womens Pants"
-    | "Womens Shorts"
+    | "Jumpers"
+    | "Shirts"
+    | "T-Shirts"
+    | "Pants"
+    | "Shorts"
+    | "Women's Tops"
+    | "Women's Bottoms"
     | "Hats"
     | "Beanies"
     | "Socks";

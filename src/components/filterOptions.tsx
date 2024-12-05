@@ -1,28 +1,16 @@
 "use client";
-
+import { ParentProductType } from "@/lib/types";
 import { useState } from "react";
 
-const parentProductTypes = [
-  "Clothing",
-  "Skateboards",
-  "Protective Gear",
-  "Shoes",
-  "Bags",
-  "Accessories",
-];
-
-const childProductTypes: Record<string, string[]> = {
+export const childProductTypePerParent: Record<ParentProductType, string[]> = {
   Clothing: [
-    "Mens Jumpers",
-    "Mens Shirts",
-    "Mens T-Shirts",
-    "Mens Pants",
-    "Mens Shorts",
-    "Womens Jumpers",
-    "Womens Shirts",
-    "Womens T-Shirts",
-    "Womens Pants",
-    "Womens Shorts",
+    "Jumpers",
+    "Shirts",
+    "T-Shirts",
+    "Pants",
+    "Shorts",
+    "Women's Tops",
+    "Women's Bottoms",
     "Hats",
     "Beanies",
     "Socks",
@@ -51,15 +39,13 @@ const childProductTypes: Record<string, string[]> = {
   ],
 };
 
-// TODO: Import from const file
 interface FilterOptionsProps {
   onFilterChange: (filters: Record<string, string | number | boolean>) => void;
 }
 
 export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
-  const [parentType, setParentType] = useState<string | "">("");
+  const [parentType, setParentType] = useState<ParentProductType | "">("");
   const [childType, setChildType] = useState<string | "">("");
-
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [onSale, setOnSale] = useState(false);
 
@@ -80,12 +66,21 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
     });
   };
 
+  const parentProductTypes = Object.keys(
+    childProductTypePerParent
+  ) as ParentProductType[];
+
+  const childProductTypes =
+    parentType && childProductTypePerParent[parentType]
+      ? (childProductTypePerParent[parentType] as string[])
+      : [];
+
   return (
     <div className="flex flex-wrap space-x-4">
       <select
         value={parentType}
         onChange={(e) => {
-          setParentType(e.target.value);
+          setParentType(e.target.value as ParentProductType);
           setChildType(""); // Reset childType when parentType changes
         }}
         className="border rounded p-2"
@@ -105,12 +100,11 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         disabled={!parentType}
       >
         <option value="">Select Child Type</option>
-        {parentType &&
-          childProductTypes[parentType]?.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
+        {childProductTypes.map((type) => (
+          <option key={type} value={type}>
+            {type}
+          </option>
+        ))}
       </select>
 
       <input

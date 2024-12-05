@@ -111,59 +111,28 @@ const childTypeKeywordsPerParent: {
   [P in ParentProductType]: Record<ChildProductTypePerParent[P], string[]>;
 } = {
   Clothing: {
-    // Clothing Children
-    "Mens Jumpers": [
-      "men's jumper",
-      "mens jumper",
-      "mens hoodie",
-      "men's hoodie",
-    ],
-    "Mens Shirts": [
-      "men's shirt",
-      "mens shirt",
-      "men's long sleeve",
-      "mens long sleeve",
-    ],
-    "Mens T-Shirts": [
-      "men's t-shirt",
-      "mens t-shirt",
-      "men's tee",
-      "mens tee",
-      "tee",
-    ],
-    "Mens Pants": ["men's pants", "mens pants", "men's denim", "mens denim"],
-    "Mens Shorts": ["men's shorts", "mens shorts", "shorts"],
-    "Womens Jumpers": [
-      "women's jumper",
-      "womens jumper",
-      "women's hoodie",
-      "womens hoodie",
-    ],
-    "Womens Shirts": [
+    Jumpers: ["jumper", "hoodie", "sweater", "pullover", "fleece", "crew"],
+    Shirts: ["shirt", "button up", "long sleeve"],
+    "T-Shirts": ["t-shirt", "tee"],
+    Pants: ["pants", "denim", "jeans", "trousers"],
+    Shorts: ["shorts"],
+    "Women's Tops": [
+      "women's top",
       "women's shirt",
-      "womens shirt",
-      "women's long sleeve",
-      "womens long sleeve",
-    ],
-    "Womens T-Shirts": [
+      "women's blouse",
       "women's t-shirt",
-      "womens t-shirt",
-      "women's tee",
-      "womens tee",
     ],
-    "Womens Pants": [
+    "Women's Bottoms": [
       "women's pants",
-      "womens pants",
-      "women's denim",
-      "womens denim",
+      "women's shorts",
+      "women's skirt",
+      "women's leggings",
     ],
-    "Womens Shorts": ["women's shorts", "womens shorts"],
     Hats: ["hat", "cap", "bucket hat", "balaclava", "ski mask"],
     Beanies: ["beanie"],
-    Socks: ["sock"],
+    Socks: ["sock", "socks"],
   },
   Skateboards: {
-    // Skateboards Children
     Decks: ["deck", "decks"],
     Completes: ["complete", "longboard", "cruiser", "surf skate"],
     Trucks: ["truck"],
@@ -173,13 +142,11 @@ const childTypeKeywordsPerParent: {
     Hardware: ["hardware", "bolts"],
   },
   "Protective Gear": {
-    // Protective Gear Children
     Pads: ["pad", "pads", "guard", "protective", "safety", "saftey"],
     Helmets: ["helmet"],
     Other: ["other"],
   },
   Shoes: {
-    // Shoes Children
     Shoes: [
       "shoe",
       "shoes",
@@ -191,12 +158,10 @@ const childTypeKeywordsPerParent: {
     ],
   },
   Bags: {
-    // Bags Children
     Backpacks: ["backpack", "backpacks"],
     "Tote Bags": ["tote bag", "tote bags", "tote"],
   },
   Accessories: {
-    // Accessories Children
     Belts: ["belt", "belts"],
     Watches: ["watch", "watches"],
     Sunglasses: ["sunglass", "sunglasses", "sunnies"],
