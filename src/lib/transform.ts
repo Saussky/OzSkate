@@ -22,6 +22,7 @@ type CategorisedProduct<
 
 const parentTypeKeywords: Record<ParentProductType, string[]> = {
   Clothing: [
+    "apparel",
     "shirt",
     "tees",
     "jumper",
@@ -107,16 +108,18 @@ const parentTypeKeywords: Record<ParentProductType, string[]> = {
 };
 
 // TODO: Implement logic separating t-shirts from shirts
+// TODO: Implement griptape as sub-category
+
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
   [P in ParentProductType]: Record<ChildProductTypePerParent[P], string[]>;
 } = {
   Clothing: {
-    Jumpers: ["jumper", "hoodie", "sweater", "pullover", "fleece", "crew"],
+    Jumpers: ["jumper", "hoodie", "sweater", "pullover", "crew"],
     Shirts: ["shirt", "button up", "long sleeve"],
     "T-Shirts": ["t-shirt", "tee"],
-    Pants: ["pants", "denim", "jeans", "trousers"],
-    Shorts: ["shorts"],
+    Pants: ["pants", "jeans", "trousers"],
+    Shorts: ["shorts", "short"],
     "Women's Tops": [
       "women's top",
       "women's shirt",
@@ -140,7 +143,7 @@ const childTypeKeywordsPerParent: {
     Wheels: ["wheel", "wheels"],
     Bearings: ["bearing", "bearings"],
     Tools: ["tool", "tools"],
-    Hardware: ["hardware", "bolts"],
+    Hardware: ["hardware", "bolts", "deck bolts"],
   },
   "Protective Gear": {
     Pads: ["pad", "pads", "guard", "protective", "safety", "saftey"],
@@ -203,7 +206,7 @@ function findParentProductType(
       (parentType) =>
         searchFields.some((field) =>
           parentTypeKeywords[parentType].some((keyword) =>
-            field.includes(keyword.toLowerCase())
+            field.split(/[\s\/]+/).some(word => word === keyword.toLowerCase())
           )
         )
     ) || null
@@ -221,7 +224,7 @@ function findChildProductTypeForParent(
       (childType) =>
         searchFields.some((field) =>
           (childKeywords[childType] as string[]).some((keyword: string) =>
-            field.includes(keyword.toLowerCase())
+            field.split(/[\s\/]+/).some(word => word === keyword.toLowerCase())
           )
         )
     ) || null
@@ -241,7 +244,7 @@ function findChildProductTypeAcrossParents(
     ).find((childType) =>
       searchFields.some((field) =>
         (childKeywords[childType] as string[]).some((keyword: string) =>
-          field.includes(keyword.toLowerCase())
+          field.split(/[\s\/]+/).some(word => word === keyword.toLowerCase())
         )
       )
     );
@@ -257,13 +260,13 @@ export function categoriseProduct(product: Product): CategorisedProduct {
   const { title, description, ogProductType, tags } = product;
 
   const searchFields = [
-    safeString(ogProductType),
     tags.map(safeString).join(" "),
     safeString(title),
-    safeString(description),
+    // safeString(description),
+    // safeString(ogProductType),
   ];
 
-  let parentProductType = findParentProductType(searchFields);
+  let parentProductType = null // findParentProductType(searchFields);
   let childProductType: ChildProductType | null = null;
 
   if (isMensFootwear(product)) {

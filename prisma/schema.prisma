@@ -29,6 +29,7 @@ model Session {
 }
 
 // Not Auth
+
 model SkateShop {
   id       Int       @id @default(autoincrement())
   name     String    @unique
