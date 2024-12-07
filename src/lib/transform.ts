@@ -139,11 +139,11 @@ const childTypeKeywordsPerParent: {
   Skateboards: {
     Decks: ["deck", "decks"],
     Completes: ["complete", "longboard", "cruiser", "surf skate"],
-    Trucks: ["truck"],
+    Trucks: ["truck", "trucks"],
     Wheels: ["wheel", "wheels"],
     Bearings: ["bearing", "bearings"],
     Tools: ["tool", "tools"],
-    Hardware: ["hardware", "bolts", "deck bolts"],
+    Hardware: ["hardware", "bolts", "riser", "risers"],
   },
   "Protective Gear": {
     Pads: ["pad", "pads", "guard", "protective", "safety", "saftey"],
@@ -190,11 +190,12 @@ function safeString(value: unknown): string {
   return typeof value === "string" ? value.toLowerCase() : "";
 }
 
-function isMensFootwear(product: Product): boolean {
+function  isMensFootwear(product: Product): boolean {
   const { ogProductType, tags } = product;
   return (
-    safeString(ogProductType).includes("mens") &&
-    tags.some((tag) => safeString(tag) === "footwear")
+    safeString(ogProductType).includes("mens") || 
+    safeString(ogProductType).includes("shoes") || 
+    tags.some((tag) => safeString(tag) === "footwear")    
   );
 }
 
