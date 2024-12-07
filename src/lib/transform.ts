@@ -109,13 +109,15 @@ const parentTypeKeywords: Record<ParentProductType, string[]> = {
 
 // TODO: Implement logic separating t-shirts from shirts
 // TODO: Implement griptape as sub-category
+// TODO: There are some keywords that will need to be two words aka "t shirt", "deck bolts". Functionality adjustment
+// TODO: GO through each search field, figure out priority, it currently overwrites (make explicit and obvious of order_)
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
   [P in ParentProductType]: Record<ChildProductTypePerParent[P], string[]>;
 } = {
   Clothing: {
-    Jumpers: ["jumper", "hoodie", "sweater", "pullover", "crew"],
+    Jumpers: ["jumper", "hoodie", "sweater", "pullover"],
     Shirts: ["shirt", "button up", "long sleeve"],
     "T-Shirts": ["t-shirt", "tee"],
     Pants: ["pants", "jeans", "trousers"],

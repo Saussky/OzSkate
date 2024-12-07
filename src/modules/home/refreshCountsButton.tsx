@@ -1,4 +1,3 @@
-
 "use client";
 import { useTransition } from "react";
 import { refreshCounts } from "@/lib/actions";
@@ -21,9 +20,17 @@ export default function RefreshCountsButton({ onRefresh }: RefreshCountsButtonPr
     <button
       onClick={handleRefresh}
       disabled={isPending}
-      className="border-black border-2 py-2 px-4 rounded"
+      className={`py-2 px-4 rounded flex items-center justify-center ${
+        isPending ? "animate-spin" : ""
+      }`}
     >
-      {isPending ? "Refreshing..." : "Refresh Counts"}
+      <span
+        className={`inline-block text-xl ${
+          isPending ? "animate-spin" : ""
+        }`}
+      >
+        🔄
+      </span>
     </button>
   );
 }
