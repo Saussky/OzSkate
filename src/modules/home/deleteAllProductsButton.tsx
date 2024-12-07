@@ -13,6 +13,9 @@ export default function DeleteAllProductsButton() {
       try {
         await deleteAllProducts();
         setMessage("All products successfully deleted.");
+        setTimeout(() => {
+          setMessage("")
+        }, 2000)
       } catch (error) {
         console.error("Error:", error);
         setMessage("An error occurred while deleting products.");

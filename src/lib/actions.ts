@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { buildWhereClause, processShop } from "./helpers";
+import { getProductCount, getShopCount } from "./service";
 
 export async function fetchAllProducts() {
   try {
@@ -134,3 +135,9 @@ export const updateProducts = async () => {
     });
   }
 };
+
+export async function refreshCounts() {
+  const productCount = await getProductCount();
+  const shopCount = await getShopCount();
+  return { shopCount, productCount };
+}

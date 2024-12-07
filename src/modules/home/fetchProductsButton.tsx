@@ -13,6 +13,9 @@ export default function FetchProductsButton() {
       try {
         await fetchAllProducts();
         setMessage("Product import completed.");
+        setTimeout(() => {
+          setMessage("")
+        }, 2000)
       } catch (error) {
         console.error("Error:", error);
         setMessage("An error occurred during product import.");

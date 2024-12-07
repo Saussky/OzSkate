@@ -1,4 +1,4 @@
-import ProductCard from "./ui/productCard";
+import ProductCard from "./productCard";
 
 interface ProductGridProps {
   products: any[];
