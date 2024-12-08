@@ -181,8 +181,9 @@ export const transformProducts = (
       : [];
 
     const parseProduct = {
-      title: product.title,
       description: product.description,
+      handle: product.handle,
+      title: product.title,
       ogProductType: product.product_type,
       tags: tagsArray,
     };

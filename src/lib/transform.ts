@@ -9,6 +9,7 @@ type Product = {
   description: string;
   ogProductType: string;
   tags: string[];
+  handle: string;
 };
 
 type CategorisedProduct<
@@ -108,7 +109,7 @@ const parentTypeKeywords: Record<ParentProductType, string[]> = {
 };
 
 // TODO: There are some keywords that will need to be two words aka "t shirt", "deck bolts". Functionality adjustment
-// TODO: GO through each search field, figure out priority, it currently overwrites (make explicit and obvious of order_)
+// Above is done? Need to find product/store to test
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
@@ -132,8 +133,8 @@ const childTypeKeywordsPerParent: {
       "women's skirt",
       "women's leggings",
     ],
-    Hats: ["hat", "cap", "bucket hat", "balaclava", "ski mask"],
-    Beanies: ["beanie"],
+    Hats: ["hat", "cap", "bucket hat", "balaclava", "ski mask", "hats", "snapback", "5 panel", "6 panel", "5-panel", "6-panel", "headwear"],
+    Beanies: ["beanie", "beanies", "warf"],
     Socks: ["sock", "socks"],
   },
   Skateboards: {
@@ -200,43 +201,6 @@ function  isMensFootwear(product: Product): boolean {
   );
 }
 
-// function findChildProductTypeAcrossParents(
-//   searchFields: string[]
-// ): { parent: ParentProductType; child: ChildProductType } | null {
-//   for (const parent of Object.keys(
-//     childTypeKeywordsPerParent
-//   ) as ParentProductType[]) {
-//     const childKeywords = childTypeKeywordsPerParent[parent];
-
-//     const foundChildType = (
-//       Object.keys(childKeywords) as Array<keyof typeof childKeywords>
-//     ).find((childType) =>
-//       searchFields.some((field) =>
-//         (childKeywords[childType] as string[]).some((keyword: string) => {
-//           const fieldWords = field.split(/[\s\/]+/);
-//           const keywordParts = keyword.toLowerCase().split(' ');
-//           if (keywordParts.length === 1) {
-//             return fieldWords.includes(keywordParts[0]);
-//           } else {
-//             // Multi-word keyword match (check consecutive words)
-//             for (let i = 0; i <= fieldWords.length - keywordParts.length; i++) {
-//               if (keywordParts.every((kp, idx) => fieldWords[i + idx] === kp)) {
-//                 return true;
-//               }
-//               return false;
-//             }
-//          }
-//         })
-//       )
-//     );
-
-//     if (foundChildType) {
-//       return { parent, child: foundChildType as ChildProductType };
-//     }
-//   }
-//   return null;
-// }
-
 function keywordMatchesField(field: string, keyword: string): boolean {
   const fieldWords = field.split(/[\s\/]+/);
   const keywordParts = keyword.toLowerCase().split(" ");
@@ -248,7 +212,10 @@ function keywordMatchesField(field: string, keyword: string): boolean {
 }
 
 function childTypeMatchesField(field: string, keywords: string[]): boolean {
-  return keywords.some((keyword) => keywordMatchesField(field, keyword));
+  for (const keyword of keywords) {
+    if (keywordMatchesField(field, keyword)) return true;
+  }
+  return false;
 }
 
 function findChildTypeForParent(
@@ -256,8 +223,10 @@ function findChildTypeForParent(
   childKeywords: Record<ChildProductType, string[]>
 ): ChildProductType | null {
   for (const childType of Object.keys(childKeywords) as ChildProductType[]) {
-    if (searchFields.some((field) => childTypeMatchesField(field, childKeywords[childType]))) {
-      return childType;
+    for (const field of searchFields) {
+      if (childTypeMatchesField(field, childKeywords[childType])) {
+        return childType;
+      }
     }
   }
   return null;
@@ -274,10 +243,8 @@ function findChildProductType(
       string[]
     >;
 
-    const foundChildType = findChildTypeForParent(searchFields, childKeywords);
-    if (foundChildType) {
-      return { parent, child: foundChildType };
-    }
+    const matchedChildType = findChildTypeForParent(searchFields, childKeywords);
+    if (matchedChildType) return { parent, child: matchedChildType };
   }
   return null;
 }
@@ -285,14 +252,14 @@ function findChildProductType(
 
 // TODO: Add product handles (remove hyphens in the string and replace with spaces)
 export function categoriseProduct(product: Product): CategorisedProduct {
-  const { title, description, ogProductType, tags } = product;
+  const { title, description, ogProductType, tags, handle } = product;
 
-  // In reverse order for priority. Description will get over-written by ogProductType and so on
   const searchFields = [
-    safeString(description),
-    safeString(ogProductType),
-    tags.map(safeString).join(" "),
     safeString(title),
+    tags.map(safeString).join(" "),
+    safeString(ogProductType),
+    // safeString(handle.replaceAll('-', ' ')),
+    //  safeString(description),
   ];
 
   let parentProductType = null;
