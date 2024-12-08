@@ -63,6 +63,7 @@ export const fetchPaginatedProducts = async (
           select: {
             name: true,
             state: true,
+            url: true,
           },
         },
         variants: true,

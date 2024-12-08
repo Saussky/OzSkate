@@ -36,6 +36,7 @@ export default function ProductGrid({
             title={product.title}
             price={product.variants?.[0]?.price || "N/A"}
             imageSrc={product.image?.src}
+            handle={product.handle}
             skateShop={product.skateShop}
           />
         ))}
