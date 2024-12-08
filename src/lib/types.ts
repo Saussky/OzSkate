@@ -27,7 +27,8 @@ export type ChildProductTypePerParent = {
     | "Wheels"
     | "Bearings"
     | "Tools"
-    | "Hardware";
+    | "Hardware"
+    | "Griptape";
   "Protective Gear": "Pads" | "Helmets" | "Other";
   Shoes: "Shoes";
   Bags: "Backpacks" | "Tote Bags";

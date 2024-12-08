@@ -108,7 +108,6 @@ const parentTypeKeywords: Record<ParentProductType, string[]> = {
 };
 
 // TODO: Implement logic separating t-shirts from shirts
-// TODO: Implement griptape as sub-category
 // TODO: There are some keywords that will need to be two words aka "t shirt", "deck bolts". Functionality adjustment
 // TODO: GO through each search field, figure out priority, it currently overwrites (make explicit and obvious of order_)
 
@@ -119,7 +118,7 @@ const childTypeKeywordsPerParent: {
   Clothing: {
     Jumpers: ["jumper", "hoodie", "sweater", "pullover"],
     Shirts: ["shirt", "button up", "long sleeve"],
-    "T-Shirts": ["t-shirt", "tee"],
+    "T-Shirts": ["t-shirt", "tee", "t shirt"],
     Pants: ["pants", "jeans", "trousers"],
     Shorts: ["shorts", "short"],
     "Women's Tops": [
@@ -145,7 +144,8 @@ const childTypeKeywordsPerParent: {
     Wheels: ["wheel", "wheels"],
     Bearings: ["bearing", "bearings"],
     Tools: ["tool", "tools"],
-    Hardware: ["hardware", "bolts", "riser", "risers"],
+    Hardware: ["hardware", "bolts", "deck bolts", "riser", "risers"],
+    Griptape: ["griptape", "griptapes", "grip tape"]
   },
   "Protective Gear": {
     Pads: ["pad", "pads", "guard", "protective", "safety", "saftey"],
@@ -201,38 +201,6 @@ function  isMensFootwear(product: Product): boolean {
   );
 }
 
-function findParentProductType(
-  searchFields: string[]
-): ParentProductType | null {
-  return (
-    (Object.keys(parentTypeKeywords) as ParentProductType[]).find(
-      (parentType) =>
-        searchFields.some((field) =>
-          parentTypeKeywords[parentType].some((keyword) =>
-            field.split(/[\s\/]+/).some(word => word === keyword.toLowerCase())
-          )
-        )
-    ) || null
-  );
-}
-
-function findChildProductTypeForParent(
-  parentProductType: ParentProductType,
-  searchFields: string[]
-): ChildProductType | null {
-  const childKeywords = childTypeKeywordsPerParent[parentProductType];
-
-  return (
-    (Object.keys(childKeywords) as Array<keyof typeof childKeywords>).find(
-      (childType) =>
-        searchFields.some((field) =>
-          (childKeywords[childType] as string[]).some((keyword: string) =>
-            field.split(/[\s\/]+/).some(word => word === keyword.toLowerCase())
-          )
-        )
-    ) || null
-  );
-}
 
 function findChildProductTypeAcrossParents(
   searchFields: string[]
@@ -276,18 +244,13 @@ export function categoriseProduct(product: Product): CategorisedProduct {
     return { parentProductType: "Shoes", childProductType: "Shoes" };
   }
 
-  if (parentProductType) {
-    childProductType = findChildProductTypeForParent(
-      parentProductType,
-      searchFields
-    );
-  } else {
-    const result = findChildProductTypeAcrossParents(searchFields);
-    if (result) {
-      parentProductType = result.parent;
-      childProductType = result.child;
-    }
+
+  const result = findChildProductTypeAcrossParents(searchFields);
+  if (result) {
+    parentProductType = result.parent;
+    childProductType = result.child;
   }
+  
 
   return { parentProductType, childProductType } as CategorisedProduct;
 }
