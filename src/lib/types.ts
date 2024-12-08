@@ -40,6 +40,8 @@ export type ChildProductTypePerParent = {
     | "Wax"
     | "Keychains"
     | "Jewellery"
+    | "Wallets"
+    | "Stickers"
     | "Other";
 };
 

@@ -164,16 +164,18 @@ const childTypeKeywordsPerParent: {
     ],
   },
   Bags: {
-    Backpacks: ["backpack", "backpacks"],
+    Backpacks: ["backpack", "backpacks", "bag", "bags"],
     "Tote Bags": ["tote bag", "tote bags", "tote"],
   },
   Accessories: {
     Belts: ["belt", "belts"],
     Watches: ["watch", "watches"],
     Sunglasses: ["sunglass", "sunglasses", "sunnies"],
-    Literature: ["literature", "book", "magazine", "poster", "dvd", "vinyl"],
+    Literature: ["literature", "book", "books", "magazine", "poster", "dvd", "vinyl"],
     Wax: ["wax"],
     Keychains: ["keychain", "key chain", "keychains"],
+    Wallets: ["wallet", "wallets"],
+    Stickers: ["sticker", "stickers"],
     Jewellery: [
       "jewellery",
       "jewelry",
@@ -184,7 +186,7 @@ const childTypeKeywordsPerParent: {
       "patch",
       "pin",
     ],
-    Other: ["other"],
+    Other: ["other", "mug", "mugs", "doormat", "doormats", ],
   },
 };
 
@@ -250,7 +252,6 @@ function findChildProductType(
 }
 
 
-// TODO: Add product handles (remove hyphens in the string and replace with spaces)
 export function categoriseProduct(product: Product): CategorisedProduct {
   const { title, description, ogProductType, tags, handle } = product;
 
@@ -258,8 +259,8 @@ export function categoriseProduct(product: Product): CategorisedProduct {
     safeString(title),
     tags.map(safeString).join(" "),
     safeString(ogProductType),
-    // safeString(handle.replaceAll('-', ' ')),
-    //  safeString(description),
+    safeString(handle.replaceAll('-', ' ')),
+    safeString(description),
   ];
 
   let parentProductType = null;
@@ -270,12 +271,15 @@ export function categoriseProduct(product: Product): CategorisedProduct {
   }
 
 
-  const result = findChildProductType(searchFields);
-  if (result) {
-    parentProductType = result.parent;
-    childProductType = result.child;
+  let result = null;
+  for (const field of searchFields) {
+    result = findChildProductType([field]);
+    if (result) {
+      parentProductType = result.parent;
+      childProductType = result.child;
+      break;
+    }
   }
-  
 
   return { parentProductType, childProductType } as CategorisedProduct;
 }
