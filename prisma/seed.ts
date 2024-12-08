@@ -8,16 +8,16 @@ const skateboardShops = [
   //   url: "https://www.335skatesupply.com.au/products.json",
   //   state: "NSW",
   // },
-  {
-    name: "Beyond Skate",
-    url: "https://www.beyondskate.com.au/products.json",
-    state: "WA",
-  },
   // {
-  //   name: "Concrete Skate Supply",
-  //   url: "https://www.concreteskatesupply.com.au/products.json",
-  //   state: "NSW-VIC",
+  //   name: "Beyond Skate",
+  //   url: "https://www.beyondskate.com.au/products.json",
+  //   state: "WA",
   // },
+  {
+    name: "Concrete Skate Supply",
+    url: "https://www.concreteskatesupply.com.au/products.json",
+    state: "NSW-VIC",
+  },
   // {
   //   name: "Evolve Skate Store",
   //   url: "https://evolveskatestore.com/products.json",

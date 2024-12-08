@@ -23,6 +23,7 @@ export const childProductTypePerParent: Record<ParentProductType, string[]> = {
     "Bearings",
     "Tools",
     "Hardware",
+    "Griptape"
   ],
   "Protective Gear": ["Pads", "Helmets", "Other"],
   Shoes: ["Shoes"],
