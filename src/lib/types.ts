@@ -45,6 +45,5 @@ export type ChildProductTypePerParent = {
     | "Other";
 };
 
-// Define a general ChildProductType as a union of all possible child types
 export type ChildProductType =
   ChildProductTypePerParent[keyof ChildProductTypePerParent];

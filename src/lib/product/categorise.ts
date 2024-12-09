@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ParentProductType,
   ChildProductType,
   ChildProductTypePerParent,
-} from "./types";
+} from "../types";
 
 type Product = {
   title: string;
@@ -19,93 +20,6 @@ type CategorisedProduct<
   childProductType: P extends ParentProductType
     ? ChildProductTypePerParent[P] | null
     : null;
-};
-
-const parentTypeKeywords: Record<ParentProductType, string[]> = {
-  Clothing: [
-    "apparel",
-    "shirt",
-    "tees",
-    "jumper",
-    "jacket",
-    "t-shirt",
-    "pant",
-    "pants",
-    "shorts",
-    "mens",
-    "womens",
-    "hat",
-    "beanie",
-    "sock",
-    "hoodie",
-    "fleece",
-    "crew",
-    "pullover",
-  ],
-  Skateboards: [
-    "deck",
-    "skateboard",
-    "truck",
-    "wheel",
-    "bearing",
-    "tool",
-    "hardware",
-    "complete",
-    "longboard",
-    "cruiser",
-    "surf skate",
-  ],
-  "Protective Gear": [
-    "pad",
-    "helmet",
-    "protective",
-    "safety",
-    "saftey",
-    "guard",
-  ],
-  Shoes: [
-    "shoe",
-    "shoes",
-    "footwear",
-    "boot",
-    "sneaker",
-    "trainer",
-    "slip on",
-    "slides",
-    "sandals",
-  ],
-  Bags: [
-    "backpack",
-    "tote",
-    "bag",
-    "luggage",
-    "duffel",
-    "bum bag",
-    "hip bag",
-    "shoulder bag",
-  ],
-  Accessories: [
-    "belt",
-    "watch",
-    "sunglass",
-    "sunnies",
-    "literature",
-    "book",
-    "magazine",
-    "poster",
-    "dvd",
-    "vinyl",
-    "wax",
-    "keychain",
-    "jewellery",
-    "ring",
-    "necklace",
-    "bracelet",
-    "earring",
-    "patch",
-    "pin",
-    "wallet",
-  ],
 };
 
 // TODO: There are some keywords that will need to be two words aka "t shirt", "deck bolts". Functionality adjustment
@@ -271,6 +185,7 @@ export function categoriseProduct(product: Product): CategorisedProduct {
   }
 
 
+  //TODO: There may be a requirement to prioritise different search fields down the line
   let result = null;
   for (const field of searchFields) {
     result = findChildProductType([field]);
