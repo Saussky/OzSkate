@@ -3,22 +3,6 @@ import { Prisma } from "@prisma/client";
 import { categoriseProduct } from "./categorise";
 import { transformVariants } from "./variants";
 
-const processFeaturedImage = (image: any) => {
-  if (
-    image &&
-    typeof image === "object" &&
-    typeof image.src === "string" &&
-    typeof image.width === "number" &&
-    typeof image.height === "number"
-  ) {
-    return {
-      src: image.src,
-      width: image.width,
-      height: image.height,
-    };
-  } else if (image) return null;
-};
-
 export const transformProducts = (
   allPaginatedProducts: any[],
   shopId: number
@@ -77,7 +61,7 @@ export const transformProducts = (
       tags: product.tags ? product.tags.join(",") : "",
       image: JSON.stringify(firstImage), // Store image as JSON string
       onSale: false,
-      variants: product.variants ? transformVariants(product, parentProductType, processFeaturedImage) : [],
+      variants: product.variants ? transformVariants(product, parentProductType) : [],
       options: product.options
         ? product.options.map((option: any) => ({
             id: option.id ? option.id.toString() : null,

@@ -18,6 +18,24 @@ that might be a later problem?
 
 */
 
+
+const processFeaturedImage = (image: any) => {
+  if (
+    image &&
+    typeof image === "object" &&
+    typeof image.src === "string" &&
+    typeof image.width === "number" &&
+    typeof image.height === "number"
+  ) {
+    return {
+      src: image.src,
+      width: image.width,
+      height: image.height,
+    };
+  } else if (image) return null;
+};
+
+
 function extractShoeSize(variantTitle: string, variantOption: string): number | null {
   const combinedString = `${variantTitle} ${variantOption}`.toLowerCase();
   const match = combinedString.match(/(?:us\s*)?(\d+(\.\d+)?)/); // Match sizes with or without 'US'
@@ -27,7 +45,6 @@ function extractShoeSize(variantTitle: string, variantOption: string): number | 
 export function transformVariants(
   product: any,
   parentProductType: string | null,
-  processFeaturedImage: (image: any) => any
 ) {
   return product.variants
     ? product.variants.map((variant: any) => {
