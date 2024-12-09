@@ -18,7 +18,7 @@ that might be a later problem?
 
 */
 
-
+// TODO: Double check this logic and possibly simplify / make really short
 const processFeaturedImage = (image: any) => {
   if (
     image &&
