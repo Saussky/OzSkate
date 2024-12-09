@@ -13,11 +13,11 @@ const skateboardShops = [
   //   url: "https://www.beyondskate.com.au/products.json",
   //   state: "WA",
   // },
-  {
-    name: "Concrete Skate Supply",
-    url: "https://www.concreteskatesupply.com.au/products.json",
-    state: "NSW-VIC",
-  },
+  // {
+  //   name: "Concrete Skate Supply",
+  //   url: "https://www.concreteskatesupply.com.au/products.json",
+  //   state: "NSW-VIC",
+  // },
   // {
   //   name: "Evolve Skate Store",
   //   url: "https://evolveskatestore.com/products.json",
@@ -38,11 +38,11 @@ const skateboardShops = [
   //   url: "https://jimmysskate.com/products.json",
   //   state: "TAS",
   // },
-  // {
-  //   name: "Locality Store",
-  //   url: "https://localitystore.com.au/products.json",
-  //   state: "VIC",
-  // },
+  {
+    name: "Locality Store",
+    url: "https://localitystore.com.au/products.json",
+    state: "VIC",
+  },
   // {
   //   name: "Lodown Skate Shop",
   //   url: "https://www.lodown.com.au/products.json",

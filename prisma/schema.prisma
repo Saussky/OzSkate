@@ -82,7 +82,8 @@ model Variant {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  @@index([productId])
+  shoeSize          Float?
+  @@index([productId]) 
 }
 
 model Option {

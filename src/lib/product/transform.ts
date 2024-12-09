@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma } from "@prisma/client";
 import { categoriseProduct } from "./categorise";
+import { transformVariants } from "./variants";
 
 const processFeaturedImage = (image: any) => {
   if (
@@ -76,27 +77,7 @@ export const transformProducts = (
       tags: product.tags ? product.tags.join(",") : "",
       image: JSON.stringify(firstImage), // Store image as JSON string
       onSale: false,
-      variants: product.variants
-        ? product.variants.map((variant: any) => ({
-            id: variant.id.toString(),
-            productId: product.id.toString(),
-            title: variant.title,
-            option1: variant.option1 || null,
-            option2: variant.option2 || null,
-            option3: variant.option3 || null,
-            sku: variant.sku,
-            price: parseFloat(variant.price),
-            compareAtPrice: variant.compare_at_price
-              ? parseFloat(variant.compare_at_price)
-              : null,
-            position: variant.position,
-            taxable: variant.taxable,
-            featuredImage: processFeaturedImage(variant.featuredImage),
-            available: variant.available,
-            createdAt: new Date(variant.created_at),
-            updatedAt: new Date(variant.updated_at),
-          }))
-        : [],
+      variants: product.variants ? transformVariants(product, parentProductType, processFeaturedImage) : [],
       options: product.options
         ? product.options.map((option: any) => ({
             id: option.id ? option.id.toString() : null,
