@@ -23,7 +23,7 @@ export const childProductTypePerParent: Record<ParentProductType, string[]> = {
     "Bearings",
     "Tools",
     "Hardware",
-    "Griptape"
+    "Griptape",
   ],
   "Protective Gear": ["Pads", "Helmets", "Other"],
   Shoes: ["Shoes"],
@@ -41,7 +41,7 @@ export const childProductTypePerParent: Record<ParentProductType, string[]> = {
 };
 
 interface FilterOptionsProps {
-  onFilterChange: (filters: Record<string, string | number | boolean>) => void;
+  onFilterChange: (filters: Record<string, string | number | boolean | null>) => void;
 }
 
 export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
@@ -49,9 +49,10 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
   const [childType, setChildType] = useState<string | "">("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [onSale, setOnSale] = useState(false);
+  const [shoeSize, setShoeSize] = useState<number | null>(null);
 
   const handleApplyFilters = () => {
-    onFilterChange({ parentType, childType, maxPrice, onSale });
+    onFilterChange({ parentType, childType, maxPrice, onSale, shoeSize });
   };
 
   const handleClearFilters = () => {
@@ -59,11 +60,13 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
     setChildType("");
     setMaxPrice("");
     setOnSale(false);
+    setShoeSize(null);
     onFilterChange({
       parentType: "",
       childType: "",
       maxPrice: "",
       onSale: false,
+      shoeSize: "",
     });
   };
 
@@ -76,6 +79,9 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
       ? (childProductTypePerParent[parentType] as string[])
       : [];
 
+  // Example shoe sizes – adjust as needed
+  const availableShoeSizes = ["7", "8", "9", "10", "11", "12"];
+
   return (
     <div className="flex flex-wrap space-x-4">
       <select
@@ -83,6 +89,7 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         onChange={(e) => {
           setParentType(e.target.value as ParentProductType);
           setChildType(""); // Reset childType when parentType changes
+          setShoeSize(null);
         }}
         className="border rounded p-2"
       >
@@ -107,6 +114,22 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
           </option>
         ))}
       </select>
+
+      {/* Conditionally render shoe size dropdown if parent type is Shoes */}
+      {parentType === "Shoes" && (
+        <select
+          value={shoeSize !== null ? shoeSize : ""}
+          onChange={(e) => setShoeSize(e.target.value ? Number(e.target.value) : null)}
+          className="border rounded p-2"
+        >
+          <option value="">Select Shoe Size</option>
+          {availableShoeSizes.map((size) => (
+            <option key={size} value={size}>
+              US {size}
+            </option>
+          ))}
+        </select>
+      )}
 
       <input
         type="number"

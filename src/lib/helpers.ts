@@ -16,23 +16,36 @@ export const buildWhereClause = (
     whereClause.childProductType = filters.childType;
   }
 
+  const variantConditions: any[] = [];
+
   if (filters.maxPrice) {
     const maxPrice = Number(filters.maxPrice);
+    variantConditions.push({
+      price: { lte: maxPrice },
+    });
+  }
+
+  if (filters.shoeSize) {
+    variantConditions.push({
+      shoeSize: filters.shoeSize,
+    });
+  }
+
+  if (variantConditions.length > 0) {
     whereClause.variants = {
       some: {
-        price: {
-          lte: maxPrice,
-        },
+        AND: variantConditions,
       },
     };
   }
 
-  if (filters.onSale !== undefined) {
-    whereClause.onSale = filters.onSale === true;
+  if (typeof filters.onSale === "boolean") {
+    whereClause.onSale = filters.onSale;
   }
 
   return whereClause;
 };
+
 
 export async function processShop(shop: any) {
   console.log(`Processing shop: ${shop.name}`);
