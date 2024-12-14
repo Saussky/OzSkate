@@ -60,11 +60,12 @@ export async function processShop(shop: any) {
 
     if (Array.isArray(variants)) {
       for (const variant of variants) {
+
         await prisma.variant.upsert({
           where: { id: variant.id },
           update: variant,
-          create: variant,
-        });
+          create: {...variant, shoeSize: variant.shoeSize || null }
+      });
       }
     }
 

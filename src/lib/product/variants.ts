@@ -36,6 +36,7 @@ const processFeaturedImage = (image: any) => {
 };
 
 
+//TODO: Improve upon this logic
 function extractShoeSize(variantTitle: string, variantOption: string): number | null {
   const combinedString = `${variantTitle} ${variantOption}`.toLowerCase();
   const match = combinedString.match(/(?:us\s*)?(\d+(\.\d+)?)/); // Match sizes with or without 'US'
@@ -72,7 +73,7 @@ export function transformVariants(
             const shoeSize = extractShoeSize(variant.title || '', variant.option1 || '');
             return {
                 ...baseVariant,
-                shoeSize: shoeSize ?? 0,
+                shoeSize: shoeSize || null,
             };
         }
         
