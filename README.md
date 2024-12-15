@@ -19,3 +19,5 @@ npx prisma db push
 ### To create types from schema.prisma
 
 npx prisma generate
+
+!!AFTER RUNNING THIS COMMAND YOU MUST RESTART NEXT APP, DEV MODE DOESN'T CATCH THIS!!

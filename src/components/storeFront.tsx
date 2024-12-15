@@ -42,7 +42,7 @@ export default function StoreFront() {
   };
 
   const handleFilterChange = (
-    newFilters: Record<string, string | number | boolean>
+    newFilters: Record<string, string | number | boolean > //TODO: Add null possibility
   ) => {
     setFilters(newFilters);
   };

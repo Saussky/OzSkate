@@ -1,22 +1,5 @@
-/*
-
-For shoes, it will have variants that include the sizes
-For one store, the shoe size was in the title with the format of M7 | W9
-Same text is in option1 column, for two stores now
-
-Consider adding another column to the variants table of 'size' for those items in the category of shoes
-Then make a function which extracts the information from where needed and normalises it
-
-for product_variant in products_in_shoes_category
-    var info = extractInfoFrom([product_variant.title, product_variant.option1)
-    updateProductVariantWithShoeSize(info)
-
-
-Jimmy's skate store also has variant colourways and their sizes in it e.g "US 7 / Navy White" & "US 11 / Black/White"
-that might be a later problem?
-- Most stores don't do this
-
-*/
+/* eslint-disable @typescript-eslint/no-explicit-any */
+//TODO: Jimmy's skate store also has variant colourways and their sizes in it e.g "US 7 / Navy White" & "US 11 / Black/White"
 
 // TODO: Double check this logic and possibly simplify / make really short
 const processFeaturedImage = (image: any) => {
@@ -43,9 +26,18 @@ function extractShoeSize(variantTitle: string, variantOption: string): number | 
   return match ? parseFloat(match[1]) : null;
 }
 
+function extractDeckSize(variantTitle: string, variantOption: string): number | null {
+  const combinedString = `${variantTitle} ${variantOption}`.toLowerCase();
+  // Match sizes that are integers or floats with up to 3 decimal places
+  const match = combinedString.match(/(?:^|\\s)(\\d+(\\.\\d{1,3})?)(?=\\s|$)/);
+  return match ? parseFloat(match[1]) : null;
+}
+
+
 export function transformVariants(
   product: any,
-  parentProductType: string | null,
+  parentProductType?: string | null,
+  childProductType?: string | null,
 ) {
   return product.variants
     ? product.variants.map((variant: any) => {
@@ -75,6 +67,14 @@ export function transformVariants(
                 ...baseVariant,
                 shoeSize: shoeSize || null,
             };
+        }
+
+        if (childProductType === 'Decks') {
+            const deckSize = extractDeckSize(variant.title || '', variant.option1 || '');
+            return {
+                ...baseVariant,
+                deckSize: deckSize || null,
+            }
         }
         
         return baseVariant;

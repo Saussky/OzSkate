@@ -118,7 +118,7 @@ function  isMensFootwear(product: Product): boolean {
 }
 
 function keywordMatchesField(field: string, keyword: string): boolean {
-  const fieldWords = field.split(/[\s\/]+/);
+  const fieldWords = field.split(/[\s/]+/);
   const keywordParts = keyword.toLowerCase().split(" ");
   if (keywordParts.length === 1) return fieldWords.includes(keywordParts[0]);
   for (let i = 0; i <= fieldWords.length - keywordParts.length; i++) {

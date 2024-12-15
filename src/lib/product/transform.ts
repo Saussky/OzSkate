@@ -61,7 +61,7 @@ export const transformProducts = (
       tags: product.tags ? product.tags.join(",") : "",
       image: JSON.stringify(firstImage), // Store image as JSON string
       onSale: false,
-      variants: product.variants ? transformVariants(product, parentProductType) : [],
+      variants: product.variants ? transformVariants(product, parentProductType, childProductType) : [],
       options: product.options
         ? product.options.map((option: any) => ({
             id: option.id ? option.id.toString() : null,

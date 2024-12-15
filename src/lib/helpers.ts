@@ -77,7 +77,7 @@ export async function processShop(shop: any) {
         await prisma.variant.upsert({
           where: { id: variant.id },
           update: variant,
-          create: {...variant, shoeSize: variant.shoeSize || null }
+          create: {...variant, shoeSize: variant.shoeSize || null, deckSize: variant.deckSize || null }
       });
       }
     }

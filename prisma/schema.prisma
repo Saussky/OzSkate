@@ -75,6 +75,7 @@ model Variant {
   sku              String?   
   price            Float    
   shoeSize         Float?  
+  deckSize         Float?  
   compareAtPrice   Float?    // Original price (if discounted)
   position         Int
   taxable          Boolean?
