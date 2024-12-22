@@ -85,6 +85,8 @@ model Variant {
   updatedAt        DateTime  @updatedAt
 
   @@index([productId]) 
+  @@index([price])
+  @@index([productId, price])
 }
 
 model Option {

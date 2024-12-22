@@ -31,6 +31,12 @@ export const buildWhereClause = (
     });
   }
 
+  if (filters.deckSize) {
+    variantConditions.push({
+      deckSize: filters.deckSize,
+    });
+  }
+
   if (variantConditions.length > 0) {
     whereClause.variants = {
       some: {

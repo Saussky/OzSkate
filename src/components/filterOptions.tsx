@@ -50,9 +50,11 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
+    const [deckSize, setDeckSize] = useState<number | null>(null);
+
 
   const handleApplyFilters = () => {
-    onFilterChange({ parentType, childType, maxPrice, onSale, shoeSize });
+    onFilterChange({ parentType, childType, maxPrice, onSale, shoeSize, deckSize });
   };
 
   const handleClearFilters = () => {
@@ -61,6 +63,8 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
     setMaxPrice("");
     setOnSale(false);
     setShoeSize(null);
+    setDeckSize(null);
+
     onFilterChange({
       parentType: "",
       childType: "",
@@ -81,6 +85,8 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
 
   // Example shoe sizes – adjust as needed
   const availableShoeSizes = ["7", "8", "9", "10", "11", "12"];
+    const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
+
 
   return (
     <div className="flex flex-wrap space-x-4">
@@ -90,6 +96,7 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
           setParentType(e.target.value as ParentProductType);
           setChildType(""); // Reset childType when parentType changes
           setShoeSize(null);
+          setDeckSize(null);
         }}
         className="border rounded p-2"
       >
@@ -126,6 +133,22 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
           {availableShoeSizes.map((size) => (
             <option key={size} value={size}>
               US {size}
+            </option>
+          ))}
+        </select>
+      )}
+
+            {/* Conditionally render deck size dropdown if parent type is Skateboards */}
+      {childType === "Decks" && (
+        <select
+          value={deckSize !== null ? deckSize : ""}
+          onChange={(e) => setDeckSize(e.target.value ? Number(e.target.value) : null)}
+          className="border rounded p-2"
+        >
+          <option value="">Select Deck Size</option>
+          {availableDeckSizes.map((size) => (
+            <option key={size} value={size}>
+              {size}"
             </option>
           ))}
         </select>
