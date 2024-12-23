@@ -27,6 +27,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const fallbackImageSrc = "/placeholder-image.png";
   const productUrl = 'hi' // skateShop.url.replace(/\.json$/, `/${handle}`);
+
   return (
         <a
       href={productUrl}
@@ -35,9 +36,9 @@ export default function ProductCard({
       className="block"
     >
     <div className="border rounded-lg shadow-md p-4" key={id}>
-      {/* <p>{skateShop.name}</p> */}
-      <Image
-        src={imageSrc || fallbackImageSrc}
+      <p>{skateShop.name}</p>
+      {/* <Image
+        src={imageSrc}
         alt={title}
         width={300}
         height={300}
@@ -46,7 +47,7 @@ export default function ProductCard({
           const target = e.target as HTMLImageElement;
           target.src = "/placeholder-image.png";
         }}
-      />
+      /> */}
       <h2 className="mt-2 text-xl font-bold text-gray-800">{title}</h2>
       <p className="text-gray-600 mt-1">${price}</p>
     </div>

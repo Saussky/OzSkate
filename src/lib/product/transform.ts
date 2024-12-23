@@ -45,6 +45,10 @@ export const transformProducts = (
     const { parentProductType, childProductType } =
       categoriseProduct(parseProduct);
 
+    const cheapestPrice = product.variants
+      ? Math.min(...product.variants.map((variant: any) => variant.price || Infinity))
+      : null;
+
     return {
       id: product.id.toString(),
       shopId: shopId,
@@ -58,6 +62,7 @@ export const transformProducts = (
       productType: product.product_type,
       parentProductType,
       childProductType,
+      cheapestPrice,
       tags: product.tags ? product.tags.join(",") : "",
       image: JSON.stringify(firstImage), // Store image as JSON string
       onSale: false,

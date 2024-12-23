@@ -110,8 +110,7 @@ export const fetchShopifyProducts = async (
   const limit = 250;
   let page = 1;
 
-  while (true) {
-    // WHILE TRUE
+  while (page < 100) {
     const url = `${baseUrl}?limit=${limit}&page=${page}`;
 
     const res = await fetch(url, {
