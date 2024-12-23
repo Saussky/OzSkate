@@ -21,3 +21,13 @@ npx prisma db push
 npx prisma generate
 
 !!AFTER RUNNING THIS COMMAND YOU MUST RESTART NEXT APP, DEV MODE DOESN'T CATCH THIS!!
+
+# Postgres Docker
+
+```bash
+docker run --name postgres-container -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ozskate -p 5432:5432 -d postgres
+```
+
+```bash
+psql -h localhost -U postgres -d ozskate
+```

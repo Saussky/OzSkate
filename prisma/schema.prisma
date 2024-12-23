@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/ozskate"
+  // url      = env("DATABASE_URL") // Use environment variable for PostgreSQL connection
 }
 
 // Auth
@@ -62,6 +63,7 @@ model Product {
   on_sale_variant_id String? // Can be null if no variants are on sale
 
   @@index([shopId])
+  @@index([title])
 }
 
 model Variant {
