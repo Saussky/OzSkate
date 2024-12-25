@@ -18,6 +18,7 @@ interface ProductCardProps {
   skateShop: SkateShop;
 }
 
+//TODO: Use image height and width with aspect ratios
 export default function ProductCard({
   id,
   title,

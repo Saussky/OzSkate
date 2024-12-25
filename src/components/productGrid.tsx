@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ProductCard from "./productCard";
 
 interface ProductGridProps {
