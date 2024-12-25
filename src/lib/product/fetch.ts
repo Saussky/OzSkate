@@ -45,8 +45,8 @@ export const buildWhereClause = async (
     };
   }
 
-  if (typeof filters.onSale === "boolean") {
-    whereClause.onSale = filters.onSale;
+  if (filters.onSale === true) {
+    whereClause.onSale = true;
   }
 
   return whereClause;
