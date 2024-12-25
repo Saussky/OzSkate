@@ -13,17 +13,17 @@ datasource db {
 
 // Auth
 
-model User {
+model user {
   id          String    @id @default(cuid())
   email       String    @unique
   hashed_password    String
-  sessions    Session[]
+  sessions    session[]
 }
 
-model Session {
+model session {
   id          String    @id
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  user        user      @relation(fields: [userId], references: [id])
   expiresAt   DateTime
 
   @@index([userId])
@@ -31,19 +31,19 @@ model Session {
 
 // Not Auth
 
-model SkateShop {
+model shop {
   id       Int       @id @default(autoincrement())
   name     String    @unique
   url      String    @unique
   state    String
   since_id String?
-  products Product[]
+  products product[]
 }
 
-model Product {
+model product {
   id          String    @id @default(cuid())
   shopId      Int
-  skateShop   SkateShop @relation(fields: [shopId], references: [id])
+  shop        shop @relation(fields: [shopId], references: [id])
   title       String
   handle      String
   description String?
@@ -53,8 +53,8 @@ model Product {
   childProductType String?
   tags        String?
   image       Json?
-  variants    Variant[] // One-to-many relationship with Variant
-  options     Option[]  // One-to-many relationship with Option
+  variants    variant[] // One-to-many relationship with Variant
+  options     option[]  // One-to-many relationship with Option
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime
@@ -65,12 +65,17 @@ model Product {
 
   @@index([shopId])
   @@index([title])
+  @@index([cheapestPrice])
+  @@index([parentProductType])
+  @@index([childProductType])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
-model Variant {
+model variant {
   id               String    @id @default(cuid())
   productId        String
-  product          Product   @relation(fields: [productId], references: [id])
+  product          product   @relation(fields: [productId], references: [id])
   title            String?
   option1          String?
   option2          String?
@@ -90,12 +95,14 @@ model Variant {
   @@index([productId]) 
   @@index([price])
   @@index([productId, price])
+  @@index([shoeSize])
+  @@index([deckSize])
 }
 
-model Option {
+model option {
   id         String   @id @default(cuid())
   productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  product    product  @relation(fields: [productId], references: [id])
   name       String
   position   Int
   values     String    // Comma-separated string

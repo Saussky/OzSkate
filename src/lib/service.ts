@@ -15,7 +15,7 @@ export async function getProductCount() {
 
 export async function getShopCount() {
   try {
-    const count = await prisma.skateShop.count();
+    const count = await prisma.shop.count();
     return count;
   } catch (error) {
     console.error("Error getting shop count:", error);

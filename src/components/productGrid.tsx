@@ -37,7 +37,7 @@ export default function ProductGrid({
             price={product.cheapestPrice}
             imageSrc={product.image?.src}
             handle={product.handle}
-            skateShop={product.skateShop}
+            skateShop={product.shop}
           />
         ))}
       </div>

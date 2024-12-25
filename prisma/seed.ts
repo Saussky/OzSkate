@@ -114,7 +114,7 @@ async function main() {
   console.log("Seeding database...");
 
   for (const shop of skateboardShops) {
-    await prisma.skateShop.upsert({
+    await prisma.shop.upsert({
       where: { name: shop.name },
       update: {},
       create: {

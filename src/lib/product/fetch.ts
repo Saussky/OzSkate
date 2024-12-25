@@ -60,7 +60,6 @@ export const fetchPaginatedProducts = async (
   sortOptions?: string
 ) => {
   const offset = (page - 1) * limit;
-
   const whereClause = await buildWhereClause(filters);
 
   const orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
@@ -78,7 +77,7 @@ export const fetchPaginatedProducts = async (
     take: limit,
     orderBy,
     include: {
-      skateShop: true,
+      shop: true,
       variants: true,
     },
   });

@@ -7,7 +7,7 @@ export async function fetchAllProducts() {
   try {
     console.log("Starting product import...");
 
-    const shops = await prisma.skateShop.findMany();
+    const shops = await prisma.shop.findMany();
 
     for (const shop of shops) {
       try {
