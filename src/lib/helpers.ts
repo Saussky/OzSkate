@@ -3,55 +3,6 @@ import fetch from "node-fetch";
 import { prisma } from "./prisma";
 import { transformProducts } from "./product/transform";
 
-export const buildWhereClause = (
-  filters: Record<string, string | number | boolean | undefined> = {}
-) => {
-  const whereClause: Record<string, any> = {};
-
-  if (filters.parentType) {
-    whereClause.parentProductType = filters.parentType;
-  }
-
-  if (filters.childType) {
-    whereClause.childProductType = filters.childType;
-  }
-
-  const variantConditions: any[] = [];
-
-  if (filters.maxPrice) {
-    const maxPrice = Number(filters.maxPrice);
-    variantConditions.push({
-      price: { lte: maxPrice },
-    });
-  }
-
-  if (filters.shoeSize) {
-    variantConditions.push({
-      shoeSize: filters.shoeSize,
-    });
-  }
-
-  if (filters.deckSize) {
-    variantConditions.push({
-      deckSize: filters.deckSize,
-    });
-  }
-
-  if (variantConditions.length > 0) {
-    whereClause.variants = {
-      some: {
-        AND: variantConditions,
-      },
-    };
-  }
-
-  if (typeof filters.onSale === "boolean") {
-    whereClause.onSale = filters.onSale;
-  }
-
-  return whereClause;
-};
-
 
 export async function processShop(shop: any) {
   console.log(`Processing shop: ${shop.name}`);

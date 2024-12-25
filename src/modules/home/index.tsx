@@ -16,7 +16,7 @@ interface HomeComponentProps {
    return (
      <div className="min-h-screen bg-gray-100 p-8">
        <h1 className="text-center text-4xl font-bold text-gray-800 my-12">
-         Welcome to OzSkate
+         OzSkate
        </h1>
        <div className="flex justify-center space-x-8 mb-12">
          <div className="flex-1 max-w-sm p-6 bg-white rounded-lg shadow-lg">

@@ -28,7 +28,7 @@ export default function ProductCard({
   skateShop,
 }: ProductCardProps) {
   const fallbackImageSrc = "/placeholder.jpg";
-  const productUrl = "hi"; // Replace with the correct logic for generating product URLs.
+  const productUrl = "hi"; // TODO: Replace with the correct logic for generating product URLs.
 
   return (
     <a

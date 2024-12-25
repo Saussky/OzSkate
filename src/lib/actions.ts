@@ -1,8 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
-import { buildWhereClause, processShop } from "./helpers";
+import { processShop } from "./helpers";
 import { getProductCount, getShopCount } from "./service";
-import { Prisma } from "@prisma/client";
 
 export async function fetchAllProducts() {
   try {
@@ -74,45 +73,3 @@ export async function refreshCounts() {
   return { shopCount, productCount };
 }
 
-
-export const fetchPaginatedProducts = async (
-  page: number,
-  limit: number,
-  filters: Record<string, string | number | boolean | undefined> = {},
-  sortOptions?: string
-) => {
-  const offset = (page - 1) * limit;
-
-  const whereClause = buildWhereClause(filters);
-
-  const orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
-  if (sortOptions === "price-asc") {
-    orderBy.push({ cheapestPrice: "asc" });
-  } else if (sortOptions === "price-desc") {
-    orderBy.push({ cheapestPrice: "desc" });
-  } else {
-    orderBy.push({ createdAt: "desc" });
-  }
-
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    skip: offset,
-    take: limit,
-    orderBy,
-    include: {
-      skateShop: true,
-      variants: true,
-    },
-  });
-
-  const totalProducts = await prisma.product.count({
-    where: whereClause,
-  });
-
-  return {
-    products,
-    totalProducts,
-    currentPage: page,
-    totalPages: Math.ceil(totalProducts / limit),
-  };
-};
