@@ -64,7 +64,7 @@ export const transformProducts = (
       childProductType,
       cheapestPrice,
       tags: product.tags ? product.tags.join(",") : "",
-      image: JSON.stringify(firstImage), // Store image as JSON string
+      image: firstImage,
       onSale: false,
       variants: product.variants ? transformVariants(product, parentProductType, childProductType) : [],
       options: product.options

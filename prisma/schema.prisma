@@ -52,7 +52,7 @@ model Product {
   parentProductType String?
   childProductType String?
   tags        String?
-  image      String?   // Store JSON string for image URLs
+  image       Json?
   variants    Variant[] // One-to-many relationship with Variant
   options     Option[]  // One-to-many relationship with Option
   createdAt   DateTime  @default(now())
