@@ -15,6 +15,10 @@ export const buildWhereClause = async (
     whereClause.childProductType = filters.childType;
   }
 
+  if (filters.vendor) {
+    whereClause.vendor = filters.vendor;
+  }
+
   const variantConditions: any[] = [];
 
   if (filters.maxPrice) {

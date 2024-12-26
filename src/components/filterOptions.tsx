@@ -51,11 +51,11 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
-    const [deckSize, setDeckSize] = useState<number | null>(null);
-
+  const [deckSize, setDeckSize] = useState<number | null>(null);
+  const [brand, setBrand] = useState<string | "">("");
 
   const handleApplyFilters = () => {
-    onFilterChange({ parentType, childType, maxPrice, onSale, shoeSize, deckSize });
+    onFilterChange({ parentType, childType, maxPrice, onSale, shoeSize, deckSize, vendor: brand });
   };
 
   const handleClearFilters = () => {
@@ -65,15 +65,21 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
     setOnSale(false);
     setShoeSize(null);
     setDeckSize(null);
+    setBrand("");
 
     onFilterChange({
       parentType: "",
       childType: "",
       maxPrice: "",
       onSale: false,
-      shoeSize: "",
+      shoeSize: null,
+      deckSize: null,
+      vendor: "",
     });
   };
+
+  // TODO: Fetch these from the server, or from storefront component
+  const availableBrands = ["Nike", "Adidas", "New Balance", "Vans", "Converse"];
 
   const parentProductTypes = Object.keys(
     childProductTypePerParent
@@ -149,7 +155,7 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
           <option value="">Select Deck Size</option>
           {availableDeckSizes.map((size) => (
             <option key={size} value={size}>
-              {size}"
+              {size}
             </option>
           ))}
         </select>
@@ -162,6 +168,7 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         onChange={(e) => setMaxPrice(Number(e.target.value) || "")}
         className="border rounded p-2"
       />
+
       <label className="flex items-center space-x-2">
         <input
           type="checkbox"
@@ -171,6 +178,20 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         />
         <span>On Sale</span>
       </label>
+
+      <select
+        value={brand}
+        onChange={(e) => setBrand(e.target.value)}
+        className="border rounded p-2"
+      >
+        <option value="">Select Brand</option>
+        {availableBrands.map((brand) => (
+          <option key={brand} value={brand}>
+            {brand}
+          </option>
+        ))}
+      </select>
+
       <button
         onClick={handleApplyFilters}
         className="bg-blue-500 text-white px-4 py-2 rounded"
