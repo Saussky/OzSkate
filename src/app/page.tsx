@@ -1,5 +1,5 @@
 "use server";
-import { getProductCount, getShopCount } from "@/lib/service";
+import { getProductCount, getShopCount } from "@/lib/actions";
 import AdminComponent from "@/components/admin";
 import "./globals.css";
 
