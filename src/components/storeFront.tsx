@@ -52,9 +52,10 @@ export default function StoreFront() {
     setSortOption(option);
   };
 
+  // TODO: Fix styling og filter and sort
   return (
     <div>
-      <div className="flex space-x-4 mb-8">
+      <div className="flex flex-col space-y-4 mb-4">
         <FilterOptions onFilterChange={handleFilterChange} />
         <SortOptions onSortChange={handleSortChange} />
       </div>
