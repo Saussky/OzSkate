@@ -38,6 +38,8 @@ export default function ProductGrid({
             imageSrc={product.image?.src}
             handle={product.handle}
             skateShop={product.shop}
+            parentProductType={product.parentProductType}
+            childProductType={product.childProductType}
           />
         ))}
       </div>

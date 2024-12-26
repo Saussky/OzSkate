@@ -11,13 +11,13 @@ export default function StoreFront() {
   const [products, setProducts] = useState<product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const [filters, setFilters] = useState<
     Record<string, string | number | boolean>
   >({});
   const [sortOption, setSortOption] = useState<string | undefined>();
   const [brands, setBrands] = useState<string[]>([])
-  const [isPending, startTransition] = useTransition();
+
+  const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
 
   const loadProducts = useCallback(
     (page: number, newFilters?: Record<string, string | number | boolean>) => {

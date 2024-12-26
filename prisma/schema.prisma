@@ -49,7 +49,7 @@ model product {
   description String?
   vendor      String?
   productType String?
-  parentProductType String?
+  parentProductType String? // TODO: Rename these, remove the 'Product' part
   childProductType String?
   tags        String?
   image       Json?
