@@ -95,20 +95,22 @@ export const fetchPaginatedProducts = async (
   const whereClause = await buildWhereClause(filters);
   const orderBy = await buildOrderByClause(sortOptions);
 
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    skip: offset,
-    take: limit,
-    orderBy,
-    include: {
-      shop: true,
-      variants: true,
-    },
-  });
-
-  const totalProducts = await prisma.product.count({
-    where: whereClause,
-  });
+  const [products, totalProducts] = await prisma.$transaction([
+    prisma.product.findMany({
+      where: whereClause,
+      skip: offset,
+      take: limit,
+      orderBy,
+      include: {
+        shop: true,
+        variants: true,
+      },
+    }),
+    
+    prisma.product.count({
+      where: whereClause,
+    }),
+  ]);
 
   return {
     products,

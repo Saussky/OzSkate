@@ -23,6 +23,7 @@ type CategorisedProduct<
 };
 
 // TODO: Identify kids and womens shoes subcategories
+// TODO: Polos, Tank tops need to be categorised
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {

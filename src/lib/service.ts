@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 
+//TODO: Remove this file and merge with other server actions
 export async function getProductCount() {
   try {
     const count = await prisma.product.count();

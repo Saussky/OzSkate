@@ -4,8 +4,9 @@ import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
 import { product } from "@prisma/client";
-import { fetchPaginatedProducts } from "@/lib/product/fetch";
+import { fetchPaginatedProducts } from "@/lib/actions";
 
+// TODO: Use query params to keep filters through page refresh
 export default function StoreFront() {
   const [products, setProducts] = useState<product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
