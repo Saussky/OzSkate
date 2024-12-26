@@ -43,9 +43,10 @@ export const childProductTypePerParent: Record<ParentProductType, string[]> = {
 
 interface FilterOptionsProps {
   onFilterChange: (filters: Record<string, string | number | boolean | null>) => void;
+  brands: string[];
 }
 
-export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
+export default function FilterOptions({ onFilterChange, brands }: FilterOptionsProps) {
   const [parentType, setParentType] = useState<ParentProductType | "">("");
   const [childType, setChildType] = useState<string | "">("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
@@ -77,9 +78,6 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
       vendor: "",
     });
   };
-
-  // TODO: Fetch these from the server, or from storefront component
-  const availableBrands = ["Nike", "Adidas", "New Balance", "Vans", "Converse"];
 
   const parentProductTypes = Object.keys(
     childProductTypePerParent
@@ -177,7 +175,7 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         className="border rounded p-2"
       >
         <option value="">Select Brand</option>
-        {availableBrands.map((brand) => (
+        {brands.map((brand) => (
           <option key={brand} value={brand}>
             {brand}
           </option>

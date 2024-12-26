@@ -11,11 +11,13 @@ export default function StoreFront() {
   const [products, setProducts] = useState<product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isPending, startTransition] = useTransition();
+
   const [filters, setFilters] = useState<
     Record<string, string | number | boolean>
   >({});
   const [sortOption, setSortOption] = useState<string | undefined>();
+  const [brands, setBrands] = useState<string[]>([])
+  const [isPending, startTransition] = useTransition();
 
   const loadProducts = useCallback(
     (page: number, newFilters?: Record<string, string | number | boolean>) => {
@@ -29,6 +31,11 @@ export default function StoreFront() {
         setProducts(data.products);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
+        
+        const uniqueBrands = Array.from(
+          new Set(data.products.map((product) => product.vendor).filter(Boolean))
+        );
+        setBrands(uniqueBrands);
       });
     },
     [filters, sortOption]
@@ -55,7 +62,7 @@ export default function StoreFront() {
   return (
     <div>
       <div className="flex flex-col space-y-4 mb-4">
-        <FilterOptions onFilterChange={handleFilterChange} />
+        <FilterOptions onFilterChange={handleFilterChange} brands={brands} />
         <SortOptions onSortChange={handleSortChange} />
       </div>
       <div>
