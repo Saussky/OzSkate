@@ -1,6 +1,6 @@
 "use server";
 import { getProductCount, getShopCount } from "@/lib/service";
-import HomeComponent from "@/modules/home";
+import AdminComponent from "@/components/admin";
 import "./globals.css";
 
 export default async function Home() {
@@ -9,8 +9,8 @@ export default async function Home() {
 
   return (
     <div>
-      <small>Long live the thing</small>
-      <HomeComponent shopCount={shopCount} productCount={productCount} />
+      <small>Long live this thing</small>
+      <AdminComponent shopCount={shopCount} productCount={productCount} />
     </div>
   );
 }

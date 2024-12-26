@@ -4,13 +4,12 @@ import RefreshCountsButton from "./refreshCountsButton";
  import FetchProductsButton from "./fetchProductsButton";
  import DeleteAllProductsButton from "./deleteAllProductsButton";
 
- //TODO: Organise as admin
 interface HomeComponentProps {
   shopCount: number;
   productCount: number;
 }
 
- export default function HomeComponent({ shopCount, productCount }: HomeComponentProps) {
+ export default function AdminComponent({ shopCount, productCount }: HomeComponentProps) {
   const [currentShopCount, setCurrentShopCount] = useState(shopCount);
   const [currentProductCount, setCurrentProductCount] = useState(productCount);
 

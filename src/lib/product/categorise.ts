@@ -22,8 +22,7 @@ type CategorisedProduct<
     : null;
 };
 
-// TODO: There are some keywords that will need to be two words aka "t shirt", "deck bolts". Functionality adjustment
-// Above is done? Need to find product/store to test
+// TODO: Identify kids and womens shoes subcategories
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
