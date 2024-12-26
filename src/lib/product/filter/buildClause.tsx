@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { Prisma } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 
-//TODO: Actually I think fetchPaginatedProducts belongs in the actions with the rest of them and a new directory for filtering and sorting is more apporpriate
 export const buildWhereClause = async (
   filters: Record<string, string | number | boolean | undefined> = {}
 ) => {
@@ -54,7 +52,7 @@ export const buildWhereClause = async (
 };
 
 export const buildOrderByClause = async (sortOptions?: string) => {
-  const orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
+  const orderBy: Prisma.productOrderByWithRelationInput[] = [];
 
   if (sortOptions === "price-asc") {
     orderBy.push({ cheapestPrice: "asc" });
