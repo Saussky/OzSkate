@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { processShop } from "./helpers";
 import { getProductCount, getShopCount } from "./service";
+import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
 
 export async function fetchAllProducts() {
   try {
@@ -84,3 +85,35 @@ export async function refreshCounts() {
   return { shopCount, productCount };
 }
 
+export const fetchPaginatedProducts = async (
+  page: number,
+  limit: number,
+  filters: Record<string, string | number | boolean | undefined> = {},
+  sortOptions?: string
+) => {
+  const offset = (page - 1) * limit;
+  const whereClause = await buildWhereClause(filters);
+  const orderBy = await buildOrderByClause(sortOptions);
+
+  const products = await prisma.product.findMany({
+    where: whereClause,
+    skip: offset,
+    take: limit,
+    orderBy,
+    include: {
+      shop: true,
+      variants: true,
+    },
+  });
+
+  const totalProducts = await prisma.product.count({
+    where: whereClause,
+  });
+
+  return {
+    products,
+    totalProducts,
+    currentPage: page,
+    totalPages: Math.ceil(totalProducts / limit),
+  };
+};
