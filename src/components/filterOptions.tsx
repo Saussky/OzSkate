@@ -95,8 +95,9 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
 
 
+  //TODO: Styling
   return (
-    <div className="flex flex-wrap space-x-4">
+    <div className="flex flex-wrap space-x-5">
       <select
         value={parentType}
         onChange={(e) => {
@@ -161,23 +162,14 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         </select>
       )}
 
+      {/* TODO: Implement smaller
       <input
         type="number"
         placeholder="Max Price"
         value={maxPrice}
         onChange={(e) => setMaxPrice(Number(e.target.value) || "")}
         className="border rounded p-2"
-      />
-
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={onSale}
-          onChange={(e) => setOnSale(e.target.checked)}
-          className="w-4 h-4"
-        />
-        <span>On Sale</span>
-      </label>
+      /> */}
 
       <select
         value={brand}
@@ -191,6 +183,16 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
           </option>
         ))}
       </select>
+
+      <label className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          checked={onSale}
+          onChange={(e) => setOnSale(e.target.checked)}
+          className="w-4 h-4"
+        />
+        <span>On Sale</span>
+      </label>
 
       <button
         onClick={handleApplyFilters}

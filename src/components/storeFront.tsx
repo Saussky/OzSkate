@@ -52,7 +52,6 @@ export default function StoreFront() {
     setSortOption(option);
   };
 
-  // TODO: Fix styling og filter and sort
   return (
     <div>
       <div className="flex flex-col space-y-4 mb-4">
