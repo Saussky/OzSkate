@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { ParentProductType } from "@/lib/types";
 import Image from "next/image";
@@ -18,8 +19,8 @@ interface ProductCardProps {
   price: string;
   imageSrc?: string;
   handle: string;
-  skateShop: SkateShop;
-  parentProductType?: ParentProductType | null;
+  skateShop: any; // SkateShop;
+  parentProductType?: string | null; // ParentProductType | null;
   childProductType?: string | null;
 }
 

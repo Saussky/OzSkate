@@ -1,10 +1,11 @@
 "use client";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import FilterOptions from "@/components/filterOptions";
-import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
-import { product } from "@prisma/client";
 import { fetchFilteredVendors, fetchPaginatedProducts } from "@/lib/actions";
+import Pagination from "./pagination";
+import ProductCard from "./productCard";
+import { product } from "@prisma/client";
 
 // TODO: Use query params to keep filters through page refresh
 export default function StoreFront() {
@@ -15,7 +16,7 @@ export default function StoreFront() {
     Record<string, string | number | boolean>
   >({});
   const [sortOption, setSortOption] = useState<string | undefined>();
-  const [brands, setBrands] = useState<string[]>([])
+  const [brands, setBrands] = useState<string[]>([]);
 
   const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
 
@@ -54,7 +55,7 @@ export default function StoreFront() {
   };
 
   const handleFilterChange = (
-    newFilters: Record<string, string | number | boolean > //TODO: Add null possibility
+    newFilters: Record<string, string | number | boolean> //TODO: Add null possibility
   ) => {
     setFilters(newFilters);
   };
@@ -67,16 +68,41 @@ export default function StoreFront() {
     <div>
       <div className="flex flex-col space-y-4 mb-4">
         <FilterOptions onFilterChange={handleFilterChange} brands={brands} />
-        <SortOptions onSortChange={handleSortChange} />
+        <div className="flex justify-between">
+          <SortOptions onSortChange={handleSortChange} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
-      <div>
-        <ProductGrid
-          products={products}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+      <div className="flex justify-between">
+        <div className="flex-1">
+          <div className="grid grid-cols-4 gap-4">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                price={product.cheapestPrice as unknown as string}
+                imageSrc={product.image?.src}
+                handle={product.handle}
+                skateShop={product.shop}
+                parentProductType={product.parentProductType}
+                childProductType={product.childProductType}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+          <div className="flex justify-between">
+           <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
     </div>
   );
 }
