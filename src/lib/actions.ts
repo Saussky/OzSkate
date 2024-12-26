@@ -9,14 +9,25 @@ export async function fetchAllProducts() {
 
     const shops = await prisma.shop.findMany();
 
-    for (const shop of shops) {
+    // for (const shop of shops) {
+    //   try {
+    //     console.log(`Processing shop: ${shop.name} ${index}/${shops.length}`);
+    //     await processShop(shop);
+    //   } catch (error) {
+    //     console.error(`Error processing shop ${shop.name}:`, error);
+    //   }
+    // }
+
+    for (let index = 0; index < shops.length; index++) {
+      const shop = shops[index];
       try {
+        console.log(`Processing shop: ${shop.name} ${index + 1}/${shops.length}`);
         await processShop(shop);
       } catch (error) {
         console.error(`Error processing shop ${shop.name}:`, error);
       }
     }
-
+    
     await updateProducts();
 
     console.log("Product import completed.");

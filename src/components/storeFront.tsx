@@ -3,11 +3,11 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
-import { Product } from "@prisma/client";
+import { product } from "@prisma/client";
 import { fetchPaginatedProducts } from "@/lib/product/fetch";
 
 export default function StoreFront() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isPending, startTransition] = useTransition();

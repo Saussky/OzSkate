@@ -2,7 +2,7 @@
 import ProductCard from "./productCard";
 
 interface ProductGridProps {
-  products: any[];
+  products: any[]; //TODO: any
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;

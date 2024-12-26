@@ -4,8 +4,6 @@ import { prisma } from "./prisma";
 import { transformProducts } from "./product/transform";
 
 export async function processShop(shop: any) {
-  console.log(`Processing shop: ${shop.name}`);
-
   const baseUrl = shop.url;
   const sinceId = shop.since_id || "0"; //TODO: Implement this when doing update see below for gpt response
 

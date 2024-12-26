@@ -4,6 +4,7 @@ import RefreshCountsButton from "./refreshCountsButton";
  import FetchProductsButton from "./fetchProductsButton";
  import DeleteAllProductsButton from "./deleteAllProductsButton";
 
+ //TODO: Organise as admin
 interface HomeComponentProps {
   shopCount: number;
   productCount: number;

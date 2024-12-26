@@ -2,6 +2,7 @@
 import { ParentProductType } from "@/lib/types";
 import { useState } from "react";
 
+//TODO: Import all types and constants related to types like this one
 export const childProductTypePerParent: Record<ParentProductType, string[]> = {
   Clothing: [
     "Jumpers",
@@ -83,9 +84,9 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
       ? (childProductTypePerParent[parentType] as string[])
       : [];
 
-  // Example shoe sizes – adjust as needed
+  // TODO: Implement sizes more robustly
   const availableShoeSizes = ["7", "8", "9", "10", "11", "12"];
-    const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
+  const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
 
 
   return (
@@ -138,7 +139,7 @@ export default function FilterOptions({ onFilterChange }: FilterOptionsProps) {
         </select>
       )}
 
-            {/* Conditionally render deck size dropdown if parent type is Skateboards */}
+      {/* Conditionally render deck size dropdown if parent type is Skateboards */}
       {childType === "Decks" && (
         <select
           value={deckSize !== null ? deckSize : ""}
