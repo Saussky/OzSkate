@@ -99,6 +99,7 @@ model variant {
   @@index([deckSize])
 }
 
+// TODO: Not used, maybe remove
 model option {
   id         String   @id @default(cuid())
   productId  String

@@ -3,6 +3,11 @@ import { Prisma } from "@prisma/client";
 import { categoriseProduct } from "./categorise";
 import { transformVariants } from "./variants";
 
+// TODO: Varaints have sku's which SHOULD be global, use to identify and match products
+// TODO cont.: They aren't, but it some cases could be so it might be worth having that as a step but not the whole process
+// TODO: Implement Levenshtein distance to compare product names to find duplicates  https://en.wikipedia.org/wiki/Levenshtein_distance
+// TODO: master category taxonomy
+
 export const transformProducts = (
   allPaginatedProducts: any[],
   shopId: number
