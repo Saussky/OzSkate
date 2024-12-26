@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
 
-
+// TODO: Rename gets and fetches, choose one
 export async function getProductCount() {
   try {
     const count = await prisma.product.count();
@@ -138,3 +138,25 @@ export const fetchPaginatedProducts = async (
     totalPages: Math.ceil(totalProducts / limit),
   };
 };
+
+export const fetchFilteredVendors = async (
+  filters: Record<string, string | number | boolean | undefined> = {}
+) => {
+  try {
+    const whereClause = await buildWhereClause(filters);
+
+    const vendors = await prisma.product.findMany({
+      where: whereClause,
+      select: {
+        vendor: true,
+      },
+      distinct: ['vendor'],
+    });
+
+    return vendors.map((v) => v.vendor).filter((vendor) => vendor); // Remove null values
+  } catch (error) {
+    console.error("Error fetching vendors:", error);
+    return [];
+  }
+};
+

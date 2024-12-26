@@ -4,7 +4,7 @@ import FilterOptions from "@/components/filterOptions";
 import ProductGrid from "@/components/productGrid";
 import SortOptions from "@/components/sortOptions";
 import { product } from "@prisma/client";
-import { fetchPaginatedProducts } from "@/lib/actions";
+import { fetchFilteredVendors, fetchPaginatedProducts } from "@/lib/actions";
 
 // TODO: Use query params to keep filters through page refresh
 export default function StoreFront() {
@@ -31,11 +31,6 @@ export default function StoreFront() {
         setProducts(data.products);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
-        
-        const uniqueBrands = Array.from(
-          new Set(data.products.map((product) => product.vendor).filter(Boolean))
-        );
-        setBrands(uniqueBrands);
       });
     },
     [filters, sortOption]
@@ -44,6 +39,15 @@ export default function StoreFront() {
   useEffect(() => {
     loadProducts(1);
   }, [filters, sortOption, loadProducts]);
+
+  useEffect(() => {
+    const loadVendors = async () => {
+      const filteredVendors = await fetchFilteredVendors(filters);
+      setBrands(filteredVendors);
+    };
+
+    loadVendors();
+  }, [filters]);
 
   const handlePageChange = (page: number) => {
     loadProducts(page);
