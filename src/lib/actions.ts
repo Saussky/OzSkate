@@ -107,7 +107,7 @@ export const updateProducts = async () => {
 export const fetchPaginatedProducts = async (
   page: number,
   limit: number,
-  filters: Record<string, string | number | boolean | undefined> = {},
+  filters: Record<string, string | number | boolean | null | undefined> = {},
   sortOptions?: string
 ) => {
   const offset = (page - 1) * limit;
@@ -140,7 +140,7 @@ export const fetchPaginatedProducts = async (
 };
 
 export const fetchFilteredVendors = async (
-  filters: Record<string, string | number | boolean | undefined> = {}
+  filters: Record<string, string | number | boolean | null | undefined> = {}
 ) => {
   try {
     const whereClause = await buildWhereClause(filters);

@@ -26,11 +26,12 @@ export default function StoreFront() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState<
-    Record<string, string | number | boolean>
+    Record<string, string | number | boolean | null>
   >({});
   const [sortOption, setSortOption] = useState<string | undefined>();
   const [brands, setBrands] = useState<string[]>([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
 
   const loadProducts = useCallback(
@@ -69,7 +70,9 @@ export default function StoreFront() {
   useEffect(() => {
     const loadVendors = async () => {
       const filteredVendors = await fetchFilteredVendors(filters);
-      setBrands(filteredVendors);
+      setBrands(
+        filteredVendors.filter((vendor): vendor is string => vendor !== null)
+      );
     };
 
     loadVendors();
@@ -80,7 +83,7 @@ export default function StoreFront() {
   };
 
   const handleFilterChange = (
-    newFilters: Record<string, string | number | boolean> //TODO: Add null possibility
+    newFilters: Record<string, string | number | boolean | null> // Updated type
   ) => {
     setFilters(newFilters);
   };

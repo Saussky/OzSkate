@@ -3,7 +3,7 @@
 import { Prisma } from '@prisma/client';
 
 export const buildWhereClause = async (
-  filters: Record<string, string | number | boolean | undefined> = {}
+  filters: Record<string, string | number | boolean | null | undefined> = {}
 ) => {
   const whereClause: Record<string, any> = {};
 
