@@ -5,11 +5,24 @@ import SortOptions from '@/components/sortOptions';
 import { fetchFilteredVendors, fetchPaginatedProducts } from '@/lib/actions';
 import Pagination from './pagination';
 import ProductCard from './productCard';
-import { product } from '@prisma/client';
+import { product, shop, variant } from '@prisma/client';
+
+type ImageJson = {
+  src: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+};
+
+export interface ExtendedProduct extends product {
+  shop: shop;
+  variants: variant[];
+  image: ImageJson | null;
+}
 
 // TODO: Use query params to keep filters through page refresh
 export default function StoreFront() {
-  const [products, setProducts] = useState<product[]>([]);
+  const [products, setProducts] = useState<ExtendedProduct[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState<
@@ -29,7 +42,19 @@ export default function StoreFront() {
           newFilters || filters,
           sortOption
         );
-        setProducts(data.products);
+
+        const transformedProducts: ExtendedProduct[] = data.products.map(
+          (product) => {
+            const image = product.image as ImageJson | null;
+
+            return {
+              ...product,
+              image,
+            };
+          }
+        );
+
+        setProducts(transformedProducts);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
       });
@@ -78,24 +103,20 @@ export default function StoreFront() {
         </div>
       </div>
 
-      <div className="flex justify-between">
-        <div className="flex-1">
-          <div className="grid grid-cols-4 gap-4">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                title={product.title}
-                price={product.cheapestPrice as unknown as string}
-                imageSrc={product.image?.src}
-                handle={product.handle}
-                skateShop={product.shop}
-                parentProductType={product.parentProductType}
-                childProductType={product.childProductType}
-              />
-            ))}
-          </div>
-        </div>
+      <div className="grid grid-cols-4 gap-4">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            id={product.id}
+            title={product.title}
+            price={product.cheapestPrice as unknown as string}
+            imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'}
+            handle={product.handle}
+            skateShop={product.shop}
+            parentProductType={product.parentProductType}
+            childProductType={product.childProductType}
+          />
+        ))}
       </div>
 
       <div className="flex justify-between">

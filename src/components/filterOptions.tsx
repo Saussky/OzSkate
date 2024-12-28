@@ -140,7 +140,6 @@ export default function FilterOptions({
         ))}
       </select>
 
-      {/* Conditionally render shoe size dropdown if parent type is Shoes */}
       {parentType === 'Shoes' && (
         <select
           value={shoeSize !== null ? shoeSize : ''}
@@ -158,7 +157,6 @@ export default function FilterOptions({
         </select>
       )}
 
-      {/* Conditionally render deck size dropdown if parent type is Skateboards */}
       {childType === 'Decks' && (
         <select
           value={deckSize !== null ? deckSize : ''}
@@ -176,7 +174,7 @@ export default function FilterOptions({
         </select>
       )}
 
-      {/* TODO: Implement smaller
+      {/* TODO: Implement but smaller
       <input
         type="number"
         placeholder="Max Price"
