@@ -19,6 +19,7 @@ interface ProductCardProps {
   childProductType?: string | null;
 }
 
+// TODO: Implement string parent product type types
 export default function ProductCard({
   id,
   title,
@@ -30,15 +31,12 @@ export default function ProductCard({
   childProductType,
 }: ProductCardProps) {
   const fallbackImageSrc = '/placeholder.jpg';
-  // TODO: Replace with the correct logic for generating product URLs.
-  const productUrl = 'hi';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const productUrl = handle; // TODO: Replace with the correct logic for generating product URLs.
 
-  // Menu open/close state
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // Local states for parent/child types
   const [selectedParent, setSelectedParent] = useState<ParentProductType>(
-    parentProductType ?? 'Clothing'
+    (parentProductType as ParentProductType) ?? 'Clothing'
   );
   const [selectedChild, setSelectedChild] = useState<string>(() => {
     const childOptions = childProductTypePerParent[selectedParent];
@@ -51,7 +49,6 @@ export default function ProductCard({
   }
 
   async function handleUpdateTypes() {
-    // Update DB via a server action
     await setProductTypes(id, selectedParent, selectedChild);
     setMenuOpen(false);
   }

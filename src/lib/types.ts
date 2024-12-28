@@ -1,4 +1,5 @@
-// Define the ParentProductType
+// TODO: Implement master category taxonomy and redo this
+
 export type ParentProductType =
   | "Clothing"
   | "Skateboards"
@@ -7,7 +8,6 @@ export type ParentProductType =
   | "Bags"
   | "Accessories";
 
-// Define the ChildProductType mapping per ParentProductType
 export type ChildProductTypePerParent = {
   Clothing:
     | "Jumpers"
