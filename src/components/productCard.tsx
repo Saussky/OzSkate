@@ -6,12 +6,7 @@ import { useState } from "react";
 import { childProductTypePerParent } from "./filterOptions";
 import { setProductTypes } from "@/lib/actions";
 import ProductEditMenu from "./admin/productEditMenu";
-
-interface SkateShop {
-  name: string;
-  state: string;
-  url: string;
-}
+import { shop } from "@prisma/client";
 
 interface ProductCardProps {
   id: string;
@@ -19,7 +14,7 @@ interface ProductCardProps {
   price: string;
   imageSrc?: string;
   handle: string;
-  skateShop: any; // SkateShop;
+  skateShop: shop; // SkateShop;
   parentProductType?: string | null; // ParentProductType | null;
   childProductType?: string | null;
 }

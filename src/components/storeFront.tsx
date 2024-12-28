@@ -1,11 +1,11 @@
-"use client";
-import { useCallback, useEffect, useState, useTransition } from "react";
-import FilterOptions from "@/components/filterOptions";
-import SortOptions from "@/components/sortOptions";
-import { fetchFilteredVendors, fetchPaginatedProducts } from "@/lib/actions";
-import Pagination from "./pagination";
-import ProductCard from "./productCard";
-import { product } from "@prisma/client";
+'use client';
+import { useCallback, useEffect, useState, useTransition } from 'react';
+import FilterOptions from '@/components/filterOptions';
+import SortOptions from '@/components/sortOptions';
+import { fetchFilteredVendors, fetchPaginatedProducts } from '@/lib/actions';
+import Pagination from './pagination';
+import ProductCard from './productCard';
+import { product } from '@prisma/client';
 
 // TODO: Use query params to keep filters through page refresh
 export default function StoreFront() {
@@ -77,6 +77,7 @@ export default function StoreFront() {
           />
         </div>
       </div>
+
       <div className="flex justify-between">
         <div className="flex-1">
           <div className="grid grid-cols-4 gap-4">
@@ -96,13 +97,14 @@ export default function StoreFront() {
           </div>
         </div>
       </div>
-          <div className="flex justify-between">
-           <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
+
+      <div className="flex justify-between">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }
