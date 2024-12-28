@@ -6,6 +6,7 @@ import { fetchFilteredVendors, fetchPaginatedProducts } from '@/lib/actions';
 import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
+import { FilterOption } from '@/lib/types';
 
 type ImageJson = {
   src: string;
@@ -25,9 +26,7 @@ export default function StoreFront() {
   const [products, setProducts] = useState<ExtendedProduct[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filters, setFilters] = useState<
-    Record<string, string | number | boolean | null>
-  >({});
+  const [filters, setFilters] = useState<FilterOption>({});
   const [sortOption, setSortOption] = useState<string | undefined>();
   const [brands, setBrands] = useState<string[]>([]);
 

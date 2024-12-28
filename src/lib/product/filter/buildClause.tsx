@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
+import { FilterOption } from '@/lib/types';
 import { Prisma } from '@prisma/client';
 
-export const buildWhereClause = async (
-  filters: Record<string, string | number | boolean | null | undefined> = {}
-) => {
+export const buildWhereClause = async (filters: FilterOption = {}) => {
   const whereClause: Record<string, any> = {};
 
   if (filters.parentType) {

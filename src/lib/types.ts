@@ -47,3 +47,5 @@ export type ChildProductTypePerParent = {
 
 export type ChildProductType =
   ChildProductTypePerParent[keyof ChildProductTypePerParent];
+
+  export type FilterOption = Record<string, string | number | boolean | null>

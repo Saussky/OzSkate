@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
+import { FilterOption } from "./types";
 
 // TODO: Rename gets and fetches, choose one
 export async function getProductCount() {
@@ -140,7 +141,7 @@ export const fetchPaginatedProducts = async (
 };
 
 export const fetchFilteredVendors = async (
-  filters: Record<string, string | number | boolean | null | undefined> = {}
+  filters: FilterOption = {}
 ) => {
   try {
     const whereClause = await buildWhereClause(filters);
