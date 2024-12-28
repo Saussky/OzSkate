@@ -11,7 +11,7 @@ import { transformVariants } from "./variants";
 export const transformProducts = (
   allPaginatedProducts: any[],
   shopId: number
-): Prisma.ProductUncheckedCreateInput[] => {
+): Prisma.productUncheckedCreateInput[] => {
   return allPaginatedProducts.map((product) => {
     let firstImage = null;
 
