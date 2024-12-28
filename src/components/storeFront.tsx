@@ -93,7 +93,7 @@ export default function StoreFront() {
     <div>
       <div className="flex flex-col space-y-4 mb-4">
         <FilterOptions onFilterChange={handleFilterChange} brands={brands} />
-        <div className="flex justify-between">
+        <div className="flex justify-between h-10">
           <SortOptions onSortChange={handleSortChange} />
           <Pagination
             currentPage={currentPage}
