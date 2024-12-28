@@ -1,7 +1,7 @@
-"use server";
-import { getProductCount, getShopCount } from "@/lib/actions";
-import AdminComponent from "@/components/admin";
-import "./globals.css";
+'use server';
+import { getProductCount, getShopCount } from '@/lib/actions';
+import AdminComponent from '@/components/admin';
+import './globals.css';
 
 export default async function Home() {
   const productCount = await getProductCount();

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use server";
-import { Prisma } from "@prisma/client";
+'use server';
+import { Prisma } from '@prisma/client';
 
 export const buildWhereClause = async (
   filters: Record<string, string | number | boolean | undefined> = {}
@@ -58,13 +58,13 @@ export const buildWhereClause = async (
 export const buildOrderByClause = async (sortOptions?: string) => {
   const orderBy: Prisma.productOrderByWithRelationInput[] = [];
 
-  if (sortOptions === "price-asc") {
-    orderBy.push({ cheapestPrice: "asc" });
-  } else if (sortOptions === "price-desc") {
-    orderBy.push({ cheapestPrice: "desc" });
+  if (sortOptions === 'price-asc') {
+    orderBy.push({ cheapestPrice: 'asc' });
+  } else if (sortOptions === 'price-desc') {
+    orderBy.push({ cheapestPrice: 'desc' });
   } else {
-    orderBy.push({ createdAt: "desc" });
+    orderBy.push({ createdAt: 'desc' });
   }
 
   return orderBy;
-}
+};

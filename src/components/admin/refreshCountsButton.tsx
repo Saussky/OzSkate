@@ -1,12 +1,14 @@
-"use client";
-import { useTransition } from "react";
-import { refreshCounts } from "@/lib/actions";
+'use client';
+import { useTransition } from 'react';
+import { refreshCounts } from '@/lib/actions';
 
 interface RefreshCountsButtonProps {
   onRefresh: (shopCount: number, productCount: number) => void;
 }
 
-export default function RefreshCountsButton({ onRefresh }: RefreshCountsButtonProps) {
+export default function RefreshCountsButton({
+  onRefresh,
+}: RefreshCountsButtonProps) {
   const [isPending, startTransition] = useTransition();
 
   async function handleRefresh() {
@@ -21,13 +23,11 @@ export default function RefreshCountsButton({ onRefresh }: RefreshCountsButtonPr
       onClick={handleRefresh}
       disabled={isPending}
       className={`py-2 px-4 rounded flex items-center justify-center ${
-        isPending ? "animate-spin" : ""
+        isPending ? 'animate-spin' : ''
       }`}
     >
       <span
-        className={`inline-block text-xl ${
-          isPending ? "animate-spin" : ""
-        }`}
+        className={`inline-block text-xl ${isPending ? 'animate-spin' : ''}`}
       >
         🔄
       </span>

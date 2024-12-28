@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { deleteAllProducts } from "@/lib/actions";
-import React, { useState, useTransition } from "react";
+import { deleteAllProducts } from '@/lib/actions';
+import React, { useState, useTransition } from 'react';
 
 export default function DeleteAllProductsButton() {
   const [isPending, startTransition] = useTransition();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const handleClick = () => {
     startTransition(async () => {
-      setMessage("Deleting all products...");
+      setMessage('Deleting all products...');
       try {
         await deleteAllProducts();
-        setMessage("All products successfully deleted.");
+        setMessage('All products successfully deleted.');
         setTimeout(() => {
-          setMessage("")
-        }, 2000)
+          setMessage('');
+        }, 2000);
       } catch (error) {
-        console.error("Error:", error);
-        setMessage("An error occurred while deleting products.");
+        console.error('Error:', error);
+        setMessage('An error occurred while deleting products.');
       }
     });
   };
@@ -30,11 +30,11 @@ export default function DeleteAllProductsButton() {
         disabled={isPending}
         className={`px-6 py-3 text-white font-bold rounded-lg ${
           isPending
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-700"
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-700'
         }`}
       >
-        {isPending ? "Deleting Products..." : "Delete All Products"}
+        {isPending ? 'Deleting Products...' : 'Delete All Products'}
       </button>
       {message && <p className="mt-2 text-sm text-gray-600">{message}</p>}
     </div>

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import { ParentProductType } from "@/lib/types";
-import Image from "next/image";
-import { useState } from "react";
-import { childProductTypePerParent } from "./filterOptions";
-import { setProductTypes } from "@/lib/actions";
-import ProductEditMenu from "./admin/productEditMenu";
-import { shop } from "@prisma/client";
+'use client';
+import { ParentProductType } from '@/lib/types';
+import Image from 'next/image';
+import { useState } from 'react';
+import { childProductTypePerParent } from './filterOptions';
+import { setProductTypes } from '@/lib/actions';
+import ProductEditMenu from './admin/productEditMenu';
+import { shop } from '@prisma/client';
 
 interface ProductCardProps {
   id: string;
@@ -29,16 +29,16 @@ export default function ProductCard({
   parentProductType,
   childProductType,
 }: ProductCardProps) {
-  const fallbackImageSrc = "/placeholder.jpg";
+  const fallbackImageSrc = '/placeholder.jpg';
   // TODO: Replace with the correct logic for generating product URLs.
-  const productUrl = "hi";
+  const productUrl = 'hi';
 
   // Menu open/close state
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Local states for parent/child types
   const [selectedParent, setSelectedParent] = useState<ParentProductType>(
-    parentProductType ?? "Clothing"
+    parentProductType ?? 'Clothing'
   );
   const [selectedChild, setSelectedChild] = useState<string>(() => {
     const childOptions = childProductTypePerParent[selectedParent];

@@ -1,5 +1,5 @@
-"use server";
-import StoreFront from "@/components/storeFront";
+'use server';
+import StoreFront from '@/components/storeFront';
 
 export default async function StorefrontPage() {
   return (

@@ -1,27 +1,27 @@
-"use client";
-import { FormEvent, useState } from "react";
+'use client';
+import { FormEvent, useState } from 'react';
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       if (res.ok) {
-        console.log("Signup successful!");
+        console.log('Signup successful!');
       } else {
-        console.log("res", res);
+        console.log('res', res);
       }
     } catch (error) {
-      console.error("An unexpected error occurred:", error);
+      console.error('An unexpected error occurred:', error);
     }
   };
 

@@ -1,81 +1,94 @@
-"use client";
-import { ParentProductType } from "@/lib/types";
-import { useState } from "react";
+'use client';
+import { ParentProductType } from '@/lib/types';
+import { useState } from 'react';
 
 //TODO: Import all types and constants related to types like this one
 export const childProductTypePerParent: Record<ParentProductType, string[]> = {
   Clothing: [
-    "Jumpers",
-    "Shirts",
-    "T-Shirts",
-    "Pants",
-    "Shorts",
+    'Jumpers',
+    'Shirts',
+    'T-Shirts',
+    'Pants',
+    'Shorts',
     "Women's Tops",
     "Women's Bottoms",
-    "Hats",
-    "Beanies",
-    "Socks",
+    'Hats',
+    'Beanies',
+    'Socks',
   ],
   Skateboards: [
-    "Decks",
-    "Completes",
-    "Trucks",
-    "Wheels",
-    "Bearings",
-    "Tools",
-    "Hardware",
-    "Griptape",
+    'Decks',
+    'Completes',
+    'Trucks',
+    'Wheels',
+    'Bearings',
+    'Tools',
+    'Hardware',
+    'Griptape',
   ],
-  "Protective Gear": ["Pads", "Helmets", "Other"],
-  Shoes: ["Shoes"],
-  Bags: ["Backpacks", "Tote Bags"],
+  'Protective Gear': ['Pads', 'Helmets', 'Other'],
+  Shoes: ['Shoes'],
+  Bags: ['Backpacks', 'Tote Bags'],
   Accessories: [
-    "Belts",
-    "Watches",
-    "Sunglasses",
-    "Literature",
-    "Wax",
-    "Keychains",
-    "Jewellery",
-    "Other",
+    'Belts',
+    'Watches',
+    'Sunglasses',
+    'Literature',
+    'Wax',
+    'Keychains',
+    'Jewellery',
+    'Other',
   ],
 };
 
 interface FilterOptionsProps {
-  onFilterChange: (filters: Record<string, string | number | boolean | null>) => void;
+  onFilterChange: (
+    filters: Record<string, string | number | boolean | null>
+  ) => void;
   brands: string[];
 }
 
-export default function FilterOptions({ onFilterChange, brands }: FilterOptionsProps) {
-  const [parentType, setParentType] = useState<ParentProductType | "">("");
-  const [childType, setChildType] = useState<string | "">("");
-  const [maxPrice, setMaxPrice] = useState<number | "">("");
+export default function FilterOptions({
+  onFilterChange,
+  brands,
+}: FilterOptionsProps) {
+  const [parentType, setParentType] = useState<ParentProductType | ''>('');
+  const [childType, setChildType] = useState<string | ''>('');
+  const [maxPrice, setMaxPrice] = useState<number | ''>('');
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
-  const [brand, setBrand] = useState<string | "">("");
+  const [brand, setBrand] = useState<string | ''>('');
 
   const handleApplyFilters = () => {
-    onFilterChange({ parentType, childType, maxPrice, onSale, shoeSize, deckSize, vendor: brand });
+    onFilterChange({
+      parentType,
+      childType,
+      maxPrice,
+      onSale,
+      shoeSize,
+      deckSize,
+      vendor: brand,
+    });
   };
 
   const handleClearFilters = () => {
-    setParentType("");
-    setChildType("");
-    setMaxPrice("");
+    setParentType('');
+    setChildType('');
+    setMaxPrice('');
     setOnSale(false);
     setShoeSize(null);
     setDeckSize(null);
-    setBrand("");
+    setBrand('');
 
     onFilterChange({
-      parentType: "",
-      childType: "",
-      maxPrice: "",
+      parentType: '',
+      childType: '',
+      maxPrice: '',
       onSale: false,
       shoeSize: null,
       deckSize: null,
-      vendor: "",
+      vendor: '',
     });
   };
 
@@ -89,9 +102,8 @@ export default function FilterOptions({ onFilterChange, brands }: FilterOptionsP
       : [];
 
   // TODO: Implement sizes more robustly
-  const availableShoeSizes = ["7", "8", "9", "10", "11", "12"];
+  const availableShoeSizes = ['7', '8', '9', '10', '11', '12'];
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
-
 
   //TODO: Styling
   return (
@@ -100,7 +112,7 @@ export default function FilterOptions({ onFilterChange, brands }: FilterOptionsP
         value={parentType}
         onChange={(e) => {
           setParentType(e.target.value as ParentProductType);
-          setChildType(""); // Reset childType when parentType changes
+          setChildType(''); // Reset childType when parentType changes
           setShoeSize(null);
           setDeckSize(null);
         }}
@@ -129,10 +141,12 @@ export default function FilterOptions({ onFilterChange, brands }: FilterOptionsP
       </select>
 
       {/* Conditionally render shoe size dropdown if parent type is Shoes */}
-      {parentType === "Shoes" && (
+      {parentType === 'Shoes' && (
         <select
-          value={shoeSize !== null ? shoeSize : ""}
-          onChange={(e) => setShoeSize(e.target.value ? Number(e.target.value) : null)}
+          value={shoeSize !== null ? shoeSize : ''}
+          onChange={(e) =>
+            setShoeSize(e.target.value ? Number(e.target.value) : null)
+          }
           className="border rounded p-2"
         >
           <option value="">Select Shoe Size</option>
@@ -145,10 +159,12 @@ export default function FilterOptions({ onFilterChange, brands }: FilterOptionsP
       )}
 
       {/* Conditionally render deck size dropdown if parent type is Skateboards */}
-      {childType === "Decks" && (
+      {childType === 'Decks' && (
         <select
-          value={deckSize !== null ? deckSize : ""}
-          onChange={(e) => setDeckSize(e.target.value ? Number(e.target.value) : null)}
+          value={deckSize !== null ? deckSize : ''}
+          onChange={(e) =>
+            setDeckSize(e.target.value ? Number(e.target.value) : null)
+          }
           className="border rounded p-2"
         >
           <option value="">Select Deck Size</option>

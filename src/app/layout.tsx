@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "OzSkate",
-  description: "All Aussie core skateshops in one place",
+  title: 'OzSkate',
+  description: 'All Aussie core skateshops in one place',
 };
 
 export default function RootLayout({

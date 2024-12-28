@@ -1,7 +1,7 @@
-"use client";
-import React from "react";
-import { ParentProductType } from "@/lib/types";
-import { childProductTypePerParent } from "../filterOptions";
+'use client';
+import React from 'react';
+import { ParentProductType } from '@/lib/types';
+import { childProductTypePerParent } from '../filterOptions';
 
 interface ProductEditMenuProps {
   menuOpen: boolean;
@@ -26,7 +26,7 @@ export default function ProductEditMenu({
   return (
     <div
       className="absolute right-0 bottom-full mb-2 w-52 bg-white border border-gray-300 shadow-lg rounded z-10"
-      style={{ transform: "translate(0, -2px)" }}
+      style={{ transform: 'translate(0, -2px)' }}
     >
       <div className="py-1">
         <div className="px-4 py-2 text-sm text-gray-700">
@@ -38,13 +38,13 @@ export default function ProductEditMenu({
               setSelectedParent(e.target.value as ParentProductType)
             }
           >
-            {(Object.keys(childProductTypePerParent) as ParentProductType[]).map(
-              (parent) => (
-                <option key={parent} value={parent}>
-                  {parent}
-                </option>
-              )
-            )}
+            {(
+              Object.keys(childProductTypePerParent) as ParentProductType[]
+            ).map((parent) => (
+              <option key={parent} value={parent}>
+                {parent}
+              </option>
+            ))}
           </select>
         </div>
 
