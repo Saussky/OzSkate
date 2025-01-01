@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import FilterOptions from '@/components/filterOptions';
 import SortOptions from '@/components/sortOptions';
-import { fetchFilteredVendors, fetchPaginatedProducts } from '@/lib/actions';
+import { getFilteredVendors, fetchPaginatedProducts } from '@/lib/actions';
 import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
@@ -68,7 +68,7 @@ export default function StoreFront() {
 
   useEffect(() => {
     const loadVendors = async () => {
-      const filteredVendors = await fetchFilteredVendors(filters);
+      const filteredVendors = await getFilteredVendors(filters);
       setBrands(
         filteredVendors.filter((vendor): vendor is string => vendor !== null)
       );

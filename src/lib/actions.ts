@@ -108,7 +108,7 @@ export const updateProducts = async () => {
 export const fetchPaginatedProducts = async (
   page: number,
   limit: number,
-  filters: Record<string, string | number | boolean | null | undefined> = {},
+  filters: Record<string, string | number | boolean | null> = {},
   sortOptions?: string
 ) => {
   const offset = (page - 1) * limit;
@@ -140,7 +140,7 @@ export const fetchPaginatedProducts = async (
   };
 };
 
-export const fetchFilteredVendors = async (
+export const getFilteredVendors = async (
   filters: FilterOption = {}
 ) => {
   try {
