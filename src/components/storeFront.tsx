@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import FilterOptions from '@/components/filterOptions';
 import SortOptions from '@/components/sortOptions';
-import { getFilteredVendors, fetchPaginatedProducts } from '@/lib/actions';
+import { getFilteredVendors, getPaginatedProducts } from '@/lib/actions';
 import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
@@ -36,12 +36,7 @@ export default function StoreFront() {
   const loadProducts = useCallback(
     (page: number) => {
       startTransition(async () => {
-        const data = await fetchPaginatedProducts(
-          page,
-          40,
-          filters,
-          sortOption
-        );
+        const data = await getPaginatedProducts(page, 40, filters, sortOption);
 
         const transformedProducts: ExtendedProduct[] = data.products.map(
           (product) => {

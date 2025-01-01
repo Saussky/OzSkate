@@ -5,7 +5,7 @@ import { transformProducts } from "./product/transform";
 
 export async function processShop(shop: any) {
   const baseUrl = shop.url;
-  const sinceId = shop.since_id || "0"; //TODO: Implement this when doing update see below for gpt response
+  const sinceId = shop.since_id || "0"; 
 
   const allPaginatedProducts = await fetchShopifyProducts(baseUrl, sinceId);
 
@@ -99,7 +99,8 @@ export const fetchShopifyProducts = async (
   return allProducts;
 };
 
-
+//TODO: Implement this when doing update see below for gpt response
+// TODO: Use since_last_id instead, it's already setup in the database.
 /*
 To implement an **update-only functionality**, you'll need to ensure you fetch and process only the products that have been updated since the last sync. Most modern APIs, including Shopify, support mechanisms like `updated_at` timestamps or other filtering parameters for efficient data fetching.
 

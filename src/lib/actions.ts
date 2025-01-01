@@ -70,7 +70,6 @@ export async function fetchAllProducts() {
     }
     
     await updateProducts();
-
     console.log("Product import completed.");
   } catch (error) {
     console.error("Error fetching all products:", error);
@@ -103,7 +102,7 @@ export const updateProducts = async () => {
   }
 };
 
-export const fetchPaginatedProducts = async (
+export const getPaginatedProducts = async (
   page: number,
   limit: number,
   filters: Record<string, string | number | boolean | null> = {},
