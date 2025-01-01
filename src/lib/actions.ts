@@ -74,8 +74,6 @@ export async function fetchAllProducts() {
     console.log("Product import completed.");
   } catch (error) {
     console.error("Error fetching all products:", error);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
