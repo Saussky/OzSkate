@@ -34,12 +34,12 @@ export default function StoreFront() {
   const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
 
   const loadProducts = useCallback(
-    (page: number, newFilters?: Record<string, string | number | boolean>) => {
+    (page: number) => {
       startTransition(async () => {
         const data = await fetchPaginatedProducts(
           page,
           40,
-          newFilters || filters,
+          filters,
           sortOption
         );
 
@@ -82,7 +82,7 @@ export default function StoreFront() {
   };
 
   const handleFilterChange = (
-    newFilters: Record<string, string | number | boolean | null> // Updated type
+    newFilters: Record<string, string | number | boolean | null>
   ) => {
     setFilters(newFilters);
   };

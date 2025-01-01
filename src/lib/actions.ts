@@ -154,7 +154,7 @@ export const fetchFilteredVendors = async (
       distinct: ['vendor'],
     });
 
-    return vendors.map((v) => v.vendor).filter((vendor) => vendor); // Remove null values
+    return vendors.map((variant) => variant.vendor).filter((vendor) => vendor); 
   } catch (error) {
     console.error("Error fetching vendors:", error);
     return [];
