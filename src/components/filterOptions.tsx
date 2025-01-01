@@ -2,7 +2,7 @@
 import { ParentProductType } from '@/lib/types';
 import { useState } from 'react';
 
-//TODO: Import all types and constants related to types like this one
+//TODO: Import all types and constants related to variables like this
 export const childProductTypePerParent: Record<ParentProductType, string[]> = {
   Clothing: [
     'Jumpers',
@@ -112,7 +112,7 @@ export default function FilterOptions({
         value={parentType}
         onChange={(e) => {
           setParentType(e.target.value as ParentProductType);
-          setChildType(''); // Reset childType when parentType changes
+          setChildType('');
           setShoeSize(null);
           setDeckSize(null);
         }}

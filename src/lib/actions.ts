@@ -4,7 +4,6 @@ import { processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
 import { FilterOption } from "./types";
 
-// TODO: Rename gets and fetches, choose one
 export async function getProductCount() {
   try {
     const count = await prisma.product.count();

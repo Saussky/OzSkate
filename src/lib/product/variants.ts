@@ -15,7 +15,7 @@ const processFeaturedImage = (image: any) => {
       width: image.width,
       height: image.height,
     };
-  } else if (image) return null;
+  } else if (image) return null; // TODO: WTF?
 };
 
 
