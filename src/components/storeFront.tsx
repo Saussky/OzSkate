@@ -2,7 +2,11 @@
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import FilterOptions from '@/components/filterOptions';
 import SortOptions from '@/components/sortOptions';
-import { getFilteredVendors, getPaginatedProducts } from '@/lib/actions';
+import {
+  getFilteredVendors,
+  getPaginatedProducts,
+  getShopNames,
+} from '@/lib/actions';
 import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
@@ -29,6 +33,7 @@ export default function StoreFront() {
   const [filters, setFilters] = useState<FilterOption>({});
   const [sortOption, setSortOption] = useState<string | undefined>();
   const [brands, setBrands] = useState<string[]>([]);
+  const [shops, setShops] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
@@ -72,6 +77,15 @@ export default function StoreFront() {
     loadVendors();
   }, [filters]);
 
+  useEffect(() => {
+    const loadShopNames = async () => {
+      const shopNames = await getShopNames();
+      setShops(shopNames);
+    };
+
+    loadShopNames();
+  }, []);
+
   const handlePageChange = (page: number) => {
     loadProducts(page);
   };
@@ -89,7 +103,11 @@ export default function StoreFront() {
   return (
     <div>
       <div className="flex flex-col space-y-4 mb-4">
-        <FilterOptions onFilterChange={handleFilterChange} brands={brands} />
+        <FilterOptions
+          onFilterChange={handleFilterChange}
+          brands={brands}
+          shops={shops}
+        />
         <div className="flex justify-between h-10">
           <SortOptions onSortChange={handleSortChange} />
           <Pagination

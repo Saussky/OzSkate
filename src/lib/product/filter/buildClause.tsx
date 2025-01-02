@@ -18,6 +18,12 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     whereClause.vendor = filters.vendor;
   }
 
+  if (filters.shop) {
+    whereClause.shop = {
+      name: filters.shop,
+    };
+  }
+
   const variantConditions: any[] = [];
 
   if (filters.maxPrice) {

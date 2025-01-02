@@ -46,11 +46,13 @@ interface FilterOptionsProps {
     filters: Record<string, string | number | boolean | null>
   ) => void;
   brands: string[];
+  shops: string[];
 }
 
 export default function FilterOptions({
   onFilterChange,
   brands,
+  shops,
 }: FilterOptionsProps) {
   const [parentType, setParentType] = useState<ParentProductType | ''>('');
   const [childType, setChildType] = useState<string | ''>('');
@@ -59,6 +61,7 @@ export default function FilterOptions({
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
   const [brand, setBrand] = useState<string | ''>('');
+  const [shop, setShop] = useState<string | ''>('');
 
   const handleApplyFilters = () => {
     onFilterChange({
@@ -69,6 +72,7 @@ export default function FilterOptions({
       shoeSize,
       deckSize,
       vendor: brand,
+      shop,
     });
   };
 
@@ -89,6 +93,7 @@ export default function FilterOptions({
       shoeSize: null,
       deckSize: null,
       vendor: '',
+      shop: '',
     });
   };
 
@@ -192,6 +197,19 @@ export default function FilterOptions({
         {brands.map((brand) => (
           <option key={brand} value={brand}>
             {brand}
+          </option>
+        ))}
+      </select>
+
+      <select
+        value={shop}
+        onChange={(e) => setShop(e.target.value)}
+        className="border rounded p-2"
+      >
+        <option value="">Select Shop</option>
+        {shops.map((shop) => (
+          <option key={shop} value={shop}>
+            {shop}
           </option>
         ))}
       </select>

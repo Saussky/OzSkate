@@ -18,11 +18,11 @@ const skateboardShops = [
     url: "https://www.concreteskatesupply.com.au/products.json",
     state: "NSW-VIC",
   },
-  // {
-  //   name: "Evolve Skate Store",
-  //   url: "https://evolveskatestore.com/products.json",
-  //   state: "VIC",
-  // },
+  {
+    name: "Evolve Skate Store",
+    url: "https://evolveskatestore.com/products.json",
+    state: "VIC",
+  },
   // {
   //   name: "Skateboard.com.au",
   //   url: "https://www.skateboard.com.au/products.json",
