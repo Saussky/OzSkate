@@ -37,6 +37,19 @@ export async function deleteAllProducts() {
   }
 }
 
+export async function deleteShops() {
+  try {
+    await prisma.variant.deleteMany();
+    await prisma.option.deleteMany();
+    await prisma.product.deleteMany();
+    await prisma.shop.deleteMany();
+
+    console.log("All shops have been deleted.");
+  } catch (error) {
+    console.error("Error deleting all shops", error);
+  }
+}
+
 export async function refreshCounts() {
   const productCount = await getProductCount();
   const shopCount = await getShopCount();

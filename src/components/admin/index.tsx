@@ -3,6 +3,7 @@ import { useState } from 'react';
 import RefreshCountsButton from './refreshCountsButton';
 import FetchProductsButton from './fetchProductsButton';
 import DeleteAllProductsButton from './deleteAllProductsButton';
+import DeleteShopsButton from './deleteShopsButton';
 
 interface HomeComponentProps {
   shopCount: number;
@@ -40,6 +41,9 @@ export default function AdminComponent({
       <div className="flex justify-center space-x-4">
         <FetchProductsButton />
         <DeleteAllProductsButton />
+        <DeleteShopsButton />
+      </div>
+      <div className="flex justify-center">
         <RefreshCountsButton
           onRefresh={(newShopCount, newProductCount) => {
             setCurrentShopCount(newShopCount);
