@@ -76,6 +76,7 @@ const childTypeKeywordsPerParent: {
       "boot",
       "boots",
     ],
+    Youth: [],
   },
   Bags: {
     Backpacks: ["backpack", "backpacks", "bag", "bags"],
@@ -159,7 +160,16 @@ function findChildProductType(
       string[]
     >;
 
-    const matchedChildType = findChildTypeForParent(searchFields, childKeywords);
+    let matchedChildType = findChildTypeForParent(searchFields, childKeywords);
+    if (matchedChildType === "Shoes") {
+      const isYouth = searchFields.some((field) =>
+        childTypeMatchesField(field, ["youth", "kid", "kids", "toddler"])
+      );
+      if (isYouth) {
+        matchedChildType = "Youth";
+      }
+    }
+
     if (matchedChildType) return { parent, child: matchedChildType };
   }
   return null;
@@ -180,9 +190,9 @@ export function categoriseProduct(product: Product): CategorisedProduct {
   let parentProductType = null;
   let childProductType: ChildProductType | null = null;
 
-  if (isMensFootwear(product)) {
-    return { parentProductType: "Shoes", childProductType: "Shoes" };
-  }
+  // if (isMensFootwear(product)) {
+  //   return { parentProductType: "Shoes", childProductType: "Shoes" };
+  // }
 
 
   //TODO: There may be a requirement to prioritise different search fields down the line
