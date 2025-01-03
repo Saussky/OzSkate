@@ -44,7 +44,6 @@ export default function AdminComponent({
       <div className="flex justify-center space-x-4">
         <FetchProductsButton />
         <DeleteAllProductsButton />
-        <DeleteShopsButton />
       </div>
       <div className="flex justify-center mt-6">
         <RefreshCountsButton
@@ -56,8 +55,6 @@ export default function AdminComponent({
       </div>
 
       <div className="p-4">
-        <h2 className="text-xl mb-4">Manage Shops</h2>
-        {/* Pass the array of existing shop names to the client component */}
         <ManageShops shopNames={shopNames} />
       </div>
     </div>

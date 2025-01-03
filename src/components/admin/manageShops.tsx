@@ -1,6 +1,6 @@
 'use client';
 
-import { toggleShop } from '@/lib/actions';
+import { deleteShops, toggleShop } from '@/lib/actions';
 import { skateboardShops } from '@/lib/constants';
 import { useState, useTransition } from 'react';
 
@@ -26,8 +26,34 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
     });
   };
 
+  const handleDeleteAllShops = () => {
+    startTransition(async () => {
+      try {
+        await deleteShops();
+        setShops([]);
+      } catch (error) {
+        console.error('Error deleting all shops:', error);
+      }
+    });
+  };
+
   return (
     <div className="space-y-4">
+      <div className="w-full flex justify-center mt-10 mb-4">
+        <div className="flex">
+          <h2 className="text-xl font-bold">Manage Shops</h2>
+        </div>
+        <button
+          onClick={handleDeleteAllShops}
+          disabled={isPending}
+          className={`ml-4 ${
+            isPending ? 'bg-gray-400 cursor-not-allowed' : ''
+          }`}
+        >
+          {isPending ? '.' : '🗑️'}
+        </button>
+      </div>
+
       {skateboardShops.map((shop) => {
         const isActive = shops.includes(shop.name);
         return (
