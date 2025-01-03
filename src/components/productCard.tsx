@@ -31,8 +31,7 @@ export default function ProductCard({
   childType,
 }: ProductCardProps) {
   const fallbackImageSrc = '/placeholder.jpg';
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const productUrl = shop.url + '/products/' + handle; // TODO: Replace with the correct logic for generating product URLs.
+  const productUrl = shop.url + '/products/' + handle;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<ParentType>(
