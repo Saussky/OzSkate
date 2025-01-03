@@ -22,7 +22,6 @@ type CategorisedProduct<
     : null;
 };
 
-// TODO: Identify kids and womens shoes subcategories
 // TODO: Polos, Tank tops need to be categorised
 
 // Mapping of child type keywords under each parent product type
@@ -67,7 +66,7 @@ const childTypeKeywordsPerParent: {
     Other: ["other"],
   },
   Shoes: {
-    Shoes: [
+    Mens: [
       "shoe",
       "shoes",
       "sneaker",
@@ -77,6 +76,7 @@ const childTypeKeywordsPerParent: {
       "boots",
     ],
     Youth: [],
+    Womens: [],
   },
   Bags: {
     Backpacks: ["backpack", "backpacks", "bag", "bags"],
@@ -152,12 +152,21 @@ function findChildType(
     >;
 
     let matchedChildType = findChildTypeForParent(searchFields, childKeywords);
-    if (matchedChildType === "Shoes") {
+
+    if (matchedChildType === "Mens") {
       const isYouth = searchFields.some((field) =>
         childTypeMatchesField(field, ["youth", "kid", "kids", "toddler"])
       );
+      const isWomens = searchFields.some((field) =>
+        childTypeMatchesField(field, ["women", "womens", "girl", "girls"])
+      );
+
       if (isYouth) {
         matchedChildType = "Youth";
+      } else if (isWomens) {
+        matchedChildType = "Womens"
+      } else {
+        matchedChildType = "Mens"
       }
     }
 

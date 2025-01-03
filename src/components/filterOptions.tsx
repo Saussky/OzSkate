@@ -27,7 +27,7 @@ export const childTypePerParent: Record<ParentType, string[]> = {
     'Griptape',
   ],
   'Protective Gear': ['Pads', 'Helmets', 'Other'],
-  Shoes: ['Shoes', 'Youth'],
+  Shoes: ['Mens', 'Youth', 'Womens'],
   Bags: ['Backpacks', 'Tote Bags'],
   Accessories: [
     'Belts',
@@ -49,6 +49,7 @@ interface FilterOptionsProps {
   shops: string[];
 }
 
+//TODO: Show number of products next to child types?
 export default function FilterOptions({
   onFilterChange,
   brands,
