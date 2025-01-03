@@ -4,7 +4,7 @@ import { prisma } from "./prisma";
 import { transformProducts } from "./product/transform";
 
 export async function processShop(shop: any) {
-  const baseUrl = shop.url;
+  const baseUrl = shop.url + '/products.json';
   const sinceId = shop.since_id || "0"; 
 
   const allPaginatedProducts = await fetchShopifyProducts(baseUrl, sinceId);
