@@ -36,8 +36,8 @@ function extractDeckSize(variantTitle: string, variantOption: string): number | 
 
 export function transformVariants(
   product: any,
-  parentProductType?: string | null,
-  childProductType?: string | null,
+  parentType?: string | null,
+  childType?: string | null,
 ) {
   return product.variants
     ? product.variants.map((variant: any) => {
@@ -61,7 +61,7 @@ export function transformVariants(
           updatedAt: new Date(variant.updated_at),
         };
         
-        if (parentProductType === 'Shoes') {
+        if (parentType === 'Shoes') {
             const shoeSize = extractShoeSize(variant.title || '', variant.option1 || '');
             return {
                 ...baseVariant,
@@ -69,7 +69,7 @@ export function transformVariants(
             };
         }
 
-        if (childProductType === 'Decks') {
+        if (childType === 'Decks') {
             const deckSize = extractDeckSize(variant.title || '', variant.option1 || '');
             return {
                 ...baseVariant,

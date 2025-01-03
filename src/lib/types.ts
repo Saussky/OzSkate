@@ -1,6 +1,6 @@
 // TODO: Implement master category taxonomy and redo this
 
-export type ParentProductType =
+export type ParentType =
   | "Clothing"
   | "Skateboards"
   | "Protective Gear"
@@ -8,7 +8,7 @@ export type ParentProductType =
   | "Bags"
   | "Accessories";
 
-export type ChildProductTypePerParent = {
+export type ChildTypePerParent = {
   Clothing:
     | "Jumpers"
     | "Shirts"
@@ -45,7 +45,7 @@ export type ChildProductTypePerParent = {
     | "Other";
 };
 
-export type ChildProductType =
-  ChildProductTypePerParent[keyof ChildProductTypePerParent];
+export type ChildType =
+  ChildTypePerParent[keyof ChildTypePerParent];
 
   export type FilterOption = Record<string, string | number | boolean | null>

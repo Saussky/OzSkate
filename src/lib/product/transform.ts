@@ -47,7 +47,7 @@ export const transformProducts = (
       tags: tagsArray,
     };
 
-    const { parentProductType, childProductType } =
+    const { parentType, childType } =
       categoriseProduct(parseProduct);
 
     const cheapestPrice = product.variants
@@ -65,13 +65,13 @@ export const transformProducts = (
       updatedAt: new Date(product.updated_at),
       vendor: product.vendor,
       productType: product.product_type,
-      parentProductType,
-      childProductType,
+      parentType,
+      childType,
       cheapestPrice,
       tags: product.tags ? product.tags.join(",") : "",
       image: firstImage || {},
       onSale: false,
-      variants: product.variants ? transformVariants(product, parentProductType, childProductType) : [],
+      variants: product.variants ? transformVariants(product, parentType, childType) : [],
       options: product.options
         ? product.options.map((option: any) => ({
             id: option.id ? option.id.toString() : null,

@@ -1,9 +1,9 @@
 'use client';
-import { ParentProductType } from '@/lib/types';
+import { ParentType } from '@/lib/types';
 import { useState } from 'react';
 
 //TODO: Import all types and constants related to variables like this
-export const childProductTypePerParent: Record<ParentProductType, string[]> = {
+export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
     'Jumpers',
     'Shirts',
@@ -54,7 +54,7 @@ export default function FilterOptions({
   brands,
   shops,
 }: FilterOptionsProps) {
-  const [parentType, setParentType] = useState<ParentProductType | ''>('');
+  const [parentType, setParentType] = useState<ParentType | ''>('');
   const [childType, setChildType] = useState<string | ''>('');
   const [maxPrice, setMaxPrice] = useState<number | ''>('');
   const [onSale, setOnSale] = useState(false);
@@ -97,13 +97,11 @@ export default function FilterOptions({
     });
   };
 
-  const parentProductTypes = Object.keys(
-    childProductTypePerParent
-  ) as ParentProductType[];
+  const parentTypes = Object.keys(childTypePerParent) as ParentType[];
 
-  const childProductTypes =
-    parentType && childProductTypePerParent[parentType]
-      ? (childProductTypePerParent[parentType] as string[])
+  const childTypes =
+    parentType && childTypePerParent[parentType]
+      ? (childTypePerParent[parentType] as string[])
       : [];
 
   // TODO: Implement sizes more robustly
@@ -116,7 +114,7 @@ export default function FilterOptions({
       <select
         value={parentType}
         onChange={(e) => {
-          setParentType(e.target.value as ParentProductType);
+          setParentType(e.target.value as ParentType);
           setChildType('');
           setShoeSize(null);
           setDeckSize(null);
@@ -124,7 +122,7 @@ export default function FilterOptions({
         className="border rounded p-2"
       >
         <option value="">Select Parent Type</option>
-        {parentProductTypes.map((type) => (
+        {parentTypes.map((type) => (
           <option key={type} value={type}>
             {type}
           </option>
@@ -138,7 +136,7 @@ export default function FilterOptions({
         disabled={!parentType}
       >
         <option value="">Select Child Type</option>
-        {childProductTypes.map((type) => (
+        {childTypes.map((type) => (
           <option key={type} value={type}>
             {type}
           </option>

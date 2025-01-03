@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
-import { ParentProductType } from '@/lib/types';
-import { childProductTypePerParent } from '../filterOptions';
+import { ParentType } from '@/lib/types';
+import { childTypePerParent } from '../filterOptions';
 
 interface ProductEditMenuProps {
   menuOpen: boolean;
-  selectedParent: ParentProductType;
-  setSelectedParent: React.Dispatch<React.SetStateAction<ParentProductType>>;
+  selectedParent: ParentType;
+  setSelectedParent: React.Dispatch<React.SetStateAction<ParentType>>;
   selectedChild: string;
   setSelectedChild: React.Dispatch<React.SetStateAction<string>>;
   handleUpdateTypes: () => Promise<void>;
@@ -21,7 +21,7 @@ export default function ProductEditMenu({
   handleUpdateTypes,
 }: ProductEditMenuProps) {
   if (!menuOpen) return null;
-  const childOptions = childProductTypePerParent[selectedParent];
+  const childOptions = childTypePerParent[selectedParent];
 
   return (
     <div
@@ -34,13 +34,9 @@ export default function ProductEditMenu({
           <select
             className="block w-full p-1 border border-gray-300 rounded"
             value={selectedParent}
-            onChange={(e) =>
-              setSelectedParent(e.target.value as ParentProductType)
-            }
+            onChange={(e) => setSelectedParent(e.target.value as ParentType)}
           >
-            {(
-              Object.keys(childProductTypePerParent) as ParentProductType[]
-            ).map((parent) => (
+            {(Object.keys(childTypePerParent) as ParentType[]).map((parent) => (
               <option key={parent} value={parent}>
                 {parent}
               </option>

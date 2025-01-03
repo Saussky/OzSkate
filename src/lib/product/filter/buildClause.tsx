@@ -7,11 +7,11 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
   const whereClause: Record<string, any> = {};
 
   if (filters.parentType) {
-    whereClause.parentProductType = filters.parentType;
+    whereClause.parentType = filters.parentType;
   }
 
   if (filters.childType) {
-    whereClause.childProductType = filters.childType;
+    whereClause.childType = filters.childType;
   }
 
   if (filters.vendor) {

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  ParentProductType,
-  ChildProductType,
-  ChildProductTypePerParent,
+  ParentType,
+  ChildType,
+  ChildTypePerParent,
 } from "../types";
 
 type Product = {
@@ -14,11 +14,11 @@ type Product = {
 };
 
 type CategorisedProduct<
-  P extends ParentProductType | null = ParentProductType | null
+  P extends ParentType | null = ParentType | null
 > = {
-  parentProductType: P;
-  childProductType: P extends ParentProductType
-    ? ChildProductTypePerParent[P] | null
+  parentType: P;
+  childType: P extends ParentType
+    ? ChildTypePerParent[P] | null
     : null;
 };
 
@@ -27,7 +27,7 @@ type CategorisedProduct<
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
-  [P in ParentProductType]: Record<ChildProductTypePerParent[P], string[]>;
+  [P in ParentType]: Record<ChildTypePerParent[P], string[]>;
 } = {
   Clothing: {
     Jumpers: ["jumper", "hoodie", "sweater", "pullover", "jumpers", "hoodies", "sweaters", "pullovers"],
@@ -137,9 +137,9 @@ function childTypeMatchesField(field: string, keywords: string[]): boolean {
 
 function findChildTypeForParent(
   searchFields: string[],
-  childKeywords: Record<ChildProductType, string[]>
-): ChildProductType | null {
-  for (const childType of Object.keys(childKeywords) as ChildProductType[]) {
+  childKeywords: Record<ChildType, string[]>
+): ChildType | null {
+  for (const childType of Object.keys(childKeywords) as ChildType[]) {
     for (const field of searchFields) {
       if (childTypeMatchesField(field, childKeywords[childType])) {
         return childType;
@@ -149,14 +149,14 @@ function findChildTypeForParent(
   return null;
 }
 
-function findChildProductType(
+function findChildType(
   searchFields: string[]
-): { parent: ParentProductType; child: ChildProductType } | null {
+): { parent: ParentType; child: ChildType } | null {
   for (const parent of Object.keys(
     childTypeKeywordsPerParent
-  ) as ParentProductType[]) {
+  ) as ParentType[]) {
     const childKeywords = childTypeKeywordsPerParent[parent] as Record<
-      ChildProductType,
+      ChildType,
       string[]
     >;
 
@@ -187,24 +187,24 @@ export function categoriseProduct(product: Product): CategorisedProduct {
     safeString(description),
   ];
 
-  let parentProductType = null;
-  let childProductType: ChildProductType | null = null;
+  let parentType = null;
+  let childType: ChildType | null = null;
 
   // if (isMensFootwear(product)) {
-  //   return { parentProductType: "Shoes", childProductType: "Shoes" };
+  //   return { parentType: "Shoes", childType: "Shoes" };
   // }
 
 
   //TODO: There may be a requirement to prioritise different search fields down the line
   let result = null;
   for (const field of searchFields) {
-    result = findChildProductType([field]);
+    result = findChildType([field]);
     if (result) {
-      parentProductType = result.parent;
-      childProductType = result.child;
+      parentType = result.parent;
+      childType = result.child;
       break;
     }
   }
 
-  return { parentProductType, childProductType } as CategorisedProduct;
+  return { parentType, childType } as CategorisedProduct;
 }

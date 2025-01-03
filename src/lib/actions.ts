@@ -185,15 +185,15 @@ export const getFilteredVendors = async (
 
 export async function setProductTypes(
   productId: string,
-  parentProductType: string, // TODO: Use real types
-  childProductType: string
+  parentType: string, // TODO: Use real types
+  childType: string
 ) {
   try {
     return await prisma.product.update({
       where: { id: productId },
       data: {
-        parentProductType,
-        childProductType,
+        parentType,
+        childType,
       },
     });
   } catch (error) {

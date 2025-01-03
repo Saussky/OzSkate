@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { ParentProductType } from '@/lib/types';
+import { ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
-import { childProductTypePerParent } from './filterOptions';
+import { childTypePerParent } from './filterOptions';
 import { setProductTypes } from '@/lib/actions';
 import ProductEditMenu from './admin/productEditMenu';
 import { shop } from '@prisma/client';
@@ -15,8 +15,8 @@ interface ProductCardProps {
   imageSrc?: string;
   handle: string;
   skateShop: shop; // SkateShop;
-  parentProductType?: string | null; // ParentProductType | null;
-  childProductType?: string | null;
+  parentType?: string | null; // ParentType | null;
+  childType?: string | null;
 }
 
 // TODO: Implement string parent product type types
@@ -27,20 +27,20 @@ export default function ProductCard({
   imageSrc,
   handle,
   skateShop,
-  parentProductType,
-  childProductType,
+  parentType,
+  childType,
 }: ProductCardProps) {
   const fallbackImageSrc = '/placeholder.jpg';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const productUrl = handle; // TODO: Replace with the correct logic for generating product URLs.
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedParent, setSelectedParent] = useState<ParentProductType>(
-    (parentProductType as ParentProductType) ?? 'Clothing'
+  const [selectedParent, setSelectedParent] = useState<ParentType>(
+    (parentType as ParentType) ?? 'Clothing'
   );
   const [selectedChild, setSelectedChild] = useState<string>(() => {
-    const childOptions = childProductTypePerParent[selectedParent];
-    return childProductType ?? childOptions[0];
+    const childOptions = childTypePerParent[selectedParent];
+    return childType ?? childOptions[0];
   });
 
   function handleMenuToggle(e: React.MouseEvent) {

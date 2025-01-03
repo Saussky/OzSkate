@@ -49,8 +49,8 @@ model product {
   description String?
   vendor      String?
   productType String?
-  parentProductType String? // TODO: Rename these, remove the 'Product' part
-  childProductType String?
+  parentType  String?
+  childType String?
   tags        String?
   image       Json?
   variants    variant[] // One-to-many relationship with Variant
@@ -66,8 +66,8 @@ model product {
   @@index([shopId])
   @@index([title])
   @@index([cheapestPrice])
-  @@index([parentProductType])
-  @@index([childProductType])
+  @@index([parentType])
+  @@index([childType])
   @@index([createdAt])
   @@index([updatedAt])
 }

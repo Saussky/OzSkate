@@ -128,8 +128,8 @@ export default function StoreFront() {
             imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'}
             handle={product.handle}
             skateShop={product.shop}
-            parentProductType={product.parentProductType}
-            childProductType={product.childProductType}
+            parentType={product.parentType}
+            childType={product.childType}
           />
         ))}
       </div>
