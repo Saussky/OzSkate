@@ -127,7 +127,7 @@ export default function StoreFront() {
             price={product.cheapestPrice as unknown as string}
             imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'}
             handle={product.handle}
-            skateShop={product.shop}
+            shop={product.shop}
             parentType={product.parentType}
             childType={product.childType}
           />

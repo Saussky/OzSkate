@@ -14,7 +14,7 @@ interface ProductCardProps {
   price: string;
   imageSrc?: string;
   handle: string;
-  skateShop: shop; // SkateShop;
+  shop: shop;
   parentType?: string | null; // ParentType | null;
   childType?: string | null;
 }
@@ -26,13 +26,14 @@ export default function ProductCard({
   price,
   imageSrc,
   handle,
-  skateShop,
+  shop,
   parentType,
   childType,
 }: ProductCardProps) {
   const fallbackImageSrc = '/placeholder.jpg';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const productUrl = handle; // TODO: Replace with the correct logic for generating product URLs.
+  console.log('product url', productUrl);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<ParentType>(
@@ -55,7 +56,7 @@ export default function ProductCard({
 
   return (
     <div className="border rounded-lg shadow-md p-4 h-full">
-      <p>{skateShop.name}</p>
+      <p>{shop.name}</p>
       <div className="relative aspect-[1/1]">
         <Image
           src={imageSrc || fallbackImageSrc}
