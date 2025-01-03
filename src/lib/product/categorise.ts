@@ -109,15 +109,6 @@ function safeString(value: unknown): string {
   return typeof value === "string" ? value.toLowerCase() : "";
 }
 
-// TODO: Achieve this functionality in generic function
-function  isMensFootwear(product: Product): boolean {
-  const { ogProductType, tags } = product;
-  return (
-    safeString(ogProductType).includes("shoes") || 
-    tags.some((tag) => safeString(tag) === "footwear")    
-  );
-}
-
 function keywordMatchesField(field: string, keyword: string): boolean {
   const fieldWords = field.split(/[\s/]+/);
   const keywordParts = keyword.toLowerCase().split(" ");
