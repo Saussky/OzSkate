@@ -1,25 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 //TODO: Jimmy's skate store also has variant colourways and their sizes in it e.g "US 7 / Navy White" & "US 11 / Black/White"
 
-// TODO: Double check this logic and possibly simplify / make really short
-const processFeaturedImage = (image: any) => {
+const processFeaturedImage = (image: unknown) => {
+  if (!image || typeof image !== "object") return null;
+  const { src, width, height } = image as {
+    src?: unknown;
+    width?: unknown;
+    height?: unknown;
+  };
+
   if (
-    image &&
-    typeof image === "object" &&
-    typeof image.src === "string" &&
-    typeof image.width === "number" &&
-    typeof image.height === "number"
+    typeof src === "string" &&
+    typeof width === "number" &&
+    typeof height === "number"
   ) {
-    return {
-      src: image.src,
-      width: image.width,
-      height: image.height,
-    };
-  } else if (image) return null; // TODO: WTF?
+    return { src, width, height };
+  }
+  return null;
 };
 
 
-//TODO: Improve upon this logic
+//TODO: Come up with extraction logic to be reused for other product types
 function extractShoeSize(variantTitle: string, variantOption: string): number | null {
   const combinedString = `${variantTitle} ${variantOption}`.toLowerCase();
   const match = combinedString.match(/(?:us\s*)?(\d+(\.\d+)?)/); // Match sizes with or without 'US'
