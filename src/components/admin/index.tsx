@@ -4,15 +4,18 @@ import RefreshCountsButton from './refreshCountsButton';
 import FetchProductsButton from './fetchProductsButton';
 import DeleteAllProductsButton from './deleteAllProductsButton';
 import DeleteShopsButton from './deleteShopsButton';
+import ManageShops from './manageShops';
 
 interface HomeComponentProps {
   shopCount: number;
   productCount: number;
+  shopNames: string[];
 }
 
 export default function AdminComponent({
   shopCount,
   productCount,
+  shopNames,
 }: HomeComponentProps) {
   const [currentShopCount, setCurrentShopCount] = useState(shopCount);
   const [currentProductCount, setCurrentProductCount] = useState(productCount);
@@ -50,6 +53,12 @@ export default function AdminComponent({
             setCurrentProductCount(newProductCount);
           }}
         />
+      </div>
+
+      <div className="p-4">
+        <h2 className="text-xl mb-4">Manage Shops</h2>
+        {/* Pass the array of existing shop names to the client component */}
+        <ManageShops shopNames={shopNames} />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
 import { FilterOption } from "./types";
+import { skateboardShops } from "./constants";
 
 export async function getProductCount() {
   try {
@@ -183,6 +184,7 @@ export const getFilteredVendors = async (
   }
 };
 
+// TODO: There needs to be a way to make sure the product type doesn't get updated when the application performs product updates
 export async function setProductTypes(
   productId: string,
   parentType: string, // TODO: Use real types
@@ -200,4 +202,26 @@ export async function setProductTypes(
     console.error("Error updating product types:", error);
     throw error;
   }
+}
+
+export async function toggleShop(name: string): Promise<{ inDatabase: boolean }> {
+  const existing = await prisma.shop.findUnique({
+    where: { name },
+  });
+
+  if (existing) {
+    await prisma.shop.delete({ where: { name } });
+    return { inDatabase: false };
+  }
+
+  const shopData = skateboardShops.find((s) => s.name === name);
+  if (!shopData) {
+    throw new Error(`Cannot find ${name} in skateboardShops constant`);
+  }
+
+  await prisma.shop.create({
+    data: shopData,
+  });
+
+  return { inDatabase: true };
 }

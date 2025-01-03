@@ -101,6 +101,9 @@ export const fetchShopifyProducts = async (
 
 //TODO: Implement this when doing update see below for gpt response
 // TODO: Use since_last_id instead, it's already setup in the database.
+// TODO: This won't work, how would we know if the other products updated? Like had their price changed? We might need to get all the data from all the stores at an interval.
+
+
 /*
 To implement an **update-only functionality**, you'll need to ensure you fetch and process only the products that have been updated since the last sync. Most modern APIs, including Shopify, support mechanisms like `updated_at` timestamps or other filtering parameters for efficient data fetching.
 
