@@ -176,7 +176,7 @@ export default function StoreFront() {
             id={product.id}
             title={product.title}
             price={product.cheapestPrice as unknown as string}
-            imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'}
+            imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'} //TODO: Double fallback
             handle={product.handle}
             shop={product.shop}
             parentType={product.parentType}

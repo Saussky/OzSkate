@@ -1,5 +1,5 @@
 'use client';
-import { FilterOption, ParentType } from '@/lib/types';
+import { ParentType } from '@/lib/types';
 import { useEffect, useState } from 'react';
 
 //TODO: Import all types and constants related to variables like this

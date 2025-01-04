@@ -1,4 +1,4 @@
-"use server";
+'use server';
 import { prisma } from "@/lib/prisma";
 import { processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";

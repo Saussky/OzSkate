@@ -1,5 +1,4 @@
 'use client';
-
 import { fetchAllProducts } from '@/lib/actions';
 import React, { useState, useTransition } from 'react';
 

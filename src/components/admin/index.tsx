@@ -3,7 +3,6 @@ import { useState } from 'react';
 import RefreshCountsButton from './refreshCountsButton';
 import FetchProductsButton from './fetchProductsButton';
 import DeleteAllProductsButton from './deleteAllProductsButton';
-import DeleteShopsButton from './deleteShopsButton';
 import ManageShops from './manageShops';
 
 interface HomeComponentProps {

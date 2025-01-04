@@ -1,5 +1,4 @@
 'use client';
-
 import { deleteAllProducts } from '@/lib/actions';
 import React, { useState, useTransition } from 'react';
 

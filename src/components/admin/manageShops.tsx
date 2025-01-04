@@ -1,5 +1,4 @@
 'use client';
-
 import { deleteShops, toggleShop } from '@/lib/actions';
 import { skateboardShops } from '@/lib/constants';
 import { useState, useTransition } from 'react';
