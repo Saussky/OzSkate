@@ -53,21 +53,38 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
         </button>
       </div>
 
-      {skateboardShops.map((shop) => {
-        const isActive = shops.includes(shop.name);
-        return (
-          <button
-            key={shop.name}
-            onClick={() => handleToggleShop(shop.name)}
-            disabled={isPending}
-            className={`px-4 py-2 font-semibold rounded-md ${
-              isActive ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-700'
-            }`}
-          >
-            {shop.name}
-          </button>
-        );
-      })}
+      <div className="w-2/3 mx-auto">
+        {Object.entries(
+          skateboardShops.reduce((acc, shop) => {
+            acc[shop.state] = acc[shop.state] || [];
+            acc[shop.state].push(shop);
+            return acc;
+          }, {} as Record<string, typeof skateboardShops>)
+        ).map(([state, shopsInState]) => (
+          <div key={state} className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">{state}</h3>
+            <div className="grid grid-cols-3 gap-4">
+              {shopsInState.map((shop) => {
+                const isActive = shops.includes(shop.name);
+                return (
+                  <button
+                    key={shop.name}
+                    onClick={() => handleToggleShop(shop.name)}
+                    disabled={isPending}
+                    className={`px-4 py-2 font-semibold rounded-md ${
+                      isActive
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-gray-700'
+                    }`}
+                  >
+                    {shop.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
