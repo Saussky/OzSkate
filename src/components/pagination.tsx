@@ -30,9 +30,11 @@ export default function Pagination({
       >
         Previous
       </button>
+
       <span className="text-gray-600">
         Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
       </span>
+
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}

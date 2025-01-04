@@ -33,6 +33,7 @@ export default function Signup() {
         className="border-2 border-lime-500 p-6 w-80 bg-gray-900 shadow-lg"
       >
         <h1 className="text-center text-lg mb-4">Sign Up</h1>
+
         <input
           value={email}
           placeholder="Enter Email"
@@ -40,6 +41,7 @@ export default function Signup() {
           required
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="password"
           value={password}
@@ -48,6 +50,7 @@ export default function Signup() {
           required
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button
           type="submit"
           form="signup-form"

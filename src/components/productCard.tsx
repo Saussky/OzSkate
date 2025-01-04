@@ -66,6 +66,7 @@ export default function ProductCard({
         </div>
 
         <h2 className="mt-2 text-xl font-bold text-gray-800">{title}</h2>
+
         <div className="flex justify-between items-center">
           <p className="text-gray-600 mt-1">${price}</p>
 

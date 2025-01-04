@@ -32,6 +32,7 @@ export default function Login() {
         className="border-2 border-lime-500 p-6 w-80 bg-gray-900 shadow-lg"
       >
         <h1 className="text-center text-lg mb-4">Log In</h1>
+
         <input
           type="email"
           value={email}
@@ -40,6 +41,7 @@ export default function Login() {
           required
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="password"
           value={password}
@@ -48,6 +50,7 @@ export default function Login() {
           required
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button
           type="submit"
           className="w-full bg-lime-500 text-black p-2 mt-4 hover:bg-lime-400 transition"

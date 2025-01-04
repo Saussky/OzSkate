@@ -108,6 +108,7 @@ export default function StoreFront() {
           brands={brands}
           shops={shops}
         />
+
         <div className="flex justify-between h-10">
           <SortOptions onSortChange={handleSortChange} />
           <Pagination
