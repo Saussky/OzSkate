@@ -11,6 +11,7 @@ import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption } from '@/lib/types';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 type ImageJson = {
   src: string;
@@ -27,16 +28,55 @@ export interface ExtendedProduct extends product {
 
 // TODO: Use query params to keep filters through page refresh
 export default function StoreFront() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const initialFilters: FilterOption = {
+    parentType: searchParams.get('parentType') || '',
+    childType: searchParams.get('childType') || '',
+    maxPrice: searchParams.get('maxPrice')
+      ? Number(searchParams.get('maxPrice'))
+      : '',
+    onSale: searchParams.get('onSale') === 'true',
+    shoeSize: searchParams.get('shoeSize')
+      ? Number(searchParams.get('shoeSize'))
+      : null,
+    deckSize: searchParams.get('deckSize')
+      ? Number(searchParams.get('deckSize'))
+      : null,
+    vendor: searchParams.get('vendor') || '',
+    shop: searchParams.get('shop') || '',
+  };
+  const initialSortOption = searchParams.get('sortOption') || 'latest';
+  const initialPage = searchParams.get('page')
+    ? Number(searchParams.get('page'))
+    : 1;
+
   const [products, setProducts] = useState<ExtendedProduct[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filters, setFilters] = useState<FilterOption>({});
-  const [sortOption, setSortOption] = useState<string | undefined>();
+  const [filters, setFilters] = useState<FilterOption>(initialFilters);
+  const [sortOption, setSortOption] = useState<string>(initialSortOption);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [brands, setBrands] = useState<string[]>([]);
   const [shops, setShops] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
+
+  const updateQueryParams = useCallback(() => {
+    const query = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== '') {
+        query.set(key, String(value));
+      }
+    });
+
+    if (sortOption) query.set('sortOption', sortOption);
+    query.set('page', String(currentPage));
+
+    router.push(`?${query.toString()}`);
+  }, [currentPage, filters, router, sortOption]);
 
   const loadProducts = useCallback(
     (page: number) => {
@@ -90,14 +130,20 @@ export default function StoreFront() {
     loadProducts(page);
   };
 
+  useEffect(() => {
+    updateQueryParams();
+  }, [filters, sortOption, currentPage, updateQueryParams]);
+
   const handleFilterChange = (
     newFilters: Record<string, string | number | boolean | null>
   ) => {
     setFilters(newFilters);
+    setCurrentPage(1);
   };
 
   const handleSortChange = (option: string) => {
     setSortOption(option);
+    setCurrentPage(1);
   };
 
   return (
@@ -107,10 +153,14 @@ export default function StoreFront() {
           onFilterChange={handleFilterChange}
           brands={brands}
           shops={shops}
+          initialFilters={initialFilters}
         />
 
         <div className="flex justify-between h-10">
-          <SortOptions onSortChange={handleSortChange} />
+          <SortOptions
+            onSortChange={handleSortChange}
+            sortOption={sortOption}
+          />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

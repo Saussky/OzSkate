@@ -1,6 +1,6 @@
 'use client';
-import { ParentType } from '@/lib/types';
-import { useState } from 'react';
+import { FilterOption, ParentType } from '@/lib/types';
+import { useEffect, useState } from 'react';
 
 //TODO: Import all types and constants related to variables like this
 export const childTypePerParent: Record<ParentType, string[]> = {
@@ -47,6 +47,8 @@ interface FilterOptionsProps {
   ) => void;
   brands: string[];
   shops: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialFilters: any;
 }
 
 //TODO: Show number of products next to child types?
@@ -54,7 +56,9 @@ export default function FilterOptions({
   onFilterChange,
   brands,
   shops,
+  initialFilters,
 }: FilterOptionsProps) {
+  // TODO: Normalise between empty string and null
   const [parentType, setParentType] = useState<ParentType | ''>('');
   const [childType, setChildType] = useState<string | ''>('');
   const [maxPrice, setMaxPrice] = useState<number | ''>('');
@@ -63,6 +67,17 @@ export default function FilterOptions({
   const [deckSize, setDeckSize] = useState<number | null>(null);
   const [brand, setBrand] = useState<string | ''>('');
   const [shop, setShop] = useState<string | ''>('');
+
+  useEffect(() => {
+    setParentType(initialFilters.parentType || '');
+    setChildType(initialFilters.childType || '');
+    setMaxPrice(initialFilters.maxPrice || '');
+    setOnSale(initialFilters.onSale || false);
+    setShoeSize(initialFilters.shoeSize || null);
+    setDeckSize(initialFilters.deckSize || null);
+    setBrand(initialFilters.vendor || '');
+    setShop(initialFilters.shop || '');
+  }, [initialFilters]);
 
   const handleApplyFilters = () => {
     onFilterChange({
