@@ -31,6 +31,7 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 	- Hiding admin page
 - Hosting, don't need to wait till it's done, can be worked on incrementally
 - Extensive filters, optional modal?
+	- Check other online aggregators for filter ideas
 - UI
 - Email notifications for price drops
 - Updating products the least computationally expensive way
