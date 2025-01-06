@@ -1,21 +1,12 @@
 'use server';
-import { getProductCount, getShopCount, getShopNames } from '@/lib/actions';
-import AdminComponent from '@/components/admin';
+import StoreFront from '@/components/storeFront';
 import './globals.css';
 
 export default async function Home() {
-  const productCount = await getProductCount();
-  const shopCount = await getShopCount();
-  const shopNames = await getShopNames();
-
   return (
-    <div>
-      <small>Long live this thing</small>
-      <AdminComponent
-        shopCount={shopCount}
-        productCount={productCount}
-        shopNames={shopNames}
-      />
+    <div className="p-8">
+      <h1 className="text-4xl font-bold mb-8">Storefront</h1>
+      <StoreFront />
     </div>
   );
 }
