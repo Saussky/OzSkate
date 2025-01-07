@@ -16,7 +16,7 @@ export default function Login() {
       });
 
       if (res.ok) {
-        console.log('Signup successful!');
+        console.log('Login successful!');
       } else {
         console.log('res', res);
       }
@@ -29,12 +29,13 @@ export default function Login() {
     <div className="h-screen bg-black flex items-center justify-center font-mono text-lime-500">
       <form
         onSubmit={handleSubmit}
+        method="post"
         className="border-2 border-lime-500 p-6 w-80 bg-gray-900 shadow-lg"
       >
         <h1 className="text-center text-lg mb-4">Log In</h1>
 
         <input
-          type="email"
+          name="email"
           value={email}
           placeholder="Email"
           className="w-full bg-black border border-lime-500 text-lime-500 p-2 mb-4 placeholder-gray-400 focus:outline-none"
@@ -43,6 +44,7 @@ export default function Login() {
         />
 
         <input
+          name="password"
           type="password"
           value={password}
           placeholder="Password"
