@@ -18,6 +18,7 @@ model user {
   email       String    @unique
   hashed_password    String
   sessions    session[]
+  admin       Boolean   @default(false)
 }
 
 model session {

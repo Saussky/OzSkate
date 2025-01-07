@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       data: {
         id: userId,
         email,
-        password: hashedPassword,
+        hashed_password: hashedPassword,
       },
     });
 
