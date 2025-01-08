@@ -1,15 +1,12 @@
 'use client';
 
-interface SortOptionsProps {
+interface SortProps {
   onSortChange: (sortOption: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sortOption: any;
 }
 
-export default function SortOptions({
-  onSortChange,
-  sortOption,
-}: SortOptionsProps) {
+export default function Sort({ onSortChange, sortOption }: SortProps) {
   return (
     <div className="flex space-x-4">
       <select

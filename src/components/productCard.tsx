@@ -2,7 +2,7 @@
 import { ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
-import { childTypePerParent } from './filterOptions';
+import { childTypePerParent } from './filter';
 import { setProductTypes } from '@/lib/actions';
 import ProductEditMenu from './admin/productEditMenu';
 import { shop } from '@prisma/client';

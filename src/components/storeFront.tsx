@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState, useTransition } from 'react';
-import FilterOptions from '@/components/filterOptions';
-import SortOptions from '@/components/sortOptions';
+import Filter from '@/components/filter';
+import Sort from '@/components/sort';
 import {
   getFilteredVendors,
   getPaginatedProducts,
@@ -149,7 +149,7 @@ export default function StoreFront() {
   return (
     <div>
       <div className="flex flex-col space-y-4 mb-4">
-        <FilterOptions
+        <Filter
           onFilterChange={handleFilterChange}
           brands={brands}
           shops={shops}
@@ -157,10 +157,7 @@ export default function StoreFront() {
         />
 
         <div className="flex justify-between h-10">
-          <SortOptions
-            onSortChange={handleSortChange}
-            sortOption={sortOption}
-          />
+          <Sort onSortChange={handleSortChange} sortOption={sortOption} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

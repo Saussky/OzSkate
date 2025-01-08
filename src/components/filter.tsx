@@ -41,7 +41,7 @@ export const childTypePerParent: Record<ParentType, string[]> = {
   ],
 };
 
-interface FilterOptionsProps {
+interface FilterProps {
   onFilterChange: (
     filters: Record<string, string | number | boolean | null>
   ) => void;
@@ -52,12 +52,12 @@ interface FilterOptionsProps {
 }
 
 //TODO: Show number of products next to child types?
-export default function FilterOptions({
+export default function Filter({
   onFilterChange,
   brands,
   shops,
   initialFilters,
-}: FilterOptionsProps) {
+}: FilterProps) {
   // TODO: Normalise between empty string and null
   const [parentType, setParentType] = useState<ParentType | ''>('');
   const [childType, setChildType] = useState<string | ''>('');

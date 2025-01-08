@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { ParentType } from '@/lib/types';
-import { childTypePerParent } from '../filterOptions';
+import { childTypePerParent } from '../filter';
 
 interface ProductEditMenuProps {
   menuOpen: boolean;
