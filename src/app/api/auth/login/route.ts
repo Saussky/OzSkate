@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.hashed_password); //TODO: Check this
+    const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
     if (!isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const session = await auth.createSession(user.id, {});
     const sessionCookie = auth.createSessionCookie(session.id);
 
-    const response = NextResponse.json({ userId: user.id });
+    const response = NextResponse.json({ userId: user.id, email: user.email, username: user.username });
     response.headers.append("Set-Cookie", sessionCookie.serialize());
 
     return response;

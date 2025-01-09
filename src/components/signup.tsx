@@ -3,6 +3,7 @@ import { FormEvent, useState } from 'react';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
@@ -12,7 +13,7 @@ export default function Signup() {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, username, password }),
       });
 
       if (res.ok) {
@@ -40,6 +41,14 @@ export default function Signup() {
           className="w-full bg-black border border-lime-500 text-lime-500 p-2 mb-4 placeholder-gray-400 focus:outline-none"
           required
           onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          value={username}
+          placeholder="Enter Username"
+          className="w-full bg-black border border-lime-500 text-lime-500 p-2 mb-4 placeholder-gray-400 focus:outline-none"
+          required
+          onChange={(e) => setUsername(e.target.value)}
         />
 
         <input
