@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { signOut } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
 
 type LoginBoxProps = {
   initialUser: { username: string } | null;
@@ -12,6 +13,7 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
   const [username, setUsername] = useState<string | null>(
     initialUser?.username || ''
   );
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +45,10 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
     }
   };
 
+  const goToAccount = () => {
+    router.push('/account');
+  };
+
   return (
     <div>
       {username ? (
@@ -50,7 +56,12 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
           <div className="text-white font-medium">
             Welcome, <span className="font-bold">{username}</span>!
           </div>
-
+          <button
+            onClick={goToAccount}
+            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-400 transition"
+          >
+            Account
+          </button>
           <button
             onClick={handleSignOut}
             className="p-2 bg-red-500 text-white rounded hover:bg-red-400 transition"
@@ -67,7 +78,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             required
             className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
           />
-
           <input
             type="password"
             value={password}
@@ -76,7 +86,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             required
             className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
           />
-
           <button
             type="submit"
             className="p-2 bg-lime-500 text-black rounded hover:bg-lime-400 transition"
