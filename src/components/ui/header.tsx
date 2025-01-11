@@ -1,6 +1,5 @@
 'use client';
 import { User } from 'lucia-auth';
-import { useState } from 'react';
 import LoginBox from '../loginBox';
 
 type HeaderProps = {
