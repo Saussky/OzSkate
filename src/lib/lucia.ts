@@ -42,6 +42,11 @@ export const validateRequest = cache(async () => {
       },
     });
 
+    if (!user) {
+      console.error('Lucia found user but Prisma did not')
+      return { user: null, session: null };
+    }
+
     if (session && session.fresh) {
       const sessionCookie = auth.createSessionCookie(session.id);
       (await cookies()).set(
