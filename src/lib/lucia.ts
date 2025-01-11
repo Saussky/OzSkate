@@ -26,7 +26,21 @@ export const validateRequest = cache(async () => {
   }
 
   try {
-    const { user, session } = await auth.validateSession(sessionId);
+    const { user: sessionUser, session } = await auth.validateSession(sessionId);
+
+    if (!sessionUser) {
+      return { user: null, session: null };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        admin: true,
+      },
+    });
 
     if (session && session.fresh) {
       const sessionCookie = auth.createSessionCookie(session.id);
@@ -36,6 +50,7 @@ export const validateRequest = cache(async () => {
         sessionCookie.attributes
       );
     }
+
     if (!session) {
       const sessionCookie = auth.createBlankSessionCookie();
       (await cookies()).set(

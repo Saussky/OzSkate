@@ -1,15 +1,21 @@
 'use client';
-
+import { User } from 'lucia-auth';
 import { useState } from 'react';
 
-export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
+type HeaderProps = {
+  user: User | null;
+};
+
+export default function Header({ user }: HeaderProps) {
+  console.log('user', user);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState<string | null>(user?.username || '');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!user);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -19,11 +25,10 @@ export default function Header() {
 
       if (res.ok) {
         const data = await res.json();
-        console.log('data', data);
         setUsername(data.username);
         setIsLoggedIn(true);
       } else {
-        console.error('Failed to log in');
+        console.error('Login failed');
       }
     } catch (error) {
       console.error('Error logging in:', error);
@@ -31,37 +36,31 @@ export default function Header() {
   };
 
   return (
-    <header className="flex justify-between items-center p-4 bg-gray-800 shadow-lg">
+    <header className="flex justify-between items-center p-4 bg-gray-900 shadow-lg">
       <div className="text-3xl font-bold">
-        <span
-          style={{
-            color: 'black',
-            background: 'linear-gradient(to right, red, yellow)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-black">
           OzSkate
         </span>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div>
         {!isLoggedIn ? (
           <form onSubmit={handleLogin} className="flex items-center space-x-2">
             <input
+              type="email"
               value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               required
-              onChange={(e) => setEmail(e.target.value)}
-              className="p-2 rounded bg-gray-700 text-white focus:outline-none"
+              className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
             />
             <input
               type="password"
               value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               required
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-2 rounded bg-gray-700 text-white focus:outline-none"
+              className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
             />
             <button
               type="submit"
