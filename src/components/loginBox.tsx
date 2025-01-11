@@ -55,6 +55,7 @@ export default function LoginBox({
           <div className="text-white font-medium">
             Welcome, <span className="font-bold">{username}</span>!
           </div>
+
           <button
             onClick={handleSignOut}
             className="p-2 bg-red-500 text-white rounded hover:bg-red-400 transition"
@@ -71,6 +72,7 @@ export default function LoginBox({
             required
             className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
           />
+
           <input
             type="password"
             value={password}
@@ -79,6 +81,7 @@ export default function LoginBox({
             required
             className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
           />
+
           <button
             type="submit"
             className="p-2 bg-lime-500 text-black rounded hover:bg-lime-400 transition"
