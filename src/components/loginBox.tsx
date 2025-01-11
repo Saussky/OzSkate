@@ -4,13 +4,9 @@ import { signOut } from '@/lib/actions';
 
 type LoginBoxProps = {
   initialUser: { username: string } | null;
-  onLoginSuccess: (username: string) => void;
 };
 
-export default function LoginBox({
-  initialUser,
-  onLoginSuccess,
-}: LoginBoxProps) {
+export default function LoginBox({ initialUser }: LoginBoxProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState<string | null>(
@@ -30,7 +26,6 @@ export default function LoginBox({
       if (res.ok) {
         const data = await res.json();
         setUsername(data.username);
-        onLoginSuccess(data.username);
       } else {
         console.error('Login failed');
       }

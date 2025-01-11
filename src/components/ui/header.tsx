@@ -16,10 +16,7 @@ export default function Header({ user }: HeaderProps) {
       </div>
 
       <div>
-        <LoginBox
-          initialUser={user}
-          onLoginSuccess={(username) => console.log(`Logged in as ${username}`)}
-        />
+        <LoginBox initialUser={user} />
       </div>
     </header>
   );
