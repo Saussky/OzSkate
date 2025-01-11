@@ -4,6 +4,9 @@ import { processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
 import { FilterOption } from "./types";
 import { skateboardShops } from "./constants";
+import { auth, validateRequest } from "./lucia";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function getProductCount() {
   try {
@@ -224,4 +227,22 @@ export async function toggleShop(name: string): Promise<{ inDatabase: boolean }>
   });
 
   return { inDatabase: true };
+}
+
+export async function signOut(): Promise<void> {
+  try {
+    const { session } = await validateRequest();
+
+    if (session) {
+      await auth.invalidateSession(session.id)
+    }
+  } catch (error) {
+    console.error('Error signing out', error);
+    throw error
+  } finally {
+    const sessionCookie = auth.createBlankSessionCookie();
+    (await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+    
+    revalidatePath('/')
+  }
 }
