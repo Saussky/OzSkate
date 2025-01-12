@@ -1,5 +1,4 @@
 'use client';
-
 import { changePassword } from '@/lib/actions';
 import { useState, useTransition } from 'react';
 
@@ -9,8 +8,8 @@ export default function AccountPage() {
   const [message, setMessage] = useState('');
   const [isPending, startTransition] = useTransition();
 
-  const handleChangePassword = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleChangePassword = (event: React.FormEvent) => {
+    event.preventDefault();
 
     startTransition(async () => {
       try {
@@ -25,44 +24,61 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="p-8 max-w-md mx-auto bg-gray-800 text-white rounded shadow-lg">
+    <div className="w-2/3 h-full p-8">
       <h1 className="text-2xl font-bold mb-4">Account Settings</h1>
-      <form onSubmit={handleChangePassword} className="space-y-4">
+
+      <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
         <div>
-          <label className="block mb-2">Current Password</label>
+          <label
+            htmlFor="currentPassword"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Current Password
+          </label>
+
           <input
+            id="currentPassword"
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
-            className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500 disabled:bg-gray-200"
             disabled={isPending}
           />
         </div>
+
         <div>
-          <label className="block mb-2">New Password</label>
+          <label
+            htmlFor="newPassword"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            New Password
+          </label>
           <input
+            id="newPassword"
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
-            className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500 disabled:bg-gray-200"
             disabled={isPending}
           />
         </div>
+
         <button
           type="submit"
-          className={`w-full p-2 rounded text-black transition ${
+          className={`w-48 py-2 px-4 text-white font-medium rounded ${
             isPending
               ? 'bg-gray-500 cursor-not-allowed'
-              : 'bg-lime-500 hover:bg-lime-400'
+              : 'bg-blue-500 hover:bg-blue-600'
           }`}
           disabled={isPending}
         >
           {isPending ? 'Updating...' : 'Change Password'}
         </button>
       </form>
-      {message && <p className="mt-4 text-center">{message}</p>}
+
+      {message && <p className="mt-4 text-sm text-gray-900">{message}</p>}
     </div>
   );
 }
