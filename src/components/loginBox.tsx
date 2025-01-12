@@ -15,8 +15,8 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
   );
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
 
     try {
       const res = await fetch('/api/auth/login', {
