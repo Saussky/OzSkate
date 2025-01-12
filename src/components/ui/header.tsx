@@ -9,11 +9,11 @@ type HeaderProps = {
 export default function Header({ user }: HeaderProps) {
   return (
     <header className="flex justify-between items-center p-4 bg-gray-900 shadow-lg">
-      <div className="text-3xl font-bold">
+      <a href={'/'} className="text-3xl font-bold">
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-black">
           OzSkate
         </span>
-      </div>
+      </a>
 
       <div>
         <LoginBox initialUser={user} />
