@@ -8,15 +8,21 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
+      user = await prisma.user.findUnique({
+        where: { username: email },
+      });
+
+      if (!user) {
+        return NextResponse.json(
+          { error: "No email/username found" },
+          { status: 401 }
+        );
+      }
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
