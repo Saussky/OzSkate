@@ -10,7 +10,7 @@ import {
 import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
-import { FilterOption } from '@/lib/types';
+import { FilterOption, User } from '@/lib/types';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 type ImageJson = {
@@ -26,8 +26,8 @@ export interface ExtendedProduct extends product {
   image: ImageJson | null;
 }
 
-// TODO: Use query params to keep filters through page refresh
-export default function StoreFront() {
+// TODO: Shorten and simplify query params, possibly separate
+export default function StoreFront(user: User) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -171,6 +171,7 @@ export default function StoreFront() {
           <ProductCard
             key={product.id}
             id={product.id}
+            admin={user.admin}
             title={product.title}
             price={product.cheapestPrice as unknown as string}
             imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'} //TODO: Double fallback

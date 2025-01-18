@@ -48,4 +48,11 @@ export type ChildTypePerParent = {
 export type ChildType =
   ChildTypePerParent[keyof ChildTypePerParent];
 
-  export type FilterOption = Record<string, string | number | boolean | null>
+export type FilterOption = Record<string, string | number | boolean | null>
+
+export type User = {
+    id: string;
+    email: string;
+    username: string;
+    admin: boolean;
+};

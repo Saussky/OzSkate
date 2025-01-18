@@ -195,6 +195,9 @@ export async function setProductTypes(
   childType: string
 ) {
   try {
+    const { user } = await validateRequest();
+    if (!user?.admin) return;
+
     return await prisma.product.update({
       where: { id: productId },
       data: {

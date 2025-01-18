@@ -10,6 +10,7 @@ import { shop } from '@prisma/client';
 interface ProductCardProps {
   id: string;
   title: string;
+  admin: boolean;
   price: string;
   imageSrc?: string;
   handle: string;
@@ -22,6 +23,7 @@ interface ProductCardProps {
 export default function ProductCard({
   id,
   title,
+  admin,
   price,
   imageSrc,
   handle,
@@ -78,14 +80,16 @@ export default function ProductCard({
               :
             </button>
 
-            <ProductEditMenu
-              menuOpen={menuOpen}
-              selectedParent={selectedParent}
-              setSelectedParent={setSelectedParent}
-              selectedChild={selectedChild}
-              setSelectedChild={setSelectedChild}
-              handleUpdateTypes={handleUpdateTypes}
-            />
+            {admin && (
+              <ProductEditMenu
+                menuOpen={menuOpen}
+                selectedParent={selectedParent}
+                setSelectedParent={setSelectedParent}
+                selectedChild={selectedChild}
+                setSelectedChild={setSelectedChild}
+                handleUpdateTypes={handleUpdateTypes}
+              />
+            )}
           </div>
         </div>
       </div>
