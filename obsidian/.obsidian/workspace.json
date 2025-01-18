@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "OzSkate Todo's.md",
+                "file": "Scraping Instructions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "OzSkate Todo's"
+              "title": "Scraping Instructions"
             }
           }
         ],
@@ -193,15 +193,15 @@
   },
   "active": "da125323b4e3c472",
   "lastOpenFiles": [
-    "OzSkate.md",
-    "Untitled.md",
+    "Skate Shop List.md",
+    "Scraping Instructions.md",
     "OzSkate Todo's.md",
+    "OzSkate.md",
     "Oz Skate Scraped Product Categories.md",
     "Digisync Synergetic Errors.md",
-    "Database + Hosting.md",
-    "Skate Shop List.md",
+    "Database + Hosting Old.md",
+    "Untitled.md",
     "Pasted image 20241125110928.png",
-    "Scraping Instructions.md",
     "347-copy-to-clipboard-changes.md",
     "Non-Shopify Skate Shop List.md",
     "().md",
