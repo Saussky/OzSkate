@@ -65,6 +65,10 @@ model product {
   on_sale_variant_id String? // Can be null if no variants are on sale
   cheapestPrice     Float?    // Cached minimum price of variants
 
+  markedAsDuplicate    Boolean?
+  duplicateProducts  product[]  @relation("ProductDuplicates")
+  duplicatedBy       product[]  @relation("ProductDuplicates") // Opposite relation
+
   @@index([shopId])
   @@index([title])
   @@index([cheapestPrice])

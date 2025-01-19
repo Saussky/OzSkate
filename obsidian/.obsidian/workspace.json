@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Scraping Instructions.md",
+                "file": "OzSkate Todo's.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Scraping Instructions"
+              "title": "OzSkate Todo's"
             }
           }
         ],
@@ -193,8 +193,8 @@
   },
   "active": "da125323b4e3c472",
   "lastOpenFiles": [
-    "Skate Shop List.md",
     "Scraping Instructions.md",
+    "Skate Shop List.md",
     "OzSkate Todo's.md",
     "OzSkate.md",
     "Oz Skate Scraped Product Categories.md",

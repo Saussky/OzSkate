@@ -27,6 +27,8 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 - Create master category taxonomy, browse each store to get an idea (then steal ocd's)
 	- Create documentation diagram using figma
 - Figure out identical products process
+	- Shoe colourways aren't handled in variants, they are all their own product
+	- Variants are mainly sizes, which will have to be handled eventually
 - Finish creating accounts ☑️
 	- Hiding admin page ☑️
 - Hosting, don't need to wait till it's done, can be worked on incrementally

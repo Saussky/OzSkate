@@ -27,7 +27,7 @@ export interface ExtendedProduct extends product {
 }
 
 // TODO: Shorten and simplify query params, possibly separate
-export default function StoreFront(user: User) {
+export default function StoreFront(user: User | null) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -171,7 +171,7 @@ export default function StoreFront(user: User) {
           <ProductCard
             key={product.id}
             id={product.id}
-            admin={user.admin}
+            admin={user?.admin || false}
             title={product.title}
             price={product.cheapestPrice as unknown as string}
             imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'} //TODO: Double fallback
