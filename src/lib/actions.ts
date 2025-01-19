@@ -8,6 +8,7 @@ import { auth, validateRequest } from "./lucia";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
+import { checkProductSimilarity } from "./product/merge";
 
 export async function getProductCount() {
   try {
@@ -267,4 +268,71 @@ export async function changePassword(currentPassword: string, newPassword: strin
     where: { id: user.id },
     data: { hashed_password: hashedPassword },
   });
+}
+
+export async function checkAllProductsForDuplicates() {
+  console.log("Fetching all products...");
+
+  // Fetch all products from the database
+  const allProducts = await prisma.product.findMany({
+    include: {
+      variants: true, // Include variants for SKU checking
+    },
+  });
+
+  console.log(`Fetched ${allProducts.length} products.`);
+
+  // Group products by childType
+  const productsByChildType: Record<string, any[]> = {};
+  for (const product of allProducts) {
+    const childType = product.childType || "Uncategorized";
+    if (!productsByChildType[childType]) {
+      productsByChildType[childType] = [];
+    }
+    productsByChildType[childType].push(product);
+  }
+
+  console.log(`Grouped products by childType:`);
+
+  // Check duplicates within each childType
+  for (const [childType, products] of Object.entries(productsByChildType)) {
+    console.log(`Checking products under childType: ${childType}`);
+
+    const results: { product1: string; product2: string; reasons: string[] }[] =
+      [];
+
+    for (let i = 0; i < products.length; i++) {
+      for (let j = i + 1; j < products.length; j++) {
+        const product1 = products[i];
+        const product2 = products[j];
+
+        const similarityResult = checkProductSimilarity(product1, product2);
+
+        if (similarityResult.isSimilar) {
+          results.push({
+            product1: product1.title,
+            product2: product2.title,
+            reasons: similarityResult.reasons,
+          });
+        }
+      }
+    }
+
+    // Log results for this childType
+    if (results.length > 0) {
+      console.log(
+        `Found ${results.length} potential duplicates in childType: ${childType}`
+      );
+      for (const result of results) {
+        console.log(
+          `- Duplicate Pair: "${result.product1}" <-> "${result.product2}"`
+        );
+        console.log(`  Reasons: ${result.reasons.join(", ")}`);
+      }
+    } else {
+      console.log(`No duplicates found in childType: ${childType}`);
+    }
+  }
+
+  console.log("Duplicate check completed.");
 }

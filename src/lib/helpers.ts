@@ -2,6 +2,7 @@
 import fetch from "node-fetch";
 import { prisma } from "./prisma";
 import { transformProducts } from "./product/transform";
+import { checkProductSimilarity } from "./product/merge";
 
 export async function processShop(shop: any) {
   const baseUrl = shop.url + '/products.json';
@@ -98,6 +99,7 @@ export const fetchShopifyProducts = async (
 
   return allProducts;
 };
+
 
 //TODO: Implement this when doing update see below for gpt response
 // TODO: Use since_last_id instead, it's already setup in the database.

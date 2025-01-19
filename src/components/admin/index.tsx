@@ -4,6 +4,7 @@ import RefreshCountsButton from './refreshCountsButton';
 import FetchProductsButton from './fetchProductsButton';
 import DeleteAllProductsButton from './deleteAllProductsButton';
 import ManageShops from './manageShops';
+import MergeProductsButton from './runMergeButton';
 
 interface HomeComponentProps {
   shopCount: number;
@@ -43,6 +44,7 @@ export default function AdminComponent({
       <div className="flex justify-center space-x-4">
         <FetchProductsButton />
         <DeleteAllProductsButton />
+        <MergeProductsButton />
       </div>
       <div className="flex justify-center mt-6">
         <RefreshCountsButton
