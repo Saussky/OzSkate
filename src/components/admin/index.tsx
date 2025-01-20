@@ -4,7 +4,6 @@ import RefreshCountsButton from './refreshCountsButton';
 import FetchProductsButton from './fetchProductsButton';
 import DeleteAllProductsButton from './deleteAllProductsButton';
 import ManageShops from './manageShops';
-import MergeProductsButton from './runMergeButton';
 
 interface HomeComponentProps {
   shopCount: number;
@@ -21,11 +20,7 @@ export default function AdminComponent({
   const [currentProductCount, setCurrentProductCount] = useState(productCount);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-center text-4xl font-bold text-gray-800 my-12">
-        OzSkate
-      </h1>
-
+    <>
       <div className="flex justify-center space-x-8 mb-12">
         <div className="flex-1 max-w-sm p-6 bg-white rounded-lg shadow-lg">
           <p className="text-lg font-semibold text-gray-700">Number of Shops</p>
@@ -44,7 +39,6 @@ export default function AdminComponent({
       <div className="flex justify-center space-x-4">
         <FetchProductsButton />
         <DeleteAllProductsButton />
-        <MergeProductsButton />
       </div>
       <div className="flex justify-center mt-6">
         <RefreshCountsButton
@@ -58,6 +52,6 @@ export default function AdminComponent({
       <div className="p-4">
         <ManageShops shopNames={shopNames} />
       </div>
-    </div>
+    </>
   );
 }

@@ -16,8 +16,10 @@ export default function MergeProductsButton() {
     <button
       onClick={handleMerge}
       disabled={isPending}
-      className={`py-2 px-4 rounded flex items-center justify-center ${
-        isPending ? 'animate-spin' : ''
+      className={`px-6 py-3 text-white font-bold rounded-lg ${
+        isPending
+          ? 'bg-gray-400 cursor-not-allowed'
+          : 'bg-blue-500 hover:bg-blue-700'
       }`}
     >
       <span
