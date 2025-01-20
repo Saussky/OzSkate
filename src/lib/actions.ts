@@ -277,6 +277,7 @@ export async function checkAllProductsForDuplicates() {
   const allProducts = await prisma.product.findMany({
     include: {
       variants: true, // Include variants for SKU checking
+      shop: true,     // Include shop information for store comparison
     },
   });
 
@@ -292,26 +293,32 @@ export async function checkAllProductsForDuplicates() {
     productsByChildType[childType].push(product);
   }
 
-  console.log(`Grouped products by childType:`);
+  console.log(`Grouped products by childType.`);
 
   // Check duplicates within each childType
   for (const [childType, products] of Object.entries(productsByChildType)) {
     console.log(`Checking products under childType: ${childType}`);
 
-    const results: { product1: string; product2: string; reasons: string[] }[] =
-      [];
+    const results: {
+      product1: any;
+      product2: any;
+      reasons: string[];
+    }[] = [];
 
     for (let i = 0; i < products.length; i++) {
       for (let j = i + 1; j < products.length; j++) {
         const product1 = products[i];
         const product2 = products[j];
 
+        // Only compare products from different stores
+        if (product1.shopId === product2.shopId) continue;
+
         const similarityResult = checkProductSimilarity(product1, product2);
 
         if (similarityResult.isSimilar) {
           results.push({
-            product1: product1.title,
-            product2: product2.title,
+            product1,
+            product2,
             reasons: similarityResult.reasons,
           });
         }
@@ -323,11 +330,44 @@ export async function checkAllProductsForDuplicates() {
       console.log(
         `Found ${results.length} potential duplicates in childType: ${childType}`
       );
+
       for (const result of results) {
+        const p1 = result.product1;
+        const p2 = result.product2;
+
         console.log(
-          `- Duplicate Pair: "${result.product1}" <-> "${result.product2}"`
+          `- Duplicate Pair: "${p1.title}" (Store: ${p1.shop.name}) <-> "${p2.title}" (Store: ${p2.shop.name})`
         );
         console.log(`  Reasons: ${result.reasons.join(", ")}`);
+
+        // Mark duplicates in the database
+        try {
+          await prisma.$transaction([
+            prisma.product.update({
+              where: { id: p1.id },
+              data: {
+                markedAsDuplicate: true,
+                duplicateProducts: {
+                  connect: [{ id: p2.id }],
+                },
+              },
+            }),
+            prisma.product.update({
+              where: { id: p2.id },
+              data: {
+                markedAsDuplicate: true,
+                duplicateProducts: {
+                  connect: [{ id: p1.id }],
+                },
+              },
+            }),
+          ]);
+          console.log(
+            `DB updated: ${p1.title} and ${p2.title} marked as duplicates.`
+          );
+        } catch (err) {
+          console.error("Error updating products as duplicates:", err);
+        }
       }
     } else {
       console.log(`No duplicates found in childType: ${childType}`);

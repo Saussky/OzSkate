@@ -68,6 +68,7 @@ model product {
   markedAsDuplicate    Boolean?
   duplicateProducts  product[]  @relation("ProductDuplicates")
   duplicatedBy       product[]  @relation("ProductDuplicates") // Opposite relation
+  approved           Boolean    @default(false) // Admin approval flag  
 
   @@index([shopId])
   @@index([title])
