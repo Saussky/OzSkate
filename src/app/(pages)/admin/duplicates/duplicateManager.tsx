@@ -82,17 +82,19 @@ export default function DuplicateManager() {
               className="flex flex-col md:flex-row items-center gap-4 mb-6"
             >
               {/* Original Product Card (the “keeper”) */}
-              <ProductCard
-                id={product.id}
-                title={product.title}
-                admin={false} // or pass actual admin if you want
-                price={product.price} // or set a real price if you store it
-                handle={''} // handle is empty or a placeholder
-                shop={{ name: product.shopName, url: '#' } as any} // minimal shop object
-                imageSrc={product.image?.src}
-                parentType={null}
-                childType={null}
-              />
+              <div className="w-1/3 h-1/4">
+                <ProductCard
+                  id={product.id}
+                  title={product.title}
+                  admin={false} // or pass actual admin if you want
+                  price={product.price} // or set a real price if you store it
+                  handle={''} // handle is empty or a placeholder
+                  shop={{ name: product.shopName, url: '#' } as any} // minimal shop object
+                  imageSrc={product.image?.src}
+                  parentType={null}
+                  childType={null}
+                />
+              </div>
 
               {/* Merge Buttons in the middle */}
               <div className="flex flex-col items-center justify-center space-y-2">
@@ -114,18 +116,20 @@ export default function DuplicateManager() {
                 </button>
               </div>
 
-              {/* Duplicate Product Card */}
-              <ProductCard
-                id={dup.id}
-                title={dup.title}
-                admin={false}
-                price="--"
-                handle={''}
-                shop={{ name: dup.shopName, url: '#' } as any}
-                imageSrc={dup.image?.src}
-                parentType={null}
-                childType={null}
-              />
+              <div className="w-1/3 h-1/4">
+                {/* Duplicate Product Card */}
+                <ProductCard
+                  id={dup.id}
+                  title={dup.title}
+                  admin={false}
+                  price="--"
+                  handle={''}
+                  shop={{ name: dup.shopName, url: '#' } as any}
+                  imageSrc={dup.image?.src}
+                  parentType={null}
+                  childType={null}
+                />
+              </div>
             </div>
           ))}
         </section>

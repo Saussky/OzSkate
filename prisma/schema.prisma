@@ -65,7 +65,7 @@ model product {
   on_sale_variant_id String? // Can be null if no variants are on sale
   cheapestPrice     Float?    // Cached minimum price of variants
 
-  markedAsDuplicate    Boolean?
+  markedAsDuplicate    Boolean? // TODO: Rename to just duplicate
   duplicateProducts  product[]  @relation("ProductDuplicates")
   duplicatedBy       product[]  @relation("ProductDuplicates") // Opposite relation
   approved           Boolean    @default(false) // Admin approval flag  
