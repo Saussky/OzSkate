@@ -78,6 +78,7 @@ export default function StoreFront(user: User | null) {
     router.push(`?${query.toString()}`);
   }, [currentPage, filters, router, sortOption]);
 
+  // TODO: Load products at page level?
   const loadProducts = useCallback(
     (page: number) => {
       startTransition(async () => {
