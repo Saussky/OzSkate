@@ -95,9 +95,9 @@ export async function mergeProducts(sourceId: string, targetId: string) {
     include: { duplicateProducts: true, duplicatedBy: true },
   });
 
-  if (targetProduct?.duplicateProducts) {
-    throw new Error("Duplicate is a source for other duplicates")
-  }
+  // if (targetProduct?.duplicateProducts) {
+  //   throw new Error("Duplicate is a source for other duplicates")
+  // }
 
   if (!sourceProduct || !targetProduct) {
     throw new Error("One or both products not found");
@@ -108,7 +108,6 @@ export async function mergeProducts(sourceId: string, targetId: string) {
     prisma.product.update({
       where: { id: sourceId },
       data: {
-        approvedDuplicate: true,
         suspectedDuplicate: false,
         duplicateProducts: {
           connect: [{ id: targetId }], // Add the target to source's duplicateProducts

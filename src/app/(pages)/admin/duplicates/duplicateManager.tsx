@@ -4,7 +4,7 @@ import { getDuplicates, rejectDuplicate, mergeProducts } from './actions';
 import ProductCard from '@/components/productCard';
 
 export default function DuplicateManager() {
-  const [duplicates, setDuplicates] = useState<any[]>([]);
+  const [duplicates, setDuplicates] = useState<any[]>([]); //TODO Get product type and extend with duplicateProduct possiblity
   const [isPending, startTransition] = useTransition();
 
   // Fetch duplicates on mount
@@ -48,7 +48,7 @@ export default function DuplicateManager() {
             </button>
           </header>
 
-          {product.duplicateProducts.map((dup) => (
+          {product.duplicateProducts.map((dup: any) => (
             <div
               key={dup.id}
               className="flex flex-col md:flex-row items-center gap-4 mb-6"
