@@ -7,8 +7,7 @@ export default function MergeProductsButton() {
 
   async function handleMerge() {
     startTransition(async () => {
-      const merge = checkAllProductsForDuplicates();
-      console.log('merge', merge);
+      checkAllProductsForDuplicates();
     });
   }
 
