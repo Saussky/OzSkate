@@ -350,7 +350,7 @@ export async function checkAllProductsForDuplicates() {
             prisma.product.update({
               where: { id: p1.id },
               data: {
-                markedAsDuplicate: true,
+                suspectedDuplicate: true,
                 duplicateProducts: {
                   connect: [{ id: p2.id }],
                 },
@@ -359,7 +359,7 @@ export async function checkAllProductsForDuplicates() {
             prisma.product.update({
               where: { id: p2.id },
               data: {
-                markedAsDuplicate: true,
+                suspectedDuplicate: true,
                 duplicateProducts: {
                   connect: [{ id: p1.id }],
                 },

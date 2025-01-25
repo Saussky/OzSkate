@@ -23,7 +23,7 @@ export default function DuplicateManager() {
   const [duplicates, setDuplicates] = useState<any[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  // Fetch list of products with `markedAsDuplicate = true` (unapproved)
+  // Fetch list of products with `suspectedDuplicate = true` (unapprovedDuplicate)
   useEffect(() => {
     startTransition(async () => {
       const data = await getDuplicates();

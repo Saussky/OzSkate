@@ -62,13 +62,14 @@ model product {
   publishedAt DateTime
 
   onSale             Boolean
-  on_sale_variant_id String? // Can be null if no variants are on sale
-  cheapestPrice     Float?    // Cached minimum price of variants
+  on_sale_variant_id String? // Null if no variants are on sale
+  cheapestPrice     Float?    // Cached minimum price of variants //TODO: Need to update this value when fetching data
 
-  markedAsDuplicate    Boolean? // TODO: Rename to just duplicate
+  suspectedDuplicate    Boolean?
+  approvedDuplicate          Boolean    @default(false)
+
   duplicateProducts  product[]  @relation("ProductDuplicates")
   duplicatedBy       product[]  @relation("ProductDuplicates") // Opposite relation
-  approved           Boolean    @default(false) // Admin approval flag  
 
   @@index([shopId])
   @@index([title])

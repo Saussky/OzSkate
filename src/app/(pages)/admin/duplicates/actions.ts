@@ -4,8 +4,8 @@ import { prisma } from '@/lib/prisma';
 export async function getDuplicates() {
   const duplicates = await prisma.product.findMany({
     where: {
-      markedAsDuplicate: true,
-      approved: false,
+      suspectedDuplicate: true,
+      approvedDuplicate: false,
     },
     include: {
       shop: true,
@@ -20,7 +20,7 @@ export async function getDuplicates() {
   return duplicates.map((product) => ({
     id: product.id,
     title: product.title,
-    approved: product.approved,
+    approvedDuplicate: product.approvedDuplicate,
     shopName: product.shop.name,
     image: product.image,
     duplicateProducts: product.duplicateProducts.map((dp) => ({
@@ -64,8 +64,8 @@ export async function rejectDuplicate(productId: string) {
         duplicateProducts: {
           set: [], // clears out any references
         },
-        markedAsDuplicate: false,
-        approved: false,
+        suspectedDuplicate: false,
+        approvedDuplicate: false,
       },
     });
   });
@@ -97,8 +97,8 @@ export async function mergeProducts(sourceId: string, targetId: string) {
     prisma.product.update({
       where: { id: sourceId },
       data: {
-        approved: true,
-        markedAsDuplicate: false,
+        approvedDuplicate: true,
+        suspectedDuplicate: false,
         duplicateProducts: {
           connect: [{ id: targetId }], // Add the target to source's duplicateProducts
         },
@@ -107,8 +107,8 @@ export async function mergeProducts(sourceId: string, targetId: string) {
     prisma.product.update({
       where: { id: targetId },
       data: {
-        approved: true,
-        markedAsDuplicate: true,
+        approvedDuplicate: true,
+        suspectedDuplicate: true,
         duplicatedBy: {
           connect: [{ id: sourceId }], // Add the source to target's duplicatedBy
         },
