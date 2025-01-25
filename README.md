@@ -14,13 +14,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### To update DB without creating a migration
 
+```bash
 npx prisma db push
+```
 
 ### To create types from schema.prisma
 
+```bash
 npx prisma generate
+```
 
-!!AFTER RUNNING THIS COMMAND YOU MUST RESTART NEXT APP, DEV MODE DOESN'T CATCH THIS!!
+After running generate command, the next-app must be restarted
 
 # Postgres Docker
 
