@@ -17,21 +17,32 @@ export async function getDuplicates() {
     },
   });
 
-  return duplicates.map((product) => ({
-    id: product.id,
-    title: product.title,
-    approvedDuplicate: product.approvedDuplicate,
-    shopName: product.shop.name,
-    image: product.image,
-    duplicateProducts: product.duplicateProducts.map((dp) => ({
-      id: dp.id,
-      title: dp.title,
-      shopName: dp.shop.name,
-      image: dp.image,
-    })),
-  }));
-}
+  return duplicates.map((product) => {
+    return {
+      id: product.id,
+      title: product.title,
+      handle: product.handle,
+      price: product.cheapestPrice,
+      parentType: product.parentType,
+      childType: product.childType,
+      shopName: product.shop.name,
+      shopUrl: product.shop.url,
+      image: product.image,
 
+      duplicateProducts: product.duplicateProducts.map((dp) => ({
+        id: dp.id,
+        title: dp.title,
+        handle: dp.handle,
+        price: dp.cheapestPrice,
+        parentType: dp.parentType,
+        childType: dp.childType,
+        shopName: dp.shop.name,
+        shopUrl: dp.shop.url,
+        image: dp.image,
+      })),
+    };
+  });
+}
 
 export async function rejectDuplicate(productId: string) {
   await prisma.$transaction(async (tx) => {

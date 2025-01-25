@@ -190,6 +190,7 @@ export function categoriseProduct(product: Product): CategorisedProduct {
   let parentType = null;
   let childType: ChildType | null = null;
 
+  // TODO: ?
   // if (isMensFootwear(product)) {
   //   return { parentType: "Shoes", childType: "Shoes" };
   // }

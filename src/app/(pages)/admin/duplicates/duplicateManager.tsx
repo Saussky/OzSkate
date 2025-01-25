@@ -1,29 +1,13 @@
 'use client';
 import React, { useEffect, useState, useTransition } from 'react';
 import { getDuplicates, rejectDuplicate, mergeProducts } from './actions';
-
-// Import your existing ProductCard component
 import ProductCard from '@/components/productCard';
 
-type DuplicateProduct = {
-  id: string;
-  title: string;
-  shopName: string;
-  image?: { src: string };
-  duplicateProducts: {
-    id: string;
-    title: string;
-    shopName: string;
-    image?: { src: string };
-  }[];
-};
-
 export default function DuplicateManager() {
-  // The “original” (keeper) is this product, while the “duplicates” are in duplicateProducts
   const [duplicates, setDuplicates] = useState<any[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  // Fetch list of products with `suspectedDuplicate = true` (unapprovedDuplicate)
+  // Fetch duplicates on mount
   useEffect(() => {
     startTransition(async () => {
       const data = await getDuplicates();
@@ -31,26 +15,15 @@ export default function DuplicateManager() {
     });
   }, []);
 
-  // “Reject” means we are discarding the flag that these are duplicates
   async function handleReject(productId: string) {
     await rejectDuplicate(productId);
-    // Remove from local state
     setDuplicates((prev) => prev.filter((p) => p.id !== productId));
   }
 
-  /**
-   * Merge logic:
-   * - sourceId = The “duplicate” we are discarding
-   * - targetId = The “original” we keep
-   */
   async function handleMerge(sourceId: string, targetId: string) {
     await mergeProducts(sourceId, targetId);
-
-    // Remove the “source” from the local state
-    // Because we’re effectively “removing” or “absorbing” that product
+    // Remove source from state
     setDuplicates((prev) => prev.filter((p) => p.id !== sourceId));
-
-    console.log(`Merged product ${sourceId} → ${targetId}`);
   }
 
   if (duplicates.length === 0) {
@@ -71,35 +44,35 @@ export default function DuplicateManager() {
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
               disabled={isPending}
             >
-              Not a Duplicate (Reject)
+              Not a Duplicate (Reject) {/*TODO: REMOVE */}
             </button>
           </header>
 
-          {/* Show each duplicate in a row next to the original */}
           {product.duplicateProducts.map((dup) => (
             <div
               key={dup.id}
               className="flex flex-col md:flex-row items-center gap-4 mb-6"
             >
-              {/* Original Product Card (the “keeper”) */}
+              {/* Original product card (keeper) */}
               <div className="w-1/3 h-1/4">
                 <ProductCard
                   id={product.id}
                   title={product.title}
-                  admin={false} // or pass actual admin if you want
-                  price={product.price} // or set a real price if you store it
-                  handle={''} // handle is empty or a placeholder
-                  shop={{ name: product.shopName, url: '#' } as any} // minimal shop object
+                  admin={false}
+                  price={product.price}
+                  handle={product.handle}
+                  shop={{ name: product.shopName, url: product.shopUrl }}
                   imageSrc={product.image?.src}
-                  parentType={null}
-                  childType={null}
+                  parentType={product.parentType}
+                  childType={product.childType}
                 />
               </div>
 
-              {/* Merge Buttons in the middle */}
+              {/* Merge buttons in the middle */}
               <div className="flex flex-col items-center justify-center space-y-2">
                 <p className="text-sm text-gray-500">Merge direction</p>
-                {/* Merge the DUPLICATE (dup) into the ORIGINAL (product) */}
+
+                {/* Merge DUP -> ORIG */}
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(dup.id, product.id)}
@@ -107,7 +80,7 @@ export default function DuplicateManager() {
                   ← Merge Duplicate → Original
                 </button>
 
-                {/* Merge the ORIGINAL (product) into the DUPLICATE (dup) */}
+                {/* Merge ORIG -> DUP */}
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(product.id, dup.id)}
@@ -116,18 +89,19 @@ export default function DuplicateManager() {
                 </button>
               </div>
 
+              {/* Duplicate product card */}
               <div className="w-1/3 h-1/4">
-                {/* Duplicate Product Card */}
                 <ProductCard
                   id={dup.id}
                   title={dup.title}
                   admin={false}
-                  price="--"
-                  handle={''}
-                  shop={{ name: dup.shopName, url: '#' } as any}
+                  price={dup.price}
+                  handle={dup.handle}
+                  // shop={{ name: dup.shopName, url: dup.shopUrl }}
+                  shop={{ name: dup.shopName, url: dup.shopUrl } as any}
                   imageSrc={dup.image?.src}
-                  parentType={null}
-                  childType={null}
+                  parentType={dup.parentType}
+                  childType={dup.childType}
                 />
               </div>
             </div>
