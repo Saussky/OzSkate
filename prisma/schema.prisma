@@ -14,19 +14,19 @@ datasource db {
 // Auth
 
 model user {
-  id          String    @id @default(cuid())
-  email       String    @unique
-  username       String    @unique
-  hashed_password    String
-  sessions    session[]
-  admin       Boolean   @default(false)
+  id              String    @id @default(cuid())
+  email           String    @unique
+  username        String    @unique
+  hashed_password String
+  sessions        session[]
+  admin           Boolean   @default(false)
 }
 
 model session {
-  id          String    @id
-  userId      String
-  user        user      @relation(fields: [userId], references: [id])
-  expiresAt   DateTime
+  id        String   @id
+  userId    String
+  user      user     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
 
   @@index([userId])
 }
@@ -45,31 +45,31 @@ model shop {
 model product {
   id          String    @id @default(cuid())
   shopId      Int
-  shop        shop @relation(fields: [shopId], references: [id])
+  shop        shop      @relation(fields: [shopId], references: [id])
   title       String
   handle      String
   description String?
   vendor      String?
   productType String?
   parentType  String?
-  childType String?
+  childType   String?
   tags        String?
   image       Json?
   variants    variant[] // One-to-many relationship with Variant
-  options     option[]  // One-to-many relationship with Option
+  options     option[] // One-to-many relationship with Option
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   publishedAt DateTime
 
   onSale             Boolean
   on_sale_variant_id String? // Null if no variants are on sale
-  cheapestPrice     Float?    // Cached minimum price of variants //TODO: Need to update this value when fetching data
+  cheapestPrice      Float? // Cached minimum price of variants //TODO: Need to update this value when fetching data
 
-  suspectedDuplicate    Boolean?
-  approvedDuplicate          Boolean    @default(false)
+  suspectedDuplicateOf product? @relation("ProductDuplicates", fields: [productId], references: [id])
+  approvedDuplicate    Boolean  @default(false)
 
-  duplicateProducts  product[]  @relation("ProductDuplicates")
-  duplicatedBy       product[]  @relation("ProductDuplicates") // Opposite relation
+  duplicateProducts product[] @relation("ProductDuplicates")
+  productId         String?
 
   @@index([shopId])
   @@index([title])
@@ -81,26 +81,26 @@ model product {
 }
 
 model variant {
-  id               String    @id @default(cuid())
-  productId        String
-  product          product   @relation(fields: [productId], references: [id])
-  title            String?
-  option1          String?
-  option2          String?
-  option3          String?
-  sku              String?   
-  price            Float    
-  shoeSize         Float?  
-  deckSize         Float?  
-  compareAtPrice   Float?    // Original price (if discounted)
-  position         Int
-  taxable          Boolean?
-  featuredImage    String?
-  available        Boolean
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id             String   @id @default(cuid())
+  productId      String
+  product        product  @relation(fields: [productId], references: [id])
+  title          String?
+  option1        String?
+  option2        String?
+  option3        String?
+  sku            String?
+  price          Float
+  shoeSize       Float?
+  deckSize       Float?
+  compareAtPrice Float? // Original price (if discounted)
+  position       Int
+  taxable        Boolean?
+  featuredImage  String?
+  available      Boolean
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  @@index([productId]) 
+  @@index([productId])
   @@index([price])
   @@index([productId, price])
   @@index([shoeSize])
@@ -109,12 +109,12 @@ model variant {
 
 // TODO: Not used, maybe remove
 model option {
-  id         String   @id @default(cuid())
-  productId  String
-  product    product  @relation(fields: [productId], references: [id])
-  name       String
-  position   Int
-  values     String    // Comma-separated string
+  id        String  @id @default(cuid())
+  productId String
+  product   product @relation(fields: [productId], references: [id])
+  name      String
+  position  Int
+  values    String // Comma-separated string
 
   @@index([productId])
 }

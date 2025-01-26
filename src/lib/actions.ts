@@ -338,7 +338,9 @@ async function markProductsAsDuplicates(p1: any, p2: any) {
       prisma.product.update({
         where: { id: p1.id },
         data: {
-          suspectedDuplicate: true,
+          suspectedDuplicateOf: {
+            connect: { id: p2.id },
+          },
           duplicateProducts: {
             connect: [{ id: p2.id }],
           },
@@ -347,9 +349,11 @@ async function markProductsAsDuplicates(p1: any, p2: any) {
       prisma.product.update({
         where: { id: p2.id },
         data: {
-          suspectedDuplicate: true,
+          suspectedDuplicateOf: {
+            connect: { id: p2.id },
+          },
           duplicateProducts: {
-            connect: [{ id: p1.id }],
+            connect: [{ id: p2.id }],
           },
         },
       }),

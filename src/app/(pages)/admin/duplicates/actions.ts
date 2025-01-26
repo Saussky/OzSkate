@@ -4,8 +4,9 @@ import { prisma } from '@/lib/prisma';
 export async function getDuplicates() {
   const duplicates = await prisma.product.findMany({
     where: {
-      suspectedDuplicate: true,
-    },
+    suspectedDuplicateOf: {
+      NOT: undefined, // Ensures that suspectedDuplicateOf is not null
+    },    },
     include: {
       shop: true,
       duplicateProducts: {
@@ -74,7 +75,7 @@ export async function rejectDuplicate(productId: string) {
         duplicateProducts: {
           set: [], // clears out any references
         },
-        suspectedDuplicate: false,
+        suspectedDuplicateOf: undefined,
         approvedDuplicate: false,
       },
     });
@@ -86,12 +87,12 @@ export async function mergeProducts(sourceId: string, targetId: string) {
   // Fetch both products
   const sourceProduct = await prisma.product.findUnique({
     where: { id: sourceId },
-    include: { duplicateProducts: true, duplicatedBy: true },
+    include: { duplicateProducts: true },
   });
 
   const targetProduct = await prisma.product.findUnique({
     where: { id: targetId },
-    include: { duplicateProducts: true, duplicatedBy: true },
+    include: { duplicateProducts: true },
   });
 
   // if (targetProduct?.duplicateProducts) {
@@ -107,7 +108,6 @@ export async function mergeProducts(sourceId: string, targetId: string) {
     prisma.product.update({
       where: { id: sourceId },
       data: {
-        suspectedDuplicate: false,
         duplicateProducts: {
           connect: [{ id: targetId }], // Add the target to source's duplicateProducts
         },
@@ -117,10 +117,6 @@ export async function mergeProducts(sourceId: string, targetId: string) {
       where: { id: targetId },
       data: {
         approvedDuplicate: true,
-        suspectedDuplicate: true,
-        duplicatedBy: {
-          connect: [{ id: sourceId }], // Add the source to target's duplicatedBy
-        },
       },
     }),
   ]);
