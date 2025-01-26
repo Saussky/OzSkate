@@ -1,6 +1,6 @@
 'use server';
 
-import FindDuplicatesButton from '@/components/admin/mergeButton';
+import FindDuplicatesButton from '@/components/admin/findDuplicatesButton';
 import DuplicateManager from './duplicateManager';
 
 export default async function Duplicates() {

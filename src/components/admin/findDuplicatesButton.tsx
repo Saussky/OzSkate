@@ -2,7 +2,7 @@
 import { checkAllProductsForDuplicates } from '@/lib/actions';
 import { useTransition } from 'react';
 
-export default function findDuplicatesButton() {
+export default function FindDuplicatesButton() {
   const [isPending, startTransition] = useTransition();
 
   async function handleMerge() {
