@@ -32,7 +32,6 @@ export async function getDuplicates() {
       shopName: product.shop.name,
       shopUrl: product.shop.url,
       image: product.image,
-      suspectedDiplcateOf: product.suspectedDuplicateOf,
 
       duplicateProducts: product.duplicateProducts.map((dp) => ({
         id: dp.id,
