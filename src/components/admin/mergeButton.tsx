@@ -2,7 +2,7 @@
 import { checkAllProductsForDuplicates } from '@/lib/actions';
 import { useTransition } from 'react';
 
-export default function MergeProductsButton() {
+export default function findDuplicatesButton() {
   const [isPending, startTransition] = useTransition();
 
   async function handleMerge() {
@@ -24,7 +24,7 @@ export default function MergeProductsButton() {
       <span
         className={`inline-block text-xl ${isPending ? 'animate-spin' : ''}`}
       >
-        Merge Duplicates
+        Find Duplicates
       </span>
     </button>
   );
