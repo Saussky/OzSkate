@@ -14,6 +14,7 @@ export default function DuplicateManager() {
     });
   }, []);
 
+  //TODO: Refactor to simply remove the suspectedDuplicateOf connection for the DUPLICATE product (currently does orginal)
   async function handleReject(productId: string) {
     await rejectDuplicate(productId);
     setDuplicates((prev) => prev.filter((p) => p.id !== productId));
@@ -75,7 +76,7 @@ export default function DuplicateManager() {
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(dup.id, product.id)}
                 >
-                  ← Merge Duplicate → Original
+                  Original ← Duplicate
                 </button>
 
                 {/* Merge ORIG -> DUP */}
@@ -83,7 +84,7 @@ export default function DuplicateManager() {
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(product.id, dup.id)}
                 >
-                  Merge Original → Duplicate →
+                  Original → Duplicate
                 </button>
               </div>
 

@@ -5,11 +5,9 @@ export async function getDuplicates() {
   const duplicates = await prisma.product.findMany({
     where: {
       suspectedDuplicateOfId: {
-        not: null, // Ensures that suspectedDuplicateOf is not null
+        not: null,
       },
-      // duplicateProducts: {
-      //     some: {}, // means at least one related product
-      // },
+
     },
     include: {
       shop: true,
