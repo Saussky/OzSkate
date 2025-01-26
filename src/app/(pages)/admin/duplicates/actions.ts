@@ -6,7 +6,11 @@ export async function getDuplicates() {
     where: {
     suspectedDuplicateOf: {
       NOT: undefined, // Ensures that suspectedDuplicateOf is not null
-    },    },
+    },
+          duplicateProducts: {
+        some: {}, // means at least one related product
+      },
+      },
     include: {
       shop: true,
       duplicateProducts: {
@@ -28,6 +32,7 @@ export async function getDuplicates() {
       shopName: product.shop.name,
       shopUrl: product.shop.url,
       image: product.image,
+      suspectedDiplcateOf: product.suspectedDuplicateOf,
 
       duplicateProducts: product.duplicateProducts.map((dp) => ({
         id: dp.id,

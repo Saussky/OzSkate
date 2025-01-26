@@ -332,7 +332,7 @@ function findDuplicatesWithinChildType(products: any[]): {
   return results;
 }
 
-async function markProductsAsDuplicates(p1: any, p2: any) {
+async function markProductsAsSuspectedDuplicates(p1: any, p2: any) {
   try {
     await prisma.$transaction([
       prisma.product.update({
@@ -385,7 +385,7 @@ export async function checkAllProductsForDuplicates() {
         );
         console.log(`  Reasons: ${reasons.join(", ")}`);
 
-        await markProductsAsDuplicates(product1, product2);
+        await markProductsAsSuspectedDuplicates(product1, product2);
       }
     } else {
       console.log(`No duplicates found in childType: ${childType}`);
