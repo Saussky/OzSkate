@@ -26,7 +26,7 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 *TODO's 5/01/24*
 - Create master category taxonomy, browse each store to get an idea (then steal ocd's)
 	- Create documentation diagram using figma
-- Figure out identical products process
+- Figure out identical products process ☑️
 	- Shoe colourways aren't handled in variants, they are all their own product
 	- Variants are mainly sizes, which will have to be handled eventually
 - Finish creating accounts ☑️
