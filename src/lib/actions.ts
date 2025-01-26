@@ -336,24 +336,10 @@ async function markProductsAsSuspectedDuplicates(p1: any, p2: any) {
   try {
     await prisma.$transaction([
       prisma.product.update({
-        where: { id: p1.id },
-        data: {
-          suspectedDuplicateOf: {
-            connect: { id: p2.id },
-          },
-          duplicateProducts: {
-            connect: [{ id: p2.id }],
-          },
-        },
-      }),
-      prisma.product.update({
         where: { id: p2.id },
         data: {
           suspectedDuplicateOf: {
             connect: { id: p2.id },
-          },
-          duplicateProducts: {
-            connect: [{ id: p2.id }],
           },
         },
       }),

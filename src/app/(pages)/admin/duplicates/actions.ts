@@ -4,13 +4,13 @@ import { prisma } from '@/lib/prisma';
 export async function getDuplicates() {
   const duplicates = await prisma.product.findMany({
     where: {
-    suspectedDuplicateOf: {
-      NOT: undefined, // Ensures that suspectedDuplicateOf is not null
+      suspectedDuplicateOfId: {
+        not: null, // Ensures that suspectedDuplicateOf is not null
+      },
+      // duplicateProducts: {
+      //     some: {}, // means at least one related product
+      // },
     },
-          duplicateProducts: {
-        some: {}, // means at least one related product
-      },
-      },
     include: {
       shop: true,
       duplicateProducts: {
@@ -50,7 +50,6 @@ export async function getDuplicates() {
 
 export async function rejectDuplicate(productId: string) {
   await prisma.$transaction(async (tx) => {
-    // 1. Fetch the product along with its duplicates
     const product = await tx.product.findUnique({
       where: { id: productId },
       include: {
@@ -60,7 +59,6 @@ export async function rejectDuplicate(productId: string) {
 
     if (!product) return;
 
-    // 2. For each "linked duplicate" product, remove the connection back to this product
     for (const dup of product.duplicateProducts) {
       await tx.product.update({
         where: { id: dup.id },
@@ -68,17 +66,14 @@ export async function rejectDuplicate(productId: string) {
           duplicateProducts: {
             disconnect: [{ id: productId }],
           },
+          suspectedDuplicateOf: undefined,
         },
       });
     }
 
-    // 3. Finally, remove all duplicate references from THIS product and reset flags
     await tx.product.update({
       where: { id: productId },
       data: {
-        duplicateProducts: {
-          set: [], // clears out any references
-        },
         suspectedDuplicateOf: undefined,
         approvedDuplicate: false,
       },

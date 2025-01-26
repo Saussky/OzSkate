@@ -65,11 +65,10 @@ model product {
   on_sale_variant_id String? // Null if no variants are on sale
   cheapestPrice      Float? // Cached minimum price of variants //TODO: Need to update this value when fetching data
 
-  suspectedDuplicateOf product? @relation("ProductDuplicates", fields: [productId], references: [id])
+  suspectedDuplicateOf product? @relation("ProductDuplicates", fields: [suspectedDuplicateOfId], references: [id])
+  suspectedDuplicateOfId String?
   approvedDuplicate    Boolean  @default(false)
-
   duplicateProducts product[] @relation("ProductDuplicates")
-  productId         String?
 
   @@index([shopId])
   @@index([title])

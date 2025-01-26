@@ -7,7 +7,6 @@ export default function DuplicateManager() {
   const [duplicates, setDuplicates] = useState<any[]>([]); //TODO Get product type and extend with duplicateProduct possiblity
   const [isPending, startTransition] = useTransition();
 
-  // Fetch duplicates on mount
   useEffect(() => {
     startTransition(async () => {
       const data = await getDuplicates();
@@ -22,7 +21,6 @@ export default function DuplicateManager() {
 
   async function handleMerge(sourceId: string, targetId: string) {
     await mergeProducts(sourceId, targetId);
-    // Remove source from state
     setDuplicates((prev) => prev.filter((p) => p.id !== sourceId));
   }
 
