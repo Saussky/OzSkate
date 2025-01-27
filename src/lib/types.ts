@@ -1,5 +1,7 @@
 // TODO: Implement master category taxonomy and redo this
 
+import { Prisma } from "@prisma/client";
+
 export type ParentType =
   | "Clothing"
   | "Skateboards"
@@ -56,3 +58,20 @@ export type User = {
     username: string;
     admin: boolean;
 };
+
+export type ProductWithDuplicates = Prisma.productGetPayload<{
+  include: {
+    shop: true;
+    duplicateProducts: {
+      include: {
+        shop: true;
+      };
+    };
+  };
+}>;
+
+export type ProductWithShop = Prisma.productGetPayload<{
+  include: {
+    shop: true;
+  }
+}>;

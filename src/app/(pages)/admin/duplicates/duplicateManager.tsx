@@ -2,9 +2,10 @@
 import React, { useEffect, useState, useTransition } from 'react';
 import { getDuplicates, rejectDuplicate, mergeProducts } from './actions';
 import ProductCard from '@/components/productCard';
+import { ProductWithDuplicates, ProductWithShop } from '@/lib/types';
 
 export default function DuplicateManager() {
-  const [duplicates, setDuplicates] = useState<any[]>([]); //TODO Get product type and extend with duplicateProduct possiblity
+  const [duplicates, setDuplicates] = useState<ProductWithDuplicates[]>([]); //TODO Get product type and extend with duplicateProduct possiblity
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function DuplicateManager() {
             </button>
           </header>
 
-          {product.duplicateProducts.map((dup: any) => (
+          {product.duplicateProducts.map((dup: ProductWithShop) => (
             <div
               key={dup.id}
               className="flex flex-col md:flex-row items-center gap-4 mb-6"
@@ -58,9 +59,9 @@ export default function DuplicateManager() {
                   id={product.id}
                   title={product.title}
                   admin={false}
-                  price={product.price}
+                  price={String(product.cheapestPrice)}
                   handle={product.handle}
-                  shop={{ name: product.shopName, url: product.shopUrl }}
+                  shop={product.shop}
                   imageSrc={product.image?.src}
                   parentType={product.parentType}
                   childType={product.childType}
@@ -94,10 +95,10 @@ export default function DuplicateManager() {
                   id={dup.id}
                   title={dup.title}
                   admin={false}
-                  price={dup.price}
+                  price={String(dup.cheapestPrice)}
                   handle={dup.handle}
                   // shop={{ name: dup.shopName, url: dup.shopUrl }}
-                  shop={{ name: dup.shopName, url: dup.shopUrl } as any}
+                  shop={product.shop}
                   imageSrc={dup.image?.src}
                   parentType={dup.parentType}
                   childType={dup.childType}
