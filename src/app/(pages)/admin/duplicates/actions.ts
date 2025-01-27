@@ -1,9 +1,9 @@
 'use server';
 import { prisma } from '@/lib/prisma';
-import { ProductWithDuplicates } from '@/lib/types';
+import { ProductWithSuspectedDuplicate } from '@/lib/types';
 
-export async function getDuplicates(): Promise<ProductWithDuplicates[]> {
- const duplicates = await prisma.product.findMany({
+export async function getSuspectedDuplicates(): Promise<ProductWithSuspectedDuplicate[]> {
+ const suspectedDuplicates = await prisma.product.findMany({
     where: {
       suspectedDuplicateOfId: {
         not: null,
@@ -11,7 +11,7 @@ export async function getDuplicates(): Promise<ProductWithDuplicates[]> {
     },
     include: {
       shop: true,
-      duplicateProducts: {
+      suspectedDuplicateOf: {
         include: {
           shop: true,
         },
@@ -19,12 +19,7 @@ export async function getDuplicates(): Promise<ProductWithDuplicates[]> {
     },
   });
 
-  return duplicates.map((product) => ({
-    ...product,
-    duplicateProducts: product.duplicateProducts.map((dp) => ({
-      ...dp,
-    })),
-  }));
+  return suspectedDuplicates;
 }
 
 export async function rejectDuplicate(productId: string) {
@@ -68,6 +63,7 @@ export async function mergeProducts(sourceId: string, targetId: string) {
     include: { duplicateProducts: true },
   });
 
+  // TODO: Find where suspectedDuplicateId is also equal
   const targetProduct = await prisma.product.findUnique({
     where: { id: targetId },
     include: { duplicateProducts: true },

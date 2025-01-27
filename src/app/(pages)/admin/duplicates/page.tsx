@@ -1,6 +1,6 @@
 'use server';
 
-import FindDuplicatesButton from '@/components/admin/findDuplicatesButton';
+import FindDuplicatesButton from '@/app/(pages)/admin/duplicates/findDuplicatesButton';
 import DuplicateManager from './duplicateManager';
 
 export default async function Duplicates() {

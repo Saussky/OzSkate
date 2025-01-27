@@ -1,16 +1,22 @@
 'use client';
 import React, { useEffect, useState, useTransition } from 'react';
-import { getDuplicates, rejectDuplicate, mergeProducts } from './actions';
+import {
+  getSuspectedDuplicates,
+  rejectDuplicate,
+  mergeProducts,
+} from './actions';
 import ProductCard from '@/components/productCard';
-import { ProductWithDuplicates, ProductWithShop } from '@/lib/types';
+import { ProductWithSuspectedDuplicate } from '@/lib/types';
 
 export default function DuplicateManager() {
-  const [duplicates, setDuplicates] = useState<ProductWithDuplicates[]>([]); //TODO Get product type and extend with duplicateProduct possiblity
+  const [duplicates, setDuplicates] = useState<ProductWithSuspectedDuplicate[]>(
+    []
+  );
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     startTransition(async () => {
-      const data = await getDuplicates();
+      const data = await getSuspectedDuplicates();
       setDuplicates(data);
     });
   }, []);
@@ -32,82 +38,89 @@ export default function DuplicateManager() {
 
   return (
     <div className="space-y-8">
-      {duplicates.map((product) => (
-        <section
-          key={product.id}
-          className="border border-gray-300 rounded p-4"
-        >
-          <header className="mb-4">
-            <h2 className="text-xl font-semibold">{product.title}</h2>
-            <button
-              onClick={() => handleReject(product.id)}
-              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-              disabled={isPending}
-            >
-              Not a Duplicate (Reject) {/*TODO: REMOVE */}
-            </button>
-          </header>
+      {duplicates.map((duplicate) => {
+        // "original" is the single product in duplicate.suspectedDuplicateOf
+        const original = duplicate.suspectedDuplicateOf;
 
-          {product.duplicateProducts.map((dup: ProductWithShop) => (
-            <div
-              key={dup.id}
-              className="flex flex-col md:flex-row items-center gap-4 mb-6"
-            >
-              {/* Original product card (keeper) */}
+        // If for some reason original is null/undefined, skip or handle differently
+        if (!original) {
+          return null;
+        }
+
+        return (
+          <section
+            key={duplicate.id}
+            className="border border-gray-300 rounded p-4"
+          >
+            <header className="mb-4">
+              <h2 className="text-xl font-semibold">
+                Duplicate: {duplicate.title}
+              </h2>
+            </header>
+
+            <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
+              {/* Original product card (LEFT) */}
               <div className="w-1/3 h-1/4">
                 <ProductCard
-                  id={product.id}
-                  title={product.title}
+                  id={original.id}
+                  title={original.title}
                   admin={false}
-                  price={String(product.cheapestPrice)}
-                  handle={product.handle}
-                  shop={product.shop}
-                  imageSrc={product.image?.src}
-                  parentType={product.parentType}
-                  childType={product.childType}
+                  price={String(original.cheapestPrice ?? '')}
+                  handle={original.handle}
+                  shop={original.shop}
+                  imageSrc={original.image?.src}
+                  parentType={original.parentType}
+                  childType={original.childType}
                 />
               </div>
 
-              {/* Merge buttons in the middle */}
+              {/* Middle: merge + reject buttons */}
               <div className="flex flex-col items-center justify-center space-y-2">
-                <p className="text-sm text-gray-500">Merge direction</p>
+                <p className="text-sm text-gray-500 mb-2">Merge direction</p>
 
-                {/* Merge DUP -> ORIG */}
+                {/* Merge DUPLICATE -> ORIGINAL */}
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-                  onClick={() => handleMerge(dup.id, product.id)}
+                  onClick={() => handleMerge(duplicate.id, original.id)}
                 >
-                  Original ← Duplicate
+                  Duplicate → Original
                 </button>
 
-                {/* Merge ORIG -> DUP */}
+                {/* Merge ORIGINAL -> DUPLICATE */}
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-                  onClick={() => handleMerge(product.id, dup.id)}
+                  onClick={() => handleMerge(original.id, duplicate.id)}
                 >
                   Original → Duplicate
                 </button>
+
+                <button
+                  onClick={() => handleReject(duplicate.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded mt-4"
+                  disabled={isPending}
+                >
+                  Not a Duplicate
+                </button>
               </div>
 
-              {/* Duplicate product card */}
+              {/* Duplicate product card (RIGHT) */}
               <div className="w-1/3 h-1/4">
                 <ProductCard
-                  id={dup.id}
-                  title={dup.title}
+                  id={duplicate.id}
+                  title={duplicate.title}
                   admin={false}
-                  price={String(dup.cheapestPrice)}
-                  handle={dup.handle}
-                  // shop={{ name: dup.shopName, url: dup.shopUrl }}
-                  shop={product.shop}
-                  imageSrc={dup.image?.src}
-                  parentType={dup.parentType}
-                  childType={dup.childType}
+                  price={String(duplicate.cheapestPrice ?? '')}
+                  handle={duplicate.handle}
+                  shop={duplicate.shop}
+                  imageSrc={duplicate.image?.src}
+                  parentType={duplicate.parentType}
+                  childType={duplicate.childType}
                 />
               </div>
             </div>
-          ))}
-        </section>
-      ))}
+          </section>
+        );
+      })}
     </div>
   );
 }

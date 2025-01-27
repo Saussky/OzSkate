@@ -59,10 +59,10 @@ export type User = {
     admin: boolean;
 };
 
-export type ProductWithDuplicates = Prisma.productGetPayload<{
+export type ProductWithSuspectedDuplicate = Prisma.productGetPayload<{
   include: {
     shop: true;
-    duplicateProducts: {
+    suspectedDuplicateOf: {
       include: {
         shop: true;
       };

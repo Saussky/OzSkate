@@ -315,6 +315,7 @@ function findDuplicatesWithinChildType(products: any[]): {
       const product2 = products[j];
 
       // Only compare products from different stores
+      if (product1.id === product2.id) continue;
       if (product1.shopId === product2.shopId) continue;
 
       const similarityResult = checkProductSimilarity(product1, product2);
@@ -332,11 +333,12 @@ function findDuplicatesWithinChildType(products: any[]): {
   return results;
 }
 
+//TODO: Investigate further
 async function markProductsAsSuspectedDuplicates(p1: any, p2: any) {
   try {
     await prisma.$transaction([
       prisma.product.update({
-        where: { id: p2.id },
+        where: { id: p1.id },
         data: {
           suspectedDuplicateOf: {
             connect: { id: p2.id },
