@@ -46,6 +46,7 @@ export default function StoreFront(user: User | null) {
       : null,
     vendor: searchParams.get('vendor') || '',
     shop: searchParams.get('shop') || '',
+    searchTerm: searchParams.get('searchTerm') || '',
   };
   const initialSortOption = searchParams.get('sortOption') || 'latest';
   const initialPage = searchParams.get('page')

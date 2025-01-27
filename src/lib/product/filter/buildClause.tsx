@@ -24,6 +24,15 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     };
   }
 
+  if (filters.searchTerm) {
+    whereClause.OR = [
+      { title: { contains: filters.searchTerm, mode: 'insensitive' } },
+      { vendor: { contains: filters.searchTerm, mode: 'insensitive' } },
+      // { description: { contains: filters.searchTerm, mode: 'insensitive' } },
+      // { handle: { contains: filters.searchTerm, mode: 'insensitive' } },
+    ];
+  }
+
   const variantConditions: any[] = [];
 
   if (filters.maxPrice) {

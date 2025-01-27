@@ -143,7 +143,6 @@ export const getPaginatedProducts = async (
   const whereClause = await buildWhereClause(filters);
   const orderBy = await buildOrderByClause(sortOptions);
 
-  console.log('wherecalus', whereClause)
 
   const [products, totalProducts] = await prisma.$transaction([
     prisma.product.findMany({

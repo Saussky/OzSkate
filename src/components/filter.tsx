@@ -67,6 +67,7 @@ export default function Filter({
   const [deckSize, setDeckSize] = useState<number | null>(null);
   const [brand, setBrand] = useState<string | ''>('');
   const [shop, setShop] = useState<string | ''>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     setParentType(initialFilters.parentType || '');
@@ -77,6 +78,7 @@ export default function Filter({
     setDeckSize(initialFilters.deckSize || null);
     setBrand(initialFilters.vendor || '');
     setShop(initialFilters.shop || '');
+    setSearchTerm(initialFilters.searchTerm || '');
   }, [initialFilters]);
 
   const handleApplyFilters = () => {
@@ -89,6 +91,7 @@ export default function Filter({
       deckSize,
       vendor: brand,
       shop,
+      searchTerm,
     });
   };
 
@@ -100,6 +103,7 @@ export default function Filter({
     setShoeSize(null);
     setDeckSize(null);
     setBrand('');
+    setSearchTerm('');
 
     onFilterChange({
       parentType: '',
@@ -110,6 +114,7 @@ export default function Filter({
       deckSize: null,
       vendor: '',
       shop: '',
+      searchTerm: '',
     });
   };
 
@@ -227,6 +232,15 @@ export default function Filter({
           </option>
         ))}
       </select>
+
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="border rounded p-2"
+        style={{ minWidth: 150 }}
+      />
 
       <label className="flex items-center space-x-2">
         <input
