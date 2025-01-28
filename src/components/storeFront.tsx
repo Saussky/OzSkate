@@ -132,6 +132,7 @@ export default function StoreFront(user: User | null) {
     loadProducts(page);
   };
 
+  // TODO: THIS IS THE REASON VENDORS AND SHOPS AREN'T LOADING
   useEffect(() => {
     updateQueryParams();
   }, [filters, sortOption, currentPage, updateQueryParams]);
