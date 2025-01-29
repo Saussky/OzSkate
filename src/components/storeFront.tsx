@@ -11,7 +11,7 @@ import Pagination from './pagination';
 import ProductCard from './productCard';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
-import { useSearchParams, useRouter } from 'next/navigation';
+import useStoreFrontQueryParams from '@/lib/hooks';
 
 type ImageJson = {
   src: string;
@@ -28,30 +28,8 @@ export interface ExtendedProduct extends product {
 
 // TODO: Shorten and simplify query params, possibly separate
 export default function StoreFront(user: User | null) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const initialFilters: FilterOption = {
-    parentType: searchParams.get('parentType') || '',
-    childType: searchParams.get('childType') || '',
-    maxPrice: searchParams.get('maxPrice')
-      ? Number(searchParams.get('maxPrice'))
-      : '',
-    onSale: searchParams.get('onSale') === 'true',
-    shoeSize: searchParams.get('shoeSize')
-      ? Number(searchParams.get('shoeSize'))
-      : null,
-    deckSize: searchParams.get('deckSize')
-      ? Number(searchParams.get('deckSize'))
-      : null,
-    vendor: searchParams.get('vendor') || '',
-    shop: searchParams.get('shop') || '',
-    searchTerm: searchParams.get('searchTerm') || '',
-  };
-  const initialSortOption = searchParams.get('sortOption') || 'latest';
-  const initialPage = searchParams.get('page')
-    ? Number(searchParams.get('page'))
-    : 1;
+  const { initialFilters, initialSortOption, initialPage, updateQueryParams } =
+    useStoreFrontQueryParams();
 
   const [products, setProducts] = useState<ExtendedProduct[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -64,20 +42,9 @@ export default function StoreFront(user: User | null) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
 
-  const updateQueryParams = useCallback(() => {
-    const query = new URLSearchParams();
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== '') {
-        query.set(key, String(value));
-      }
-    });
-
-    if (sortOption) query.set('sortOption', sortOption);
-    query.set('page', String(currentPage));
-
-    router.push(`?${query.toString()}`);
-  }, [currentPage, filters, router, sortOption]);
+  useEffect(() => {
+    updateQueryParams(filters, sortOption, currentPage);
+  }, [filters, sortOption, currentPage, updateQueryParams]);
 
   // TODO: Load products at page level?
   const loadProducts = useCallback(
@@ -131,11 +98,6 @@ export default function StoreFront(user: User | null) {
   const handlePageChange = (page: number) => {
     loadProducts(page);
   };
-
-  // TODO: THIS IS THE REASON VENDORS AND SHOPS AREN'T LOADING
-  useEffect(() => {
-    updateQueryParams();
-  }, [filters, sortOption, currentPage, updateQueryParams]);
 
   const handleFilterChange = (
     newFilters: Record<string, string | number | boolean | null>
