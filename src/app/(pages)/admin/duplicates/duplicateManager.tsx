@@ -39,13 +39,8 @@ export default function DuplicateManager() {
   return (
     <div className="space-y-8">
       {duplicates.map((duplicate) => {
-        // "original" is the single product in duplicate.suspectedDuplicateOf
         const original = duplicate.suspectedDuplicateOf;
-
-        // If for some reason original is null/undefined, skip or handle differently
-        if (!original) {
-          return null;
-        }
+        if (!original) return null;
 
         return (
           <section
