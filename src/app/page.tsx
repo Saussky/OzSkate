@@ -1,6 +1,6 @@
 'use server';
-import StoreFront from '@/components/storeFront';
 import './globals.css';
+import StoreFront from '@/components/storeFront';
 import { validateRequest } from '@/lib/lucia';
 
 //TODO: fix type error

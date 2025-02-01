@@ -27,9 +27,9 @@ export default function DuplicateManager() {
     setDuplicates((prev) => prev.filter((p) => p.id !== productId));
   }
 
-  async function handleMerge(sourceId: string, targetId: string) {
-    await mergeProducts(sourceId, targetId);
-    setDuplicates((prev) => prev.filter((p) => p.id !== sourceId));
+  async function handleMerge(originalId: string, duplicateId: string) {
+    await mergeProducts(originalId, duplicateId);
+    setDuplicates((prev) => prev.filter((p) => p.id !== originalId));
   }
 
   if (duplicates.length === 0) {
@@ -59,7 +59,6 @@ export default function DuplicateManager() {
             </header>
 
             <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
-              {/* Original product card (LEFT) */}
               <div className="w-1/3 h-1/4">
                 <ProductCard
                   id={original.id}
@@ -74,22 +73,19 @@ export default function DuplicateManager() {
                 />
               </div>
 
-              {/* Middle: merge + reject buttons */}
               <div className="flex flex-col items-center justify-center space-y-2">
                 <p className="text-sm text-gray-500 mb-2">Merge direction</p>
 
-                {/* Merge DUPLICATE -> ORIGINAL */}
-                <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-                  onClick={() => handleMerge(duplicate.id, original.id)}
-                >
-                  Duplicate → Original
-                </button>
-
-                {/* Merge ORIGINAL -> DUPLICATE */}
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(original.id, duplicate.id)}
+                >
+                  Original ⬅️ Duplicate
+                </button>
+
+                <button
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                  onClick={() => handleMerge(duplicate.id, original.id)}
                 >
                   Original → Duplicate
                 </button>
@@ -103,7 +99,6 @@ export default function DuplicateManager() {
                 </button>
               </div>
 
-              {/* Duplicate product card (RIGHT) */}
               <div className="w-1/3 h-1/4">
                 <ProductCard
                   id={duplicate.id}

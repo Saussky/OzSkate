@@ -55,47 +55,45 @@ export async function rejectDuplicate(productId: string) {
   });
 }
 
-// TODO: Rename to original and duplicate
-export async function mergeProducts(sourceId: string, targetId: string) {
-  // Fetch both products
+export async function mergeProducts(originalId: string, duplicateId: string) {
   const sourceProduct = await prisma.product.findUnique({
-    where: { id: sourceId },
+    where: { id: originalId },
     include: { duplicateProducts: true },
   });
 
   // TODO: Find where suspectedDuplicateId is also equal
   const targetProduct = await prisma.product.findUnique({
-    where: { id: targetId },
+    where: { id: duplicateId },
     include: { duplicateProducts: true },
   });
 
-  // if (targetProduct?.duplicateProducts) {
-  //   throw new Error("Duplicate is a source for other duplicates")
-  // }
+  if (targetProduct?.duplicateProducts) {
+    throw new Error("Duplicate is a source for other duplicates")
+  }
 
   if (!sourceProduct || !targetProduct) {
     throw new Error("One or both products not found");
   }
 
-  // Update the database to mark duplicates and approve them
+  
   await prisma.$transaction([
     prisma.product.update({
-      where: { id: sourceId },
+      where: { id: originalId },
       data: {
         duplicateProducts: {
-          connect: [{ id: targetId }], // Add the target to source's duplicateProducts
+          connect: [{ id: duplicateId }],
         },
       },
     }),
     prisma.product.update({
-      where: { id: targetId },
+      where: { id: duplicateId },
       data: {
         approvedDuplicate: true,
       },
     }),
   ]);
 
-  console.log(`Marked products ${sourceId} and ${targetId} as duplicates with approval.`);
+  console.log(`Marked products ${originalId} and ${duplicateId} as duplicates with approval.`);
 }
 
 
