@@ -171,7 +171,6 @@ export const getPaginatedProducts = async (
   };
 };
 
-//TODO: This isn't running for some reason, not console logging anything
 export const getFilteredVendors = async (
   filters: FilterOption = {}
 ) => {

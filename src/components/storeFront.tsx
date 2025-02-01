@@ -26,7 +26,6 @@ export interface ExtendedProduct extends product {
   image: ImageJson | null;
 }
 
-// TODO: Shorten and simplify query params, possibly separate
 export default function StoreFront(user: User | null) {
   const { initialFilters, initialSortOption, initialPage, updateQueryParams } =
     useStoreFrontQueryParams();
