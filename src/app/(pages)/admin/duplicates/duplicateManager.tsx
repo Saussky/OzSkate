@@ -1,27 +1,33 @@
 'use client';
 import React, { useEffect, useState, useTransition } from 'react';
 import {
-  getSuspectedDuplicates,
   rejectDuplicate,
   mergeProducts,
+  getPaginatedSuspectedDuplicates,
 } from './actions';
 import ProductCard from '@/components/productCard';
 import { ProductWithSuspectedDuplicate } from '@/lib/types';
+import Pagination from '@/components/pagination';
 
 export default function DuplicateManager() {
   const [duplicates, setDuplicates] = useState<ProductWithSuspectedDuplicate[]>(
     []
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     startTransition(async () => {
-      const data = await getSuspectedDuplicates();
-      setDuplicates(data);
+      const { duplicates, totalPages } = await getPaginatedSuspectedDuplicates(
+        currentPage,
+        10
+      );
+      setDuplicates(duplicates);
+      setTotalPages(totalPages);
     });
-  }, []);
+  }, [currentPage]);
 
-  //TODO: Refactor to simply remove the suspectedDuplicateOf connection for the DUPLICATE product (currently does orginal)
   async function handleReject(productId: string) {
     await rejectDuplicate(productId);
     setDuplicates((prev) => prev.filter((p) => p.id !== productId));
@@ -31,6 +37,10 @@ export default function DuplicateManager() {
     await mergeProducts(originalId, duplicateId);
     setDuplicates((prev) => prev.filter((p) => p.id !== originalId));
   }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   if (duplicates.length === 0) {
     return <div>No duplicates found.</div>;
@@ -74,6 +84,7 @@ export default function DuplicateManager() {
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(original.id, duplicate.id)}
+                  disabled={isPending}
                 >
                   Original ⬅️ Duplicate
                 </button>
@@ -81,6 +92,7 @@ export default function DuplicateManager() {
                 <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
                   onClick={() => handleMerge(duplicate.id, original.id)}
+                  disabled={isPending}
                 >
                   Original → Duplicate
                 </button>
@@ -111,6 +123,12 @@ export default function DuplicateManager() {
           </section>
         );
       })}
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

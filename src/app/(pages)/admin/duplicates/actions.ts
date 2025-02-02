@@ -2,24 +2,39 @@
 import { prisma } from '@/lib/prisma';
 import { ProductWithSuspectedDuplicate } from '@/lib/types';
 
-export async function getSuspectedDuplicates(): Promise<ProductWithSuspectedDuplicate[]> {
- const suspectedDuplicates = await prisma.product.findMany({
-    where: {
-      suspectedDuplicateOfId: {
-        not: null,
-      },
-    },
-    include: {
-      shop: true,
-      suspectedDuplicateOf: {
-        include: {
-          shop: true,
+export async function getPaginatedSuspectedDuplicates(page: number, limit: number) {
+  const offset = (page - 1) * limit;
+
+  const [duplicates, total] = await prisma.$transaction([
+    prisma.product.findMany({
+      where: {
+        suspectedDuplicateOfId: {
+          not: null,
         },
       },
-    },
-  });
+      include: {
+        shop: true,
+        suspectedDuplicateOf: {
+          include: { shop: true },
+        },
+      },
+      skip: offset,
+      take: limit,
+    }),
+    prisma.product.count({
+      where: {
+        suspectedDuplicateOfId: {
+          not: null,
+        },
+      },
+    }),
+  ]);
 
-  return suspectedDuplicates;
+  return {
+    duplicates: duplicates as ProductWithSuspectedDuplicate[],
+    totalPages: Math.ceil(total / limit),
+    total,
+  };
 }
 
 export async function rejectDuplicate(productId: string) {
@@ -67,9 +82,9 @@ export async function mergeProducts(originalId: string, duplicateId: string) {
     include: { duplicateProducts: true },
   });
 
-  if (targetProduct?.duplicateProducts) {
-    throw new Error("Duplicate is a source for other duplicates")
-  }
+  // if (targetProduct?.duplicateProducts) {
+  //   throw new Error("Duplicate is a source for other duplicates")
+  // }
 
   if (!sourceProduct || !targetProduct) {
     throw new Error("One or both products not found");

@@ -161,8 +161,6 @@ export const getPaginatedProducts = async (
     }),
   ]);
 
-  console.log('products length', products.length)
-
   return {
     products,
     totalProducts,
