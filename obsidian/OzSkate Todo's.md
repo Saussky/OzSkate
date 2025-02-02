@@ -35,7 +35,17 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 - Extensive filters, optional modal?
 	- Check other online aggregators for filter ideas
 - UI
-- Email notifications for price drops
+- Email notifications for price drops - ignore do later
 - Updating products the least computationally expensive way
 - Sort by state(s) (location)?
 - Images sometimes too zoomed in, weren't before
+
+*TODO's 2/02/24*
+- Master category taxonomy
+- Images sometimes too zoomed in
+- Hosting
+- Filtering by state, organisaing where to put all the filters
+- Updating products - priority #1
+- Signifying the products have duplicates in storefront / product card
+- Make a bot that will watch 50-50.com.au to track the buying notifications that appear when any customer purchases something, track $ over time to get an idea of shops daily intake
+- Some product links show the item as unavailable
