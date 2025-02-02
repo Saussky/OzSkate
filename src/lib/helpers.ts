@@ -18,7 +18,7 @@ export async function processShop(shop: any) {
   const transformedProducts = transformProducts(allPaginatedProducts, shop.id);
 
   for (const product of transformedProducts) {
-    const { variants, options, ...productData } = product;
+    const { variants, ...productData } = product;
 
     await prisma.product.upsert({
       where: { id: productData.id },
@@ -34,18 +34,6 @@ export async function processShop(shop: any) {
           update: variant,
           create: {...variant, shoeSize: variant.shoeSize || null, deckSize: variant.deckSize || null }
       });
-      }
-    }
-
-    if (Array.isArray(options)) {
-      for (const option of options) {
-        if (option.id) {
-          await prisma.option.upsert({
-            where: { id: option.id },
-            update: option,
-            create: option,
-          });
-        }
       }
     }
   }

@@ -49,3 +49,4 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 - Signifying the products have duplicates in storefront / product card
 - Make a bot that will watch 50-50.com.au to track the buying notifications that appear when any customer purchases something, track $ over time to get an idea of shops daily intake
 - Some product links show the item as unavailable
+- Shoe sizes are different priced, this should affect results in storefront

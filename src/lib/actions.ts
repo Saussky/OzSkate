@@ -87,7 +87,7 @@ export async function fetchAllProducts() {
       }
     }
     
-    await updateProducts();
+    await markProductsOnSale();
     console.log("Product import completed.");
   } catch (error) {
     console.error("Error fetching all products:", error);
@@ -95,13 +95,14 @@ export async function fetchAllProducts() {
 }
 
 
-export const updateProducts = async () => {
+export const markProductsOnSale = async () => {
   const products = await prisma.product.findMany({
     include: {
       variants: true,
     },
   });
 
+  // TODO: What if multiple variants are on sale??
   for (const product of products) {
     const onSaleVariant = product.variants.find(
       (variant) => variant.compareAtPrice !== null

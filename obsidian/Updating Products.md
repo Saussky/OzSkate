@@ -11,4 +11,4 @@ We delete the products and pull in all of them every hour or so. Computationally
 Instead of replacing the products we could compare the product Ids, if they match just see if the recently fetched product has any new prices (or is out of stock) and if so, update the existing product.
 	- Might it be easier to just update the product with that information regardless? Probably not as that's adding more read/write
 
-We could store the manual changes separately and re-apply them with every import
+Make a function that calls processShop for each shop. Matches products to the ones in the database, check if the variant prices have updated, if they have update all variants and recalculate cheapestPrice property
