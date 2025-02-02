@@ -15,7 +15,7 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
     startTransition(async () => {
       try {
         const { inDatabase } = await toggleShop(name);
-        // Update local state so button immediately reflects the new status
+        // Update local state immediately to reflect the new status
         setShops((prev) =>
           inDatabase ? [...prev, name] : prev.filter((n) => n !== name)
         );
@@ -36,12 +36,29 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
     });
   };
 
+  const handleActivateAllShops = () => {
+    startTransition(async () => {
+      try {
+        for (const shop of skateboardShops) {
+          if (!shops.includes(shop.name)) {
+            await toggleShop(shop.name);
+          }
+        }
+        // Update local state so all shops appear active
+        setShops(skateboardShops.map((shop) => shop.name));
+      } catch (error) {
+        console.error('Error activating all shops:', error);
+      }
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="w-full flex justify-center mt-10 mb-4">
         <div className="flex">
           <h2 className="text-xl font-bold">Manage Shops</h2>
         </div>
+
         <button
           onClick={handleDeleteAllShops}
           disabled={isPending}
@@ -50,6 +67,16 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
           }`}
         >
           {isPending ? '.' : '🗑️'}
+        </button>
+
+        <button
+          onClick={handleActivateAllShops}
+          disabled={isPending}
+          className={`ml-4 ${
+            isPending ? 'bg-gray-400 cursor-not-allowed' : ''
+          }`}
+        >
+          {isPending ? '.' : '✅'}
         </button>
       </div>
 
