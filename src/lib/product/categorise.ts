@@ -77,6 +77,7 @@ const childTypeKeywordsPerParent: {
     ],
     Youth: [],
     Womens: [],
+    Slides: ['slide', 'slides']
   },
   Bags: {
     Backpacks: ["backpack", "backpacks", "bag", "bags"],
@@ -153,6 +154,7 @@ function findChildType(
 
     let matchedChildType = findChildTypeForParent(searchFields, childKeywords);
 
+    // TODO: Logic isn't picking up kids shoes properly
     if (matchedChildType === "Mens") {
       const isYouth = searchFields.some((field) =>
         childTypeMatchesField(field, ["youth", "kid", "kids", "toddler"])
