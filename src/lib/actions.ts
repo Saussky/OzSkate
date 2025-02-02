@@ -351,7 +351,8 @@ async function markProductsAsSuspectedDuplicates(p1: any, p2: any) {
 
 export async function checkAllProductsForDuplicates() {
   const allProducts = await getAllProducts();
-  const productsByChildType = groupProductsByChildType(allProducts);
+  const cleanProducts = allProducts.filter(product => !product.approvedDuplicate)
+  const productsByChildType = groupProductsByChildType(cleanProducts);
 
   // Check duplicates within each childType
   for (const [childType, products] of Object.entries(productsByChildType)) {
