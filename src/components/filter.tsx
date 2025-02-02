@@ -120,6 +120,7 @@ export default function Filter({
 
   const parentTypes = Object.keys(childTypePerParent) as ParentType[];
 
+  //TODO: Child type per parent is not clear
   const childTypes =
     parentType && childTypePerParent[parentType]
       ? (childTypePerParent[parentType] as string[])
@@ -129,7 +130,6 @@ export default function Filter({
   const availableShoeSizes = ['7', '8', '9', '10', '11', '12'];
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
 
-  //TODO: Styling
   //TODO: Search filter should apply on keystroke
   return (
     <div className="flex flex-wrap space-x-5">

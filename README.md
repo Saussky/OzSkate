@@ -29,7 +29,7 @@ After running generate command, the next-app must be restarted
 # Postgres Docker
 
 ```bash
-docker run --name postgres-container -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ozskate -p 5432:5432 -d postgres
+docker run --name ozskate -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ozskate -p 5432:5432 -d postgres
 ```
 
 ```bash
