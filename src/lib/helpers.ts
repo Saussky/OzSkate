@@ -8,14 +8,14 @@ export async function processShop(shop: any) {
   const baseUrl = shop.url + '/products.json';
   const sinceId = shop.since_id || "0"; 
 
-  const allPaginatedProducts = await fetchShopifyProducts(baseUrl, sinceId);
+  const allProducts = await fetchShopifyProducts(baseUrl, sinceId);
 
-  if (allPaginatedProducts.length === 0) {
+  if (allProducts.length === 0) {
     console.log(`No new products found for shop: ${shop.name}`);
     return;
   }
 
-  const transformedProducts = transformProducts(allPaginatedProducts, shop.id);
+  const transformedProducts = transformProducts(allProducts, shop.id);
 
   for (const product of transformedProducts) {
     const { variants, ...productData } = product;

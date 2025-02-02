@@ -1,6 +1,6 @@
 'use server';
 import { prisma } from "@/lib/prisma";
-import { processShop } from "./helpers";
+import { fetchShopifyProducts, processShop } from "./helpers";
 import { buildOrderByClause, buildWhereClause } from "./product/filter/buildClause";
 import { FilterOption } from "./types";
 import { skateboardShops } from "./constants";
@@ -9,6 +9,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
 import { checkProductSimilarity } from "./product/merge";
+import { transformProducts } from "./product/transform";
 
 export async function getProductCount() {
   try {
@@ -93,6 +94,102 @@ export async function fetchAllProducts() {
     console.error("Error fetching all products:", error);
   }
 }
+
+export const updateProducts = async () => {
+  const shops = await prisma.shop.findMany();
+
+  for (const shop of shops) {
+    const baseUrl = `${shop.url}/products.json`;
+    const sinceId = shop.since_id || "0";
+
+    // 1) Fetch all products from the external store
+    const allProducts = await fetchShopifyProducts(baseUrl, { since_id: sinceId });
+
+    if (allProducts.length === 0) {
+      console.log(`No new products found for shop: ${shop.name}`);
+      continue;
+    }
+
+    // 2) Transform Shopify raw data into your local structure
+    const transformedProducts = transformProducts(allProducts, shop.id);
+
+    // Build a quick lookup for new product data by ID
+    const newProductsMap = new Map<string, typeof transformedProducts[number]>();
+    for (const p of transformedProducts) {
+      newProductsMap.set(p.id, p);
+    }
+
+    // 3) Get existing products/variants from your DB for this shop
+    const localProducts = await prisma.product.findMany({
+      where: { shopId: shop.id },
+      include: { variants: true },
+    });
+
+    // 4) Compare each local product/variant with the new data
+    for (const localProduct of localProducts) {
+      const newProduct = newProductsMap.get(localProduct.id);
+      if (!newProduct) {
+        // If your data model says that a product missing in the new feed
+        // might be discontinued or removed, handle it here.
+        // For now, just continue.
+        continue;
+      }
+
+      // Check if cheapestPrice changed (you can add other fields too)
+      const productUpdates: Record<string, any> = {};
+      if (localProduct.cheapestPrice !== newProduct.cheapestPrice) {
+        productUpdates.cheapestPrice = newProduct.cheapestPrice;
+      }
+
+      // If you want to compare other fields, do so here:
+      // if (localProduct.title !== newProduct.title) productUpdates.title = newProduct.title;
+      // ... etc.
+
+      // Update product only if there are changes
+      if (Object.keys(productUpdates).length > 0) {
+        await prisma.product.update({
+          where: { id: localProduct.id },
+          data: productUpdates,
+        });
+      }
+
+      // Now compare variants
+      const newVariantMap = new Map<string, typeof newProduct.variants[number]>();
+      (newProduct.variants ?? []).forEach((variant) => {
+        newVariantMap.set(variant.id, variant);
+      });
+
+      for (const localVariant of localProduct.variants) {
+        const newVariant = newVariantMap.get(localVariant.id);
+        if (!newVariant) {
+          // Possibly a variant no longer present in the feed; handle as you wish.
+          continue;
+        }
+
+        const variantUpdates: Record<string, any> = {};
+        // Compare the price fields, availability, etc.
+        if (localVariant.price !== newVariant.price) {
+          variantUpdates.price = newVariant.price;
+        }
+        if (localVariant.compareAtPrice !== newVariant.compareAtPrice) {
+          variantUpdates.compareAtPrice = newVariant.compareAtPrice;
+        }
+        // if (localVariant.available !== newVariant.available) {
+        //   variantUpdates.available = newVariant.available;
+        // }
+
+        if (Object.keys(variantUpdates).length > 0) {
+          await prisma.variant.update({
+            where: { id: localVariant.id },
+            data: variantUpdates,
+          });
+        }
+      }
+    }
+    console.log(`Finished updating products for shop: ${shop.name}`);
+  }
+  console.log("All shops processed in updateProducts.");
+};
 
 
 export const markProductsOnSale = async () => {
