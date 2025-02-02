@@ -7,8 +7,16 @@ type ManageShopsProps = {
   shopNames: string[];
 };
 
+function groupShopsByState(shops: typeof skateboardShops) {
+  return shops.reduce((acc, shop) => {
+    acc[shop.state] = acc[shop.state] || [];
+    acc[shop.state].push(shop);
+    return acc;
+  }, {} as Record<string, typeof skateboardShops>);
+}
+
 export default function ManageShops({ shopNames }: ManageShopsProps) {
-  const [shops, setShops] = useState<string[]>(shopNames);
+  const [activeShops, setActiveShops] = useState<string[]>(shopNames);
   const [isPending, startTransition] = useTransition();
 
   const handleToggleShop = (name: string) => {
@@ -16,7 +24,7 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
       try {
         const { inDatabase } = await toggleShop(name);
         // Update local state immediately to reflect the new status
-        setShops((prev) =>
+        setActiveShops((prev) =>
           inDatabase ? [...prev, name] : prev.filter((n) => n !== name)
         );
       } catch (error) {
@@ -29,7 +37,7 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
     startTransition(async () => {
       try {
         await deleteShops();
-        setShops([]);
+        setActiveShops([]);
       } catch (error) {
         console.error('Error deleting all shops:', error);
       }
@@ -40,17 +48,19 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
     startTransition(async () => {
       try {
         for (const shop of skateboardShops) {
-          if (!shops.includes(shop.name)) {
+          if (!activeShops.includes(shop.name)) {
             await toggleShop(shop.name);
           }
         }
         // Update local state so all shops appear active
-        setShops(skateboardShops.map((shop) => shop.name));
+        setActiveShops(skateboardShops.map((shop) => shop.name));
       } catch (error) {
         console.error('Error activating all shops:', error);
       }
     });
   };
+
+  const shopsByState = groupShopsByState(skateboardShops);
 
   return (
     <div className="space-y-4">
@@ -81,18 +91,12 @@ export default function ManageShops({ shopNames }: ManageShopsProps) {
       </div>
 
       <div className="w-2/3 mx-auto">
-        {Object.entries(
-          skateboardShops.reduce((acc, shop) => {
-            acc[shop.state] = acc[shop.state] || [];
-            acc[shop.state].push(shop);
-            return acc;
-          }, {} as Record<string, typeof skateboardShops>)
-        ).map(([state, shopsInState]) => (
+        {Object.entries(shopsByState).map(([state, shopsInState]) => (
           <div key={state} className="mb-8">
             <h3 className="text-lg font-semibold mb-4">{state}</h3>
             <div className="grid grid-cols-3 gap-4">
               {shopsInState.map((shop) => {
-                const isActive = shops.includes(shop.name);
+                const isActive = activeShops.includes(shop.name);
                 return (
                   <button
                     key={shop.name}
