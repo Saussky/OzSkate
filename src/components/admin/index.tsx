@@ -4,6 +4,7 @@ import RefreshCountsButton from './refreshCountsButton';
 import FetchProductsButton from './fetchProductsButton';
 import DeleteAllProductsButton from './deleteAllProductsButton';
 import ManageShops from './manageShops';
+import { updateAllProducts } from './actions';
 
 interface HomeComponentProps {
   shopCount: number;
@@ -18,6 +19,11 @@ export default function AdminComponent({
 }: HomeComponentProps) {
   const [currentShopCount, setCurrentShopCount] = useState(shopCount);
   const [currentProductCount, setCurrentProductCount] = useState(productCount);
+
+  const handleUpdateProductsClick = (event: MouseEvent) => {
+    event.preventDefault();
+    updateAllProducts();
+  };
 
   return (
     <>
@@ -47,6 +53,11 @@ export default function AdminComponent({
             setCurrentProductCount(newProductCount);
           }}
         />
+      </div>
+      <div>
+        <button onClick={() => handleUpdateProductsClick}>
+          Update Products
+        </button>
       </div>
 
       <div className="p-4">

@@ -1,3 +1,4 @@
+"use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fetch from "node-fetch";
 import { prisma } from "./prisma";
