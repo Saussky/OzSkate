@@ -35,6 +35,22 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
 
   const variantConditions: any[] = [];
 
+  // Removes unavailable products
+  if (variantConditions.length > 0) {
+    whereClause.variants = {
+      some: {
+        available: true,
+        AND: variantConditions,
+      },
+    };
+  } else {
+    whereClause.variants = {
+      some: {
+        available: true,
+      },
+    };
+  }
+
   if (filters.maxPrice) {
     const maxPrice = Number(filters.maxPrice);
     variantConditions.push({
