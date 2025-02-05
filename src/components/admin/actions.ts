@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/prisma";
 import { fetchShopifyProducts } from "@/lib/helpers";
-import { transformProductsForUpdate } from "@/lib/product/transform";
+import { transformProducts, transformProductsForUpdate } from "@/lib/product/transform";
 
 export async function updateAllProducts() { //TODO: Just one shop function
   console.log('begin')
@@ -28,7 +28,7 @@ async function processShopUpdates(shop: any) {
   const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
 
   // Filter fresh products that are new or have a differing updated_at timestamp.
-  const freshProductsToTransform = filterUpdatedFreshProducts(freshProductsRaw, localUpdatedAtMap);
+  const freshProductsToTransform = filterUpdatedFreshProducts(freshProductsRaw, localUpdatedAtMap, shop.id);
 
   if (freshProductsToTransform.length === 0) {
     console.log('No fresh product updates needed.');
@@ -65,14 +65,56 @@ async function getLocalProductsBriefMap(shopId: number): Promise<Map<string, Dat
 
 function filterUpdatedFreshProducts(
   freshProductsRaw: any[],
-  localUpdatedAtMap: Map<string, Date>
+  localUpdatedAtMap: Map<string, Date>,
+  shopId: number,
 ): any[] {
-  return freshProductsRaw.filter((product) => {
+  const newProducts: any = [];
+
+  const updatedProducts =  freshProductsRaw.filter((product) => {
     const localUpdatedAt = localUpdatedAtMap.get(product.id.toString());
-    if (!localUpdatedAt) return true; // TODO: New product handle
-    return new Date(product.updated_at).getTime() !== localUpdatedAt.getTime(); // TODO: Should we check the date is greater than? Could see shops/shopify screwing this up somehow
+
+    if (!localUpdatedAt) {
+      // No product id found, signifies new product
+      newProducts.push(product)
+      console.log('new product', product.title)
+    }
+
+    return new Date(product.updated_at).getTime() !== localUpdatedAt?.getTime(); // TODO: Should we check the date is greater than? Could see shops/shopify screwing this up somehow
   });
+
+  insertFreshProducts(newProducts, shopId)
+
+  return updatedProducts
 }
+async function insertFreshProducts(freshProductsRaw: any[], shopId: number) {
+  const transformedProducts = await transformProducts(freshProductsRaw, shopId);
+
+  for (const product of transformedProducts) {
+    const { variants, ...productData } = product;
+
+    await prisma.product.upsert({
+      where: { id: productData.id },
+      update: productData,
+      create: productData,
+    });
+
+    if (Array.isArray(variants)) {
+      for (const variant of variants) {
+        await prisma.variant.upsert({
+          where: { id: variant.id },
+          update: variant,
+          create: { 
+            ...variant, 
+            shoeSize: variant.shoeSize || null, 
+            deckSize: variant.deckSize || null 
+          }
+        });
+      }
+    }
+  }
+}
+
+
 
 function buildProductsMap(products: any[]) {
   const map = new Map<string, any>();
