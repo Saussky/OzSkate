@@ -1,9 +1,8 @@
 "use server";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/prisma";
 import { fetchShopifyProducts } from "@/lib/helpers";
-import { transformProducts } from "@/lib/product/transform";
+import { transformProductsForUpdate } from "@/lib/product/transform";
 
 export async function updateAllProducts() { //TODO: Just one shop function
   console.log('begin')
@@ -36,7 +35,7 @@ async function processShopUpdates(shop: any) {
     return;
   }
 
-  const transformedProducts = transformProducts(freshProductsToTransform, shop.id);
+  const transformedProducts = await transformProductsForUpdate(freshProductsToTransform);
   const newProductsMap = buildProductsMap(transformedProducts);
 
   const localProductsFull = await prisma.product.findMany({

@@ -80,3 +80,51 @@ export const transformProducts = (
     };
   });
 };
+
+
+
+/**
+ * Transforms the raw fresh products into a minimal shape needed for updates.
+ * Only extracts the product id, cheapestPrice, and variants (with price and compareAtPrice).
+ */
+export const transformProductsForUpdate = async (
+  allPaginatedProducts: any[],
+): Promise<{
+  id: string;
+  cheapestPrice: number | null;
+  variants: Array<{ id: string; price: number; compareAtPrice: number | null }>;
+}[]> => {
+  return Promise.all(
+    allPaginatedProducts.map(async (product) => {
+      const variants = product.variants ? await transformVariantsForUpdate(product.variants) : [];
+      
+      const cheapestPrice = variants.length > 0
+        ? Math.min(...variants.map(variant => variant.price))
+        : null;
+
+      return {
+        id: product.id.toString(),
+        cheapestPrice,
+        variants,
+      };
+    })
+  );
+};
+
+/**
+ * Transforms raw variant data into a minimal shape for updates.
+ * Extracts only the variant id, price, and compareAtPrice.
+ */
+export async function transformVariantsForUpdate(
+  variants: any[]
+): Promise<Array<{ id: string; price: number; compareAtPrice: number | null }>> {
+  return Promise.all(
+    variants.map(async (variant) => ({
+      id: variant.id.toString(),
+      price: parseFloat(variant.price),
+      compareAtPrice: variant.compare_at_price
+        ? parseFloat(variant.compare_at_price)
+        : null,
+    }))
+  );
+}
