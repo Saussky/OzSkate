@@ -68,15 +68,6 @@ export const transformProducts = (
       image: firstImage || {},
       onSale: false,
       variants: product.variants ? transformVariants(product, parentType, childType) : [],
-      options: product.options
-        ? product.options.map((option: any) => ({
-            id: option.id ? option.id.toString() : null,
-            productId: product.id.toString(),
-            name: option.name || "Unnamed Option",
-            position: option.position || 0,
-            values: option.values ? option.values.join(",") : "",
-          }))
-        : [],
     };
   });
 };
