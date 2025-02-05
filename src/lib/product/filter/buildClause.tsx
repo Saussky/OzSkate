@@ -36,6 +36,7 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
   const variantConditions: any[] = [];
 
   // Removes unavailable products
+  // Potentially computatitonally expensive, might be simpler to calculate in transfrom similar to cheapestPrice column
   if (variantConditions.length > 0) {
     whereClause.variants = {
       some: {

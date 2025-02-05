@@ -4,8 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { fetchShopifyProducts } from "@/lib/helpers";
 import { transformProducts, transformProductsForUpdate } from "@/lib/product/transform";
 
-export async function updateAllProducts() { //TODO: Just one shop function
-  console.log('begin')
+export async function updateAllProducts() {
   const shops = await prisma.shop.findMany();
 
   for (const shop of shops) {
@@ -50,8 +49,27 @@ async function processShopUpdates(shop: any) {
       continue;
     }
     await updateLocalProduct(localProduct, newProduct);
-    await updateVariants(localProduct.variants, newProduct.variants ?? []);
+    const variantsUpdated = await updateVariants(localProduct.variants, newProduct.variants ?? []);
+    if (variantsUpdated) {
+      await markProductOnSale(newProduct);
+    }
   }
+}
+
+async function markProductOnSale(product: { id: string; variants: Array<{ id: string; compareAtPrice: number | null }> }) {
+  const onSaleVariant = product.variants.find((variant) => variant.compareAtPrice !== null);
+  const onSale = !!onSaleVariant;
+  const onSaleVariantId = onSaleVariant ? onSaleVariant.id : null;
+
+  console.log('marking on sale product: ', product.id)
+
+  await prisma.product.update({
+    where: { id: product.id },
+    data: {
+      onSale,
+      on_sale_variant_id: onSaleVariantId,
+    },
+  });
 }
 
 async function getLocalProductsBriefMap(shopId: number): Promise<Map<string, Date>> {
@@ -140,7 +158,8 @@ async function updateLocalProduct(localProduct: any, newProduct: any) {
   }
 }
 
-async function updateVariants(localVariants: any[], newVariants: any[]) {
+async function updateVariants(localVariants: any[], newVariants: any[]): Promise<boolean> {
+  let compareAtPriceUpdated = false;
   const newVariantMap = new Map<string, any>();
   for (const variant of newVariants) {
     newVariantMap.set(variant.id, variant);
@@ -153,14 +172,13 @@ async function updateVariants(localVariants: any[], newVariants: any[]) {
     const variantUpdates: Record<string, any> = {};
 
     if (localVariant.price !== newVariant.price) {
-      console.log('updating variant price') // TODO: Pass product title here
+      console.log('updating variant price');
       variantUpdates.price = newVariant.price;
     }
     if (localVariant.compareAtPrice !== newVariant.compareAtPrice) {
-      // TODO: This means its on sale, update the product table flag
-      // TODO: happens already in transform, see that TODO
-      console.log('updating compare at price of variant ', localVariant.title)
+      console.log('updating compare at price of variant ', localVariant.title);
       variantUpdates.compareAtPrice = newVariant.compareAtPrice;
+      compareAtPriceUpdated = true;
     }
 
     if (Object.keys(variantUpdates).length > 0) {
@@ -170,4 +188,6 @@ async function updateVariants(localVariants: any[], newVariants: any[]) {
       });
     }
   }
+  return compareAtPriceUpdated;
 }
+
