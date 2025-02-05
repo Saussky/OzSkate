@@ -20,10 +20,9 @@ export default function AdminComponent({
   const [currentShopCount, setCurrentShopCount] = useState(shopCount);
   const [currentProductCount, setCurrentProductCount] = useState(productCount);
 
-  const handleUpdateProductsClick = (event: MouseEvent) => {
-    event.preventDefault();
-    updateAllProducts();
-  };
+  async function handleUpdateProductsClick() {
+    await updateAllProducts();
+  }
 
   return (
     <>
@@ -54,10 +53,8 @@ export default function AdminComponent({
           }}
         />
       </div>
-      <div>
-        <button onClick={() => handleUpdateProductsClick}>
-          Update Products
-        </button>
+      <div className="flex justify-center mt-6">
+        <button onClick={handleUpdateProductsClick}>Update Products</button>
       </div>
 
       <div className="p-4">

@@ -58,7 +58,7 @@ export const transformProducts = (
       description: product.body_html || null,
       publishedAt: new Date(product.published_at),
       createdAt: new Date(product.created_at),
-      updatedAt: new Date(product.updated_at),
+      updatedAt: new Date(product.updated_at), // TODO: Use this value when updating product
       vendor: product.vendor,
       productType: product.product_type,
       parentType,
