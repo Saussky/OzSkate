@@ -25,12 +25,14 @@
             "id": "819186dd1db0e81e",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.8.4"
+                "file": "OzSkate Todo's.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.8.4"
+              "icon": "lucide-file",
+              "title": "OzSkate Todo's"
             }
           }
         ],
