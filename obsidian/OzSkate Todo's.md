@@ -51,6 +51,6 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 	- Getting the cheapest price
 - Make a bot that will watch 50-50.com.au to track the buying notifications that appear when any customer purchases something, track $ over time to get an idea of shops daily intake
 - Some product links show the item as unavailable
-	- Have now filtered by the 'available' 
+	- Have now filtered by the 'available' column
 - Shoe sizes are different priced, this should affect results in storefront
 - Move actions into directories they are used, make lots of them
