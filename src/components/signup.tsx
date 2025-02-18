@@ -5,6 +5,7 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -17,12 +18,27 @@ export default function Signup() {
       });
 
       if (res.ok) {
-        console.log('Signup successful!');
+        setMessage('Signup successful! Logging you in...');
+
+        const loginRes = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (loginRes.ok) {
+          window.location.href = '/';
+        } else {
+          setMessage(
+            'Signup succeeded, but login failed. Please log in manually.'
+          );
+        }
       } else {
-        console.log('res', res);
+        setMessage('Signup failed. Please try again.');
       }
     } catch (error) {
       console.error('An unexpected error occurred:', error);
+      setMessage('An error occurred. Please try again later.');
     }
   };
 
@@ -36,6 +52,10 @@ export default function Signup() {
         <h1 className="text-center text-xl mb-6 font-semibold">
           Create an Account
         </h1>
+
+        {message && (
+          <p className="text-center text-green-600 mb-4">{message}</p>
+        )}
 
         <input
           value={email}
