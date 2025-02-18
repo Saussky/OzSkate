@@ -174,7 +174,7 @@ export const getFilteredVendors = async (
   try {
     const { parentType, childType } = filters;
     const whereClause: Record<string, any> = {};
-    
+
     if (parentType) whereClause.parentType = parentType;
     if (childType) whereClause.childType = childType;
 
@@ -182,6 +182,7 @@ export const getFilteredVendors = async (
       where: whereClause,
       select: { vendor: true },
       distinct: ['vendor'],
+      orderBy: { vendor: 'asc' }
     });
 
     return vendors.map((prod) => prod.vendor).filter((vendor) => vendor);
