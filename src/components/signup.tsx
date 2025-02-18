@@ -27,26 +27,28 @@ export default function Signup() {
   };
 
   return (
-    <div className="h-screen bg-black flex items-center justify-center font-mono text-lime-500">
+    <div className="min-h-screen bg-white flex items-center justify-center font-sans text-gray-800">
       <form
         onSubmit={handleSubmit}
         id="signup-form"
-        className="border-2 border-lime-500 p-6 w-80 bg-gray-900 shadow-lg"
+        className="border border-gray-300 p-6 w-96 bg-gray-100 shadow-lg rounded-xl"
       >
-        <h1 className="text-center text-lg mb-4">Sign Up</h1>
+        <h1 className="text-center text-xl mb-6 font-semibold">
+          Create an Account
+        </h1>
 
         <input
           value={email}
-          placeholder="Enter Email"
-          className="w-full bg-black border border-lime-500 text-lime-500 p-2 mb-4 placeholder-gray-400 focus:outline-none"
+          placeholder="Email Address"
+          className="w-full bg-white border border-gray-400 text-gray-900 p-3 mb-4 placeholder-gray-500 focus:outline-none rounded-lg"
           required
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           value={username}
-          placeholder="Enter Username"
-          className="w-full bg-black border border-lime-500 text-lime-500 p-2 mb-4 placeholder-gray-400 focus:outline-none"
+          placeholder="Username"
+          className="w-full bg-white border border-gray-400 text-gray-900 p-3 mb-4 placeholder-gray-500 focus:outline-none rounded-lg"
           required
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -54,8 +56,8 @@ export default function Signup() {
         <input
           type="password"
           value={password}
-          placeholder="Enter Password"
-          className="w-full bg-black border border-lime-500 text-lime-500 p-2 mb-4 placeholder-gray-400 focus:outline-none"
+          placeholder="Password"
+          className="w-full bg-white border border-gray-400 text-gray-900 p-3 mb-4 placeholder-gray-500 focus:outline-none rounded-lg"
           required
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -63,7 +65,7 @@ export default function Signup() {
         <button
           type="submit"
           form="signup-form"
-          className="w-full bg-lime-500 text-black p-2 mt-4 hover:bg-lime-400 transition"
+          className="w-full bg-blue-600 text-white p-3 mt-6 hover:bg-blue-500 transition rounded-lg"
         >
           Sign Up
         </button>

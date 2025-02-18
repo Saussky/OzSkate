@@ -35,3 +35,8 @@ docker run --name ozskate -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgre
 ```bash
 psql -h localhost -U postgres -d ozskate
 ```
+
+
+```bash
+ pm2 start npm --name next-app -- run dev
+ ```
