@@ -172,17 +172,19 @@ export const getFilteredVendors = async (
   filters: FilterOption = {}
 ) => {
   try {
-    const whereClause = await buildWhereClause(filters);
+    const { parentType, childType } = filters;
+    const whereClause: Record<string, any> = {};
+    
+    if (parentType) whereClause.parentType = parentType;
+    if (childType) whereClause.childType = childType;
 
     const vendors = await prisma.product.findMany({
       where: whereClause,
-      select: {
-        vendor: true,
-      },
+      select: { vendor: true },
       distinct: ['vendor'],
     });
 
-    return vendors.map((variant) => variant.vendor).filter((vendor) => vendor); 
+    return vendors.map((prod) => prod.vendor).filter((vendor) => vendor);
   } catch (error) {
     console.error("Error fetching vendors:", error);
     return [];

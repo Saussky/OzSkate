@@ -54,3 +54,5 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 	- Have now filtered by the 'available' column
 - Shoe sizes are different priced, this should affect results in storefront
 - Move actions into directories they are used, make lots of them
+- Brands only shows whats available, so if you select 'vans', then once it loads you will only see 'vans' in the brands dropdown
+	- Brands also need standardizing e.g SLAPPY, SLAPPY TRUCKS, slappy etc.
