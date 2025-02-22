@@ -6,7 +6,7 @@ type VendorGroup = {
   group: string[];
 };
 
-export default function VendorStandardizationPage() {
+export default function BrandsDuplicateManager() {
   const [vendorGroups, setVendorGroups] = useState<VendorGroup[]>([]);
   const [selectedVendors, setSelectedVendors] = useState<{
     [groupIndex: number]: string;
@@ -38,9 +38,13 @@ export default function VendorStandardizationPage() {
     }
     try {
       await updateVendorGroup(group, selectedVendor);
-      // Optionally, refresh the groups after updating
-      const groups: VendorGroup[] = await getVendorGroups();
-      setVendorGroups(groups);
+      // Remove the standardized group from the list immediately
+      setVendorGroups((prev) => prev.filter((_, idx) => idx !== groupIndex));
+      setSelectedVendors((prev) => {
+        const newSelections = { ...prev };
+        delete newSelections[groupIndex];
+        return newSelections;
+      });
     } catch (err) {
       console.error(err);
       alert('Failed to update vendors.');

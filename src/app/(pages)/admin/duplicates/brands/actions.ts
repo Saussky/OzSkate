@@ -1,25 +1,34 @@
-
 'use server';
 import { prisma } from '@/lib/prisma';
 import levenshtein from 'fast-levenshtein';
 
 /**
- * Computes the Levenshtein-based similarity between two strings.
+ * Remove the words "skateboards" or "skateboarding" from the vendor name.
+ */
+function sanitizeVendorName(vendor: string): string {
+  return vendor.replace(/\b(skateboards?|skateboarding)\b/gi, '').trim();
+}
+
+/**
+ * Computes the Levenshtein-based similarity between two vendor names.
+ * The vendor names are sanitized to ignore "Skateboards" or "Skateboarding".
  * Returns a value between 0 (completely different) and 1 (identical).
  */
 function titleSimilarity(title1: string, title2: string): number {
-  const distance = levenshtein.get(title1.toLowerCase(), title2.toLowerCase());
-  const maxLength = Math.max(title1.length, title2.length);
-  return 1 - distance / maxLength;
+  const sanitizedTitle1 = sanitizeVendorName(title1);
+  const sanitizedTitle2 = sanitizeVendorName(title2);
+  const distance = levenshtein.get(sanitizedTitle1.toLowerCase(), sanitizedTitle2.toLowerCase());
+  const maxLength = Math.max(sanitizedTitle1.length, sanitizedTitle2.length);
+  return maxLength === 0 ? 1 : 1 - distance / maxLength;
 }
 
 /**
  * Retrieves all non-null vendors from the products table,
- * groups similar vendor names together based on a similarity threshold,
- * and returns the groups.
+ * groups similar vendor names together (ignoring "skateboards/skateboarding")
+ * using a similarity threshold of 80%, and returns only groups with duplicates.
  */
 export async function getVendorGroups(): Promise<{ group: string[] }[]> {
-  // Get all products that have a vendor
+  // Retrieve all products with a vendor
   const products = await prisma.product.findMany({
     select: { vendor: true },
     where: { vendor: { not: null } },
@@ -33,17 +42,15 @@ export async function getVendorGroups(): Promise<{ group: string[] }[]> {
   const vendors = Array.from(vendorSet);
 
   // Group vendors using a simple clustering algorithm:
-  // for each vendor, compare with the representative of each group.
+  // For each vendor, compare with the representative of each group.
   const groups: string[][] = [];
   const threshold = 0.8; // 80% similarity
 
   for (const vendor of vendors) {
     let added = false;
     for (const group of groups) {
-      // Use the first vendor in the group as the representative
-      const representative = group[0];
-      const similarity = titleSimilarity(vendor, representative);
-      if (similarity >= threshold) {
+      // Use the first vendor in the group as representative
+      if (titleSimilarity(vendor, group[0]) >= threshold) {
         group.push(vendor);
         added = true;
         break;
@@ -54,13 +61,13 @@ export async function getVendorGroups(): Promise<{ group: string[] }[]> {
     }
   }
 
-  // Return groups in a consistent shape
-  return groups.map((group) => ({ group }));
+  // Only return groups with more than one vendor (i.e. duplicates)
+  return groups.filter(group => group.length > 1).map(group => ({ group }));
 }
 
 /**
- * Updates all products whose vendor is in the provided vendorGroup
- * (except those already matching the selectedVendor) to have vendor equal to selectedVendor.
+ * Updates all products whose vendor is in the provided vendorGroup (except those already matching selectedVendor)
+ * so that their vendor is updated to selectedVendor.
  */
 export async function updateVendorGroup(vendorGroup: string[], selectedVendor: string): Promise<void> {
   await prisma.product.updateMany({
@@ -70,8 +77,6 @@ export async function updateVendorGroup(vendorGroup: string[], selectedVendor: s
         not: selectedVendor,
       },
     },
-    data: {
-      vendor: selectedVendor,
-    },
+    data: { vendor: selectedVendor },
   });
 }
