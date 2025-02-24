@@ -6,9 +6,9 @@ import { validateRequest } from '@/lib/lucia';
 export default async function Admin() {
   const { user } = await validateRequest();
 
-  if (!user?.admin) {
-    return <small>Long live this thing</small>;
-  }
+  // if (!user?.admin) {
+  //   return <small>Long live this thing</small>;
+  // }
 
   const productCount = await getProductCount();
   const shopCount = await getShopCount();

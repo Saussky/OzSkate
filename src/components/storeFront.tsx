@@ -26,7 +26,11 @@ export interface ExtendedProduct extends product {
   image: ImageJson | null;
 }
 
-export default function StoreFront(user: User | null) {
+interface StorefrontProps {
+  user: User | null;
+}
+
+export default function StoreFront({ user }: StorefrontProps) {
   const { initialFilters, initialSortOption, initialPage, updateQueryParams } =
     useStoreFrontQueryParams();
 

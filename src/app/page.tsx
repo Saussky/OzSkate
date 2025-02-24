@@ -3,7 +3,6 @@ import './globals.css';
 import StoreFront from '@/components/storeFront';
 import { validateRequest } from '@/lib/lucia';
 
-//TODO: fix type error
 export default async function Home() {
   const { user } = await validateRequest();
 
