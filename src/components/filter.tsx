@@ -59,14 +59,14 @@ export default function Filter({
   initialFilters,
 }: FilterProps) {
   // TODO: Normalise between empty string and null
-  const [parentType, setParentType] = useState<ParentType | ''>('');
-  const [childType, setChildType] = useState<string | ''>('');
-  const [maxPrice, setMaxPrice] = useState<number | ''>('');
+  const [parentType, setParentType] = useState<ParentType | null>(null);
+  const [childType, setChildType] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
-  const [brand, setBrand] = useState<string | ''>('');
-  const [shop, setShop] = useState<string | ''>('');
+  const [brand, setBrand] = useState<string>('');
+  const [shop, setShop] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
@@ -96,9 +96,9 @@ export default function Filter({
   };
 
   const handleClearFilters = () => {
-    setParentType('');
+    setParentType(null);
     setChildType('');
-    setMaxPrice('');
+    setMaxPrice(null);
     setOnSale(false);
     setShoeSize(null);
     setDeckSize(null);
@@ -134,7 +134,7 @@ export default function Filter({
   return (
     <div className="flex flex-wrap space-x-5">
       <select
-        value={parentType}
+        value={parentType ? parentType : ''}
         onChange={(e) => {
           setParentType(e.target.value as ParentType);
           setChildType('');
