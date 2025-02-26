@@ -192,12 +192,6 @@ export function categoriseProduct(product: Product): CategorisedProduct {
   let parentType = null;
   let childType: ChildType | null = null;
 
-  // TODO: ?
-  // if (isMensFootwear(product)) {
-  //   return { parentType: "Shoes", childType: "Shoes" };
-  // }
-
-
   //TODO: There may be a requirement to prioritise different search fields down the line
   let result = null;
   for (const field of searchFields) {
