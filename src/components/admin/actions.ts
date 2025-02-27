@@ -12,6 +12,8 @@ export async function updateAllProducts() {
     console.log(`Finished updating products for shop: ${shop.name}`);
   }
 
+    await applyVendorRules();
+
   console.log("All shops processed in updateProducts.");
 }
 
@@ -191,3 +193,20 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
   return compareAtPriceUpdated;
 }
 
+export async function applyVendorRules(): Promise<void> {
+  const rules = await prisma.vendorRule.findMany();
+
+  for (const rule of rules) {
+    await prisma.product.updateMany({
+      where: {
+        vendor: {
+          contains: rule.vendorPattern,
+          mode: 'insensitive',
+        },
+      },
+      data: {
+        vendor: rule.standardVendor,
+      },
+    });
+  }
+}

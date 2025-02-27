@@ -112,3 +112,12 @@ export async function mergeProducts(originalId: string, duplicateId: string) {
 }
 
 
+// TODO: Implemnt
+export async function addVendorRule(vendorPattern: string, standardVendor: string): Promise<void> {
+  await prisma.vendorRule.create({
+    data: {
+      vendorPattern,
+      standardVendor,
+    },
+  });
+}

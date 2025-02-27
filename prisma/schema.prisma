@@ -104,3 +104,12 @@ model variant {
   @@index([shoeSize])
   @@index([deckSize])
 }
+
+model VendorRule {
+  id             String   @id @default(cuid())
+  vendorPattern  String
+  // The vendor name that should be used when the pattern is matched.
+  standardVendor String 
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
