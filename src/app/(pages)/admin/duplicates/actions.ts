@@ -111,13 +111,3 @@ export async function mergeProducts(originalId: string, duplicateId: string) {
   console.log(`Marked products ${originalId} and ${duplicateId} as duplicates with approval.`);
 }
 
-
-// TODO: Implemnt
-export async function addVendorRule(vendorPattern: string, standardVendor: string): Promise<void> {
-  await prisma.vendorRule.create({
-    data: {
-      vendorPattern,
-      standardVendor,
-    },
-  });
-}

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState, useTransition } from 'react';
-import { getVendorGroups, updateVendorGroup } from './actions';
+import { getVendorGroups, updateVendorGroup, addVendorRule } from './actions';
 
 type VendorGroup = {
   group: string[];
@@ -37,7 +37,14 @@ export default function BrandsDuplicateManager() {
       return;
     }
     try {
+      // First, update all products in this group to the selected vendor
       await updateVendorGroup(group, selectedVendor);
+      // Then, add a vendor rule for every non-standard vendor in the group
+      for (const vendor of group) {
+        if (vendor !== selectedVendor) {
+          await addVendorRule(vendor, selectedVendor);
+        }
+      }
       // Remove the standardized group from the list immediately
       setVendorGroups((prev) => prev.filter((_, idx) => idx !== groupIndex));
       setSelectedVendors((prev) => {

@@ -80,3 +80,16 @@ export async function updateVendorGroup(vendorGroup: string[], selectedVendor: s
     data: { vendor: selectedVendor },
   });
 }
+
+/**
+ * Creates a vendor rule so that whenever a vendor name contains vendorPattern,
+ * it should be updated to standardVendor in future product updates.
+ */
+export async function addVendorRule(vendorPattern: string, standardVendor: string): Promise<void> {
+  await prisma.vendorRule.create({
+    data: {
+      vendorPattern,
+      standardVendor,
+    },
+  });
+}
