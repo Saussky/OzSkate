@@ -56,3 +56,13 @@ Because its *variants* that are on sale, it might only be certain colours of a t
 - Move actions into directories they are used, make lots of them
 - Brands only shows whats available, so if you select 'vans', then once it loads you will only see 'vans' in the brands dropdown
 	- Brands also need standardizing e.g SLAPPY, SLAPPY TRUCKS, slappy etc.
+
+TODO 2/3/25
+- Finish merged brands
+- For merged products, need to display that it is at multiple stores
+	- Display states using Melbourne Melee icons?
+	- Display cheapest price, will need to create logic for that
+- Figure out a pipeline so that the site will do migrations when pushing
+- Filters, search by brand like in depop
+- Clean up filters UI
+- Mobile UI
