@@ -34,9 +34,21 @@
               "icon": "lucide-file",
               "title": "OzSkate Todo's"
             }
+          },
+          {
+            "id": "1f0dff5adf522a5b",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.8.7"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.8.7"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -178,7 +190,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "819186dd1db0e81e",
+  "active": "1f0dff5adf522a5b",
   "lastOpenFiles": [
     "Updating Products.md",
     "OzSkate Todo's.md",
