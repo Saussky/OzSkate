@@ -2,16 +2,13 @@
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import Filter from '@/components/filter';
 import Sort from '@/components/sort';
-import {
-  getFilteredVendors,
-  getPaginatedProducts,
-  getShopNames,
-} from '@/lib/actions';
-import Pagination from './pagination';
-import ProductCard from './productCard';
+import { getFilteredVendors, getPaginatedProducts } from '@/lib/actions';
+import Pagination from '../../../components/pagination';
+import ProductCard from '../../../components/productCard';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
 import useStoreFrontQueryParams from '@/lib/hooks';
+import { getShopNames } from '../admin/actions';
 
 type ImageJson = {
   src: string;

@@ -1,7 +1,8 @@
 'use server';
-import { getProductCount, getShopCount, getShopNames } from '@/lib/actions';
-import AdminComponent from '@/components/admin';
+
+import AdminComponent from '@/app/(pages)/admin/admin';
 import { validateRequest } from '@/lib/lucia';
+import { getProductCount, getShopCount, getShopNames } from './actions';
 
 export default async function Admin() {
   const { user } = await validateRequest();

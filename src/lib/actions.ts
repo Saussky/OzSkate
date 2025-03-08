@@ -11,25 +11,6 @@ import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
 import { checkProductSimilarity } from "./product/merge";
 
-export async function getProductCount() {
-  try {
-    const count = await prisma.product.count();
-    return count;
-  } catch (error) {
-    console.error("Error getting product count:", error);
-    return 0;
-  }
-}
-
-export async function getShopCount() {
-  try {
-    const count = await prisma.shop.count();
-    return count;
-  } catch (error) {
-    console.error("Error getting shop count:", error);
-    return 0;
-  }
-}
 
 export async function deleteAllProducts() {
   try {
@@ -55,11 +36,7 @@ export async function deleteShops() {
   }
 }
 
-export async function refreshCounts() {
-  const productCount = await getProductCount();
-  const shopCount = await getShopCount();
-  return { shopCount, productCount };
-}
+
 
 export async function fetchAllProducts() {
   try {
@@ -119,18 +96,7 @@ export const markProductsOnSale = async () => {
   }
 };
 
-export const getShopNames = async () => {
-  try {
-    const shops = await prisma.shop.findMany({
-      select: { name: true },
-    });
 
-    return shops.map((shop) => shop.name);
-  } catch (error) {
-    console.error('Error fetching shop names:', error);
-    return [];
-  }
-};
 
 export const getPaginatedProducts = async (
   page: number,

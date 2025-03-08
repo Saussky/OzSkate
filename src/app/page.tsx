@@ -1,6 +1,6 @@
 'use server';
 import './globals.css';
-import StoreFront from '@/components/storeFront';
+import StoreFront from '@/app/(pages)/storefront/storeFront';
 import { validateRequest } from '@/lib/lucia';
 
 export default async function Home() {
