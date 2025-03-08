@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/ui/header';
+import Header from '@/components/ui/header/header';
 import { validateRequest } from '@/lib/lucia';
 
 export const metadata: Metadata = {

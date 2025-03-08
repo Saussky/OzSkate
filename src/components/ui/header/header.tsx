@@ -1,6 +1,6 @@
 'use client';
 import { User } from 'lucia-auth';
-import LoginBox from '../loginBox';
+import LoginBox from './loginBox';
 
 type HeaderProps = {
   user: User | null;

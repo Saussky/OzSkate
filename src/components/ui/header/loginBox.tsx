@@ -24,7 +24,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
       if (res.ok) {
         const data = await res.json();
         setUsername(data.username);

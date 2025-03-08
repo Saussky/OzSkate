@@ -1,10 +1,7 @@
 'use server';
-import BrandsDuplicateManager from './brandsDuplicateManager';
 
-export default async function Duplicates() {
-  return (
-    <div>
-      <BrandsDuplicateManager />
-    </div>
-  );
+import BrandsDuplicateManager from '@/components/admin/duplicates/brands/brandsDuplicateManager';
+
+export default async function BrandDuplicates() {
+  return <BrandsDuplicateManager />;
 }

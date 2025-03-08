@@ -1,7 +1,7 @@
 'use client';
-import { deleteShops, toggleShop } from '@/lib/actions';
 import { skateboardShops } from '@/lib/constants';
 import { useState, useTransition } from 'react';
+import { deleteShops, toggleShop } from './actions';
 
 type ManageShopsProps = {
   shopNames: string[];

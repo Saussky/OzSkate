@@ -1,8 +1,27 @@
 "use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { prisma } from "@/lib/prisma";
-import { fetchShopifyProducts } from "@/lib/helpers";
-import { transformProducts, transformProductsForUpdate } from "@/lib/product/transform";
+import { fetchShopifyProducts } from "../helpers";
+import { transformProductsForUpdate, transformProducts } from "./transform";
+
+export async function applyVendorRules(): Promise<void> {
+  const rules = await prisma.vendorRule.findMany();
+
+  for (const rule of rules) {
+    await prisma.product.updateMany({
+      where: {
+        vendor: {
+          contains: rule.vendorPattern,
+          mode: 'insensitive',
+        },
+      },
+      data: {
+        vendor: rule.standardVendor,
+      },
+    });
+  }
+}
 
 export async function updateAllProducts() {
   const shops = await prisma.shop.findMany();
@@ -191,22 +210,4 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
     }
   }
   return compareAtPriceUpdated;
-}
-
-export async function applyVendorRules(): Promise<void> {
-  const rules = await prisma.vendorRule.findMany();
-
-  for (const rule of rules) {
-    await prisma.product.updateMany({
-      where: {
-        vendor: {
-          contains: rule.vendorPattern,
-          mode: 'insensitive',
-        },
-      },
-      data: {
-        vendor: rule.standardVendor,
-      },
-    });
-  }
 }

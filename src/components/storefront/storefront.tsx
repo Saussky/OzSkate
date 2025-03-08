@@ -1,14 +1,15 @@
 'use client';
 import { useCallback, useEffect, useState, useTransition } from 'react';
-import Filter from '@/components/filter';
-import Sort from '@/components/sort';
+import Filter from '@/components/storefront/filter';
+import Sort from '@/components/storefront/sort';
 import { getFilteredVendors, getPaginatedProducts } from '@/lib/actions';
-import Pagination from '../../../components/pagination';
-import ProductCard from '../../../components/productCard';
+
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
 import useStoreFrontQueryParams from '@/lib/hooks';
-import { getShopNames } from '../admin/actions';
+import { getShopNames } from '@/app/(pages)/admin/actions';
+import Pagination from '../shared/pagination';
+import ProductCard from '../shared/productCard';
 
 type ImageJson = {
   src: string;
@@ -27,7 +28,7 @@ interface StorefrontProps {
   user: User | null;
 }
 
-export default function StoreFront({ user }: StorefrontProps) {
+export default function Storefront({ user }: StorefrontProps) {
   const { initialFilters, initialSortOption, initialPage, updateQueryParams } =
     useStoreFrontQueryParams();
 

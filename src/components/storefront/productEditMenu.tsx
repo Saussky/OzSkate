@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { ParentType } from '@/lib/types';
-import { childTypePerParent } from '../filter';
+import { childTypePerParent } from './filter';
 
 interface ProductEditMenuProps {
   menuOpen: boolean;
@@ -12,6 +12,7 @@ interface ProductEditMenuProps {
   handleUpdateTypes: () => Promise<void>;
 }
 
+//TODO: Not used anywhere?
 export default function ProductEditMenu({
   menuOpen,
   selectedParent,
