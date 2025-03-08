@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { prisma } from "@/lib/prisma";
-import { fetchShopifyProducts } from "../helpers";
 import { transformProductsForUpdate, transformProducts } from "./transform";
+import { fetchShopifyProducts } from "./fetch";
 
 export async function applyVendorRules(): Promise<void> {
   const rules = await prisma.vendorRule.findMany();

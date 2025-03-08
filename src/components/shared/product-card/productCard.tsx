@@ -2,10 +2,10 @@
 import { ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
-import { setProductTypes } from '@/lib/actions';
 import { shop } from '@prisma/client';
-import { childTypePerParent } from '../storefront/filter';
-import ProductEditMenu from '../storefront/productEditMenu';
+import { childTypePerParent } from '../../storefront/filter';
+import ProductEditMenu from '../../storefront/productEditMenu';
+import { setProductTypes } from './actions';
 
 interface ProductCardProps {
   id: string;

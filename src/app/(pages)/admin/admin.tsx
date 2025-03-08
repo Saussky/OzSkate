@@ -1,12 +1,10 @@
 'use client';
-
 import { useState, useTransition } from 'react';
 import ManageShops from '../../../components/admin/shops/manageShops';
-import { fetchAllProducts, deleteAllProducts } from '@/lib/actions';
 import Button from '../../../components/ui/button';
-
-import { refreshCounts } from './actions';
+import { deleteAllProducts, refreshCounts } from './actions';
 import { updateAllProducts } from '@/lib/product/update';
+import { fetchAllProducts } from '@/lib/product/fetch';
 
 interface AdminComponentProps {
   shopCount: number;

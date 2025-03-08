@@ -1,9 +1,41 @@
-"use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import fetch from "node-fetch";
-import { prisma } from "./prisma";
-import { transformProducts } from "./product/transform";
-import { checkProductSimilarity } from "./product/merge";
+"use server";
+import { prisma } from "@/lib/prisma";
+import { transformProducts } from "./transform";
+
+
+export async function fetchAllProducts() {
+  try {
+    console.log("Starting product import...");
+
+    const shops = await prisma.shop.findMany();
+
+    // for (const shop of shops) {
+    //   try {
+    //     console.log(`Processing shop: ${shop.name} ${index}/${shops.length}`);
+    //     await processShop(shop);
+    //   } catch (error) {
+    //     console.error(`Error processing shop ${shop.name}:`, error);
+    //   }
+    // }
+
+    for (let index = 0; index < shops.length; index++) {
+      const shop = shops[index];
+      try {
+        console.log(`Processing shop: ${shop.name} ${index + 1}/${shops.length}`);
+        await processShop(shop);
+      } catch (error) {
+        console.error(`Error processing shop ${shop.name}:`, error);
+      }
+    }
+    
+    await markProductsOnSale();
+    console.log("Product import completed.");
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+  }
+}
+
 
 export async function processShop(shop: any) {
   const baseUrl = shop.url + '/products.json';
@@ -39,6 +71,7 @@ export async function processShop(shop: any) {
     }
   }
 }
+
 
 export const fetchShopifyProducts = async (
   baseUrl: string,
@@ -89,3 +122,28 @@ export const fetchShopifyProducts = async (
   return allProducts;
 };
 
+export const markProductsOnSale = async () => {
+  const products = await prisma.product.findMany({
+    include: {
+      variants: true,
+    },
+  });
+
+  // TODO: What if multiple variants are on sale??
+  for (const product of products) {
+    const onSaleVariant = product.variants.find(
+      (variant) => variant.compareAtPrice !== null
+    );
+
+    const onSale = !!onSaleVariant;
+    const onSaleVariantId = onSaleVariant ? onSaleVariant.id : null;
+
+    await prisma.product.update({
+      where: { id: product.id },
+      data: {
+        onSale,
+        on_sale_variant_id: onSaleVariantId,
+      },
+    });
+  }
+};
