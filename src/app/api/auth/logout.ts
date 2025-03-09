@@ -4,7 +4,6 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { auth } from "@/lib/auth";
 
-// TODO: This stuff has been deleted long ago, redo
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

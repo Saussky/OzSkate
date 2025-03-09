@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from './actions';
+import Button from '../button';
 
 type LoginBoxProps = {
   initialUser: { username: string } | null;
 };
 
-export default function LoginBox({ initialUser }: LoginBoxProps) {
+export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState<string | null>(
@@ -15,7 +16,7 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
   );
   const router = useRouter();
 
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
@@ -48,27 +49,23 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
     router.push('/account');
   };
 
+  const goToSignup = () => {
+    router.push('/signup');
+  };
+
   return (
-    <div>
+    <div className="space-y-4">
       {username ? (
         <div className="flex items-center space-x-4">
           <div className="text-white font-medium">
             Welcome, <span className="font-bold">{username}</span>!
           </div>
-
-          <button
-            onClick={goToAccount}
-            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-400 transition"
-          >
+          <Button onClick={goToAccount} variant="primary" size="small">
             Account
-          </button>
-
-          <button
-            onClick={handleSignOut}
-            className="p-2 bg-red-500 text-white rounded hover:bg-red-400 transition"
-          >
+          </Button>
+          <Button onClick={handleSignOut} variant="danger" size="small">
             Sign Out
-          </button>
+          </Button>
         </div>
       ) : (
         <form onSubmit={handleLogin} className="flex items-center space-x-2">
@@ -79,7 +76,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             required
             className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
           />
-
           <input
             type="password"
             value={password}
@@ -89,12 +85,19 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
           />
 
-          <button
-            type="submit"
-            className="p-2 bg-lime-500 text-black rounded hover:bg-lime-400 transition"
-          >
-            Log In
-          </button>
+          <div className="flex space-x-5">
+            <Button
+              type="submit"
+              onClick={() => {}}
+              variant="primary"
+              size="small"
+            >
+              Log In
+            </Button>
+            <Button onClick={goToSignup} variant="secondary" size="small">
+              Sign Up
+            </Button>
+          </div>
         </form>
       )}
     </div>
