@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { invalidateSession } from "../../../lib/session";
 import { deleteSessionCookie } from "../../../lib/cookies";
 
+// TODO: This stuff has been deleted long ago, redo
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

@@ -1,5 +1,5 @@
 'use server';
-import { validateRequest } from "@/lib/lucia";
+import { validateRequest } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 

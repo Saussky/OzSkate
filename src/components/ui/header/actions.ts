@@ -1,5 +1,5 @@
 'use server';
-import { auth, validateRequest } from "@/lib/lucia";
+import { auth, validateRequest } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
