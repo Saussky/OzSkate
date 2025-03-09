@@ -1,8 +1,8 @@
 'use client';
-import { ParentType } from '@/lib/types';
 import { useEffect, useState } from 'react';
+import { ParentType } from '@/lib/types';
+import DropdownSelector from '../ui/dropdown';
 
-//TODO: Import all types and constants related to variables like this
 export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
     'Jumpers',
@@ -51,14 +51,12 @@ interface FilterProps {
   initialFilters: any;
 }
 
-//TODO: Show number of products next to child types?
 export default function Filter({
   onFilterChange,
   brands,
   shops,
   initialFilters,
 }: FilterProps) {
-  // TODO: Normalise between empty string and null
   const [parentType, setParentType] = useState<ParentType | null>(null);
   const [childType, setChildType] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
@@ -72,7 +70,7 @@ export default function Filter({
   useEffect(() => {
     setParentType(initialFilters.parentType || '');
     setChildType(initialFilters.childType || '');
-    setMaxPrice(initialFilters.maxPrice || '');
+    setMaxPrice(initialFilters.maxPrice || null);
     setOnSale(initialFilters.onSale || false);
     setShoeSize(initialFilters.shoeSize || null);
     setDeckSize(initialFilters.deckSize || null);
@@ -103,6 +101,7 @@ export default function Filter({
     setShoeSize(null);
     setDeckSize(null);
     setBrand('');
+    setShop('');
     setSearchTerm('');
 
     onFilterChange({
@@ -118,152 +117,120 @@ export default function Filter({
     });
   };
 
+  // Get list of parent types (the keys of childTypePerParent)
   const parentTypes = Object.keys(childTypePerParent) as ParentType[];
 
-  //TODO: Child type per parent is not clear
+  // Child types for the selected parent type
   const childTypes =
     parentType && childTypePerParent[parentType]
-      ? (childTypePerParent[parentType] as string[])
+      ? childTypePerParent[parentType]
       : [];
 
-  // TODO: Implement sizes more robustly
+  // TODO: Do this properly
   const availableShoeSizes = ['7', '8', '9', '10', '11', '12'];
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
 
-  //TODO: Search filter should apply on keystroke
   return (
-    <div className="flex flex-wrap space-x-5">
-      <select
-        value={parentType ? parentType : ''}
-        onChange={(e) => {
-          setParentType(e.target.value as ParentType);
+    <div className="flex flex-wrap items-center gap-2 mb-4">
+      <DropdownSelector
+        label="Parent Type"
+        value={parentType || ''}
+        onChange={(val) => {
+          setParentType(val as ParentType);
+          // Reset related filters
           setChildType('');
           setShoeSize(null);
           setDeckSize(null);
         }}
-        className="border rounded p-2"
-      >
-        <option value="">Select Parent Type</option>
-        {parentTypes.map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
+        options={parentTypes}
+      />
 
-      <select
+      <DropdownSelector
+        label="Child Type"
         value={childType}
-        onChange={(e) => setChildType(e.target.value)}
-        className="border rounded p-2"
+        onChange={setChildType}
+        options={childTypes}
         disabled={!parentType}
-      >
-        <option value="">Select Child Type</option>
-        {childTypes.map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
+      />
 
       {parentType === 'Shoes' && (
-        <select
-          value={shoeSize !== null ? shoeSize : ''}
-          onChange={(e) =>
-            setShoeSize(e.target.value ? Number(e.target.value) : null)
-          }
-          className="border rounded p-2"
-        >
-          <option value="">Select Shoe Size</option>
-          {availableShoeSizes.map((size) => (
-            <option key={size} value={size}>
-              US {size}
-            </option>
-          ))}
-        </select>
+        <DropdownSelector
+          label="Shoe Size"
+          value={shoeSize?.toString() || ''}
+          onChange={(val) => setShoeSize(val ? Number(val) : null)}
+          options={availableShoeSizes}
+        />
       )}
 
       {childType === 'Decks' && (
-        <select
-          value={deckSize !== null ? deckSize : ''}
-          onChange={(e) =>
-            setDeckSize(e.target.value ? Number(e.target.value) : null)
-          }
-          className="border rounded p-2"
-        >
-          <option value="">Select Deck Size</option>
-          {availableDeckSizes.map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+        <DropdownSelector
+          label="Deck Size"
+          value={deckSize?.toString() || ''}
+          onChange={(val) => setDeckSize(val ? Number(val) : null)}
+          options={availableDeckSizes.map((size) => size.toString())}
+        />
       )}
 
-      {/* TODO: Implement but smaller
-      <input
-        type="number"
-        placeholder="Max Price"
-        value={maxPrice}
-        onChange={(e) => setMaxPrice(Number(e.target.value) || "")}
-        className="border rounded p-2"
-      /> */}
-
-      <select
+      <DropdownSelector
+        label="Brand"
         value={brand}
-        onChange={(e) => setBrand(e.target.value)}
-        className="border rounded p-2"
-      >
-        <option value="">Select Brand</option>
-        {brands.map((brand) => (
-          <option key={brand} value={brand}>
-            {brand}
-          </option>
-        ))}
-      </select>
+        onChange={setBrand}
+        options={brands}
+      />
 
-      <select
+      <DropdownSelector
+        label="Shop"
         value={shop}
-        onChange={(e) => setShop(e.target.value)}
-        className="border rounded p-2"
-      >
-        <option value="">Select Shop</option>
-        {shops.map((shop) => (
-          <option key={shop} value={shop}>
-            {shop}
-          </option>
-        ))}
-      </select>
+        onChange={setShop}
+        options={shops}
+      />
 
       <input
         type="text"
         placeholder="Search..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="border rounded p-2"
-        style={{ minWidth: 150 }}
+        className="
+          border border-gray-400 text-black bg-white
+          rounded px-3 py-1 text-sm
+          focus:outline-none focus:ring-1 focus:ring-blue-500
+        "
+        style={{ minWidth: '150px' }}
       />
 
-      <label className="flex items-center space-x-2">
+      <label
+        className="
+          flex items-center text-sm
+          px-3 py-1 border border-gray-400 bg-white rounded
+          hover:cursor-pointer
+        "
+      >
         <input
           type="checkbox"
           checked={onSale}
           onChange={(e) => setOnSale(e.target.checked)}
-          className="w-4 h-4"
+          className="mr-1"
         />
-        <span>On Sale</span>
+        On Sale
       </label>
 
       <button
         onClick={handleApplyFilters}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="
+          border border-gray-400 text-sm text-black bg-white
+          rounded px-3 py-1 hover:cursor-pointer
+        "
       >
         Apply
       </button>
       <button
         onClick={handleClearFilters}
-        className="bg-gray-300 text-black px-4 py-2 rounded"
+        className="
+          border border-gray-400 text-sm text-black bg-white
+          rounded px-3 py-1 hover:cursor-pointer
+        "
       >
-        Clear Filters
+        Clear
       </button>
     </div>
   );
