@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { signOut } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
+import { signOut } from './actions';
 
 type LoginBoxProps = {
   initialUser: { username: string } | null;

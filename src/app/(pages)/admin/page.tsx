@@ -1,5 +1,4 @@
 'use server';
-
 import AdminComponent from '@/app/(pages)/admin/admin';
 import { validateRequest } from '@/lib/lucia';
 import { getProductCount, getShopCount, getShopNames } from './actions';

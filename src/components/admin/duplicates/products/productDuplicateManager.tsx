@@ -1,16 +1,15 @@
 'use client';
-
 import React, { useEffect, useState, useTransition } from 'react';
-import { checkAllProductsForDuplicates } from '@/lib/actions';
-import ProductCard from '@/components/productCard';
-import Pagination from '@/components/pagination';
 import { ProductWithSuspectedDuplicate } from '@/lib/types';
 import Button from '@/components/ui/button';
 import {
   getPaginatedSuspectedDuplicates,
   rejectDuplicate,
   mergeProducts,
+  checkAllProductsForDuplicates,
 } from './actions';
+import ProductCard from '@/components/shared/product-card/productCard';
+import Pagination from '@/components/shared/pagination';
 
 export default function ProductDuplicateManager(): JSX.Element {
   // State and transition for the "Find Duplicates" button.
@@ -108,7 +107,7 @@ export default function ProductDuplicateManager(): JSX.Element {
                   <Button
                     onClick={() => handleReject(duplicate.id)}
                     disabled={isPending}
-                    variant="danger"
+                    // variant="danger"
                   >
                     Not a Duplicate
                   </Button>

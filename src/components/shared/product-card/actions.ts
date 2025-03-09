@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
+"use server";
 import { validateRequest } from "@/lib/lucia";
 import { prisma } from "@/lib/prisma";
 
