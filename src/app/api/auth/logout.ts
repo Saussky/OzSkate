@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { invalidateSession } from "../../../lib/session";
 import { deleteSessionCookie } from "../../../lib/cookies";
+import { encodeHexLowerCase } from "@oslojs/encoding";
+import { sha256 } from "@oslojs/crypto/sha2";
+import { auth } from "@/lib/auth";
 
 // TODO: This stuff has been deleted long ago, redo
 export default async function handler(
@@ -20,7 +22,7 @@ export default async function handler(
     const sessionToken = req.cookies.session;
     if (sessionToken) {
       const sessionId = encodeHexLowerCase(sha256(Buffer.from(sessionToken)));
-      await invalidateSession(sessionId);
+      await auth.invalidateSession(sessionId);
       deleteSessionCookie(res);
     }
     res.status(200).end();
