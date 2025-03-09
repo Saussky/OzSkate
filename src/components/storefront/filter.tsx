@@ -214,6 +214,7 @@ export default function Filter({
         On Sale
       </label>
 
+      {/* TODO: Make this a generic button styling */}
       <button
         onClick={handleApplyFilters}
         className="
