@@ -55,9 +55,9 @@ export default function ProductCard({
 
   return (
     <a href={productUrl} target="_blank" rel="noopener noreferrer">
-      <div className="border rounded-lg shadow-md p-4 h-full">
+      <div className="border rounded-lg shadow-md p-4 h-full w-full bg-white">
         <p>{shop.name}</p>
-        <div className="relative aspect-[1/1]">
+        <div className="relative aspect-[1/1] bg-white">
           <Image
             src={imageSrc || fallbackImageSrc}
             alt={title}
