@@ -18,7 +18,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -54,10 +53,15 @@ export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
   };
 
   return (
-    <div className="space-y-4">
+    <div
+      className="
+        bg-white text-black rounded 
+        p-4 flex flex-col space-y-4
+      "
+    >
       {username ? (
         <div className="flex items-center space-x-4">
-          <div className="text-white font-medium">
+          <div className="font-medium">
             Welcome, <span className="font-bold">{username}</span>!
           </div>
           <Button onClick={goToAccount} variant="primary" size="small">
@@ -69,23 +73,33 @@ export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
         </div>
       ) : (
         <form onSubmit={handleLogin} className="flex items-center space-x-2">
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            className="p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
-          />
+          <div className="flex space-x-2">
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              className="
+              border border-gray-400 bg-white text-black placeholder-gray-400
+              rounded px-2 py-1 text-sm
+              focus:outline-none focus:ring-1 focus:ring-blue-500
+            "
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className="
+              border border-gray-400 bg-white text-black placeholder-gray-400
+              rounded px-2 py-1 text-sm
+              focus:outline-none focus:ring-1 focus:ring-blue-500
+            "
+            />
+          </div>
 
-          <div className="flex space-x-5">
+          <div className="flex space-x-3">
             <Button
               type="submit"
               onClick={() => {}}
