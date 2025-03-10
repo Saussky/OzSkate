@@ -111,8 +111,8 @@ export default function Storefront({ user }: StorefrontProps) {
   };
 
   return (
-    <div>
-      <div className="flex flex-col space-y-4 mb-4">
+    <div className="p-6">
+      <div className="flex flex-col space-y-1 mb-2">
         <Filter
           onFilterChange={handleFilterChange}
           brands={brands}
@@ -122,7 +122,7 @@ export default function Storefront({ user }: StorefrontProps) {
           sortOption={sortOption}
         />
 
-        <div className="flex justify-between h-10">
+        <div className="flex justify-between h-6 ml-auto">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
