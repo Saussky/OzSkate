@@ -1,7 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import Filter from '@/components/storefront/filter';
-import Sort from '@/components/storefront/sort';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
 import useStoreFrontQueryParams from '@/lib/hooks';
@@ -119,10 +118,11 @@ export default function Storefront({ user }: StorefrontProps) {
           brands={brands}
           shops={shops}
           initialFilters={initialFilters}
+          onSortChange={handleSortChange}
+          sortOption={sortOption}
         />
 
         <div className="flex justify-between h-10">
-          <Sort onSortChange={handleSortChange} sortOption={sortOption} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

@@ -34,7 +34,7 @@ export default function DropdownSelector({
         onChange={(e) => onChange(e.target.value)}
       >
         {/* First option acts like a placeholder label */}
-        <option value="">{label} ▼</option>
+        <option value="">{label}</option>
         {options.map((opt) => (
           <option key={opt} value={opt}>
             {opt}

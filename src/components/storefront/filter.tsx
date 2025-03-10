@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { ParentType } from '@/lib/types';
 import DropdownSelector from '../ui/dropdown';
+import SortDropdown from '../ui/sortDropdown';
 
 export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
@@ -49,6 +50,8 @@ interface FilterProps {
   shops: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialFilters: any;
+  onSortChange: (sortOption: string) => void;
+  sortOption: string;
 }
 
 export default function Filter({
@@ -56,6 +59,8 @@ export default function Filter({
   brands,
   shops,
   initialFilters,
+  onSortChange,
+  sortOption,
 }: FilterProps) {
   const [parentType, setParentType] = useState<ParentType | null>(null);
   const [childType, setChildType] = useState<string>('');
@@ -129,6 +134,13 @@ export default function Filter({
   // TODO: Do this properly
   const availableShoeSizes = ['7', '8', '9', '10', '11', '12'];
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
+
+  const sortOptions = [
+    // { value: 'relevance', label: 'Relevance' }, TODO: this
+    { value: 'price-asc', label: 'Price: low to high' },
+    { value: 'price-desc', label: 'Price: high to low' },
+    { value: 'latest', label: 'Newly Listed' },
+  ];
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -233,6 +245,14 @@ export default function Filter({
       >
         Clear
       </button>
+
+      <div className="ml-auto">
+        <SortDropdown
+          options={sortOptions}
+          selectedOption={sortOption}
+          onChange={onSortChange}
+        />
+      </div>
     </div>
   );
 }
