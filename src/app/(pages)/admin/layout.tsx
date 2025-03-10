@@ -14,6 +14,10 @@ export default function Layout({
       <header className="mb-8">
         <nav className="flex justify-center space-x-4">
           <Link href="/admin/shops" className={`${linkStyle}`}>
+            Admin
+          </Link>
+
+          <Link href="/admin/shops" className={`${linkStyle}`}>
             Shops
           </Link>
 
