@@ -1,5 +1,5 @@
 'use server';
-import Login from '@/app/(pages)/(auth)/login/login';
+import Login from '@/components/auth/login/login';
 
 export default async function LoginPage() {
   return <Login />;
