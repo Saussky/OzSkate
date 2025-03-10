@@ -5,10 +5,10 @@ import Sort from '@/components/storefront/sort';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
 import useStoreFrontQueryParams from '@/lib/hooks';
-import { getShopNames } from '@/app/(pages)/admin/actions';
 import Pagination from '../shared/pagination';
 import ProductCard from '../shared/product-card/productCard';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
+import { getShopNames } from '../admin/admin/actions';
 
 type ImageJson = {
   src: string;

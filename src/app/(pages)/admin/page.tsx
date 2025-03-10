@@ -1,7 +1,12 @@
 'use server';
-import AdminComponent from '@/app/(pages)/admin/admin';
+
+import {
+  getProductCount,
+  getShopCount,
+  getShopNames,
+} from '@/components/admin/admin/actions';
+import AdminComponent from '@/components/admin/admin/admin';
 import { validateRequest } from '@/lib/auth';
-import { getProductCount, getShopCount, getShopNames } from './actions';
 
 export default async function Admin() {
   const { user } = await validateRequest();

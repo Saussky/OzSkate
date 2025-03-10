@@ -12,7 +12,6 @@ interface ProductEditMenuProps {
   handleUpdateTypes: () => Promise<void>;
 }
 
-//TODO: Not used anywhere?
 export default function ProductEditMenu({
   menuOpen,
   selectedParent,
