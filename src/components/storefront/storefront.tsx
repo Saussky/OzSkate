@@ -111,7 +111,7 @@ export default function Storefront({ user }: StorefrontProps) {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 mt-1">
       <div className="flex flex-col space-y-1 mb-2">
         <Filter
           onFilterChange={handleFilterChange}

@@ -1,6 +1,5 @@
 'use client';
 import { useState, useTransition } from 'react';
-import ManageShops from '../../../components/admin/shops/manageShops';
 import Button from '../../../components/ui/button';
 import { deleteAllProducts, refreshCounts } from './actions';
 import { updateAllProducts } from '@/lib/product/update';
@@ -9,15 +8,11 @@ import { fetchAllProducts } from '@/lib/product/fetch';
 interface AdminComponentProps {
   shopCount: number;
   productCount: number;
-  shopNames: string[];
 }
-
-// Shared  button component for consistent styling
 
 export default function AdminComponent({
   shopCount,
   productCount,
-  shopNames,
 }: AdminComponentProps): JSX.Element {
   const [currentShopCount, setCurrentShopCount] = useState<number>(shopCount);
   const [currentProductCount, setCurrentProductCount] =
@@ -34,7 +29,6 @@ export default function AdminComponent({
   const [isDeleting, startDelete] = useTransition();
   const [deleteMessage, setDeleteMessage] = useState<string>('');
 
-  // Handle refresh counts inline
   const handleRefreshCounts = () => {
     startRefresh(async () => {
       const { shopCount, productCount } = await refreshCounts();
@@ -43,7 +37,6 @@ export default function AdminComponent({
     });
   };
 
-  // Handle fetch products inline
   const handleFetchProducts = () => {
     startFetch(async () => {
       setFetchMessage('Fetching products...');
@@ -58,7 +51,6 @@ export default function AdminComponent({
     });
   };
 
-  // Handle delete products inline
   const handleDeleteProducts = () => {
     startDelete(async () => {
       setDeleteMessage('Deleting all products...');
@@ -73,14 +65,14 @@ export default function AdminComponent({
     });
   };
 
-  // Handle update products inline (no transition required)
   const handleUpdateProducts = async () => {
     await updateAllProducts();
   };
 
   return (
-    <>
-      <div className="flex justify-center space-x-8 mb-12">
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Stats Cards */}
+      <div className="flex flex-wrap justify-center gap-8 mb-12">
         <div className="flex-1 max-w-sm p-6 bg-white rounded-lg shadow-lg">
           <p className="text-lg font-semibold text-gray-700">Number of Shops</p>
           <p className="text-3xl font-bold text-blue-500">{currentShopCount}</p>
@@ -95,38 +87,45 @@ export default function AdminComponent({
         </div>
       </div>
 
-      <div className="flex justify-center space-x-4">
-        <Button onClick={handleFetchProducts} disabled={isFetching}>
-          {isFetching ? 'Fetching Products...' : 'Fetch All Products'}
-        </Button>
+      {/* Fetch and Delete Products */}
+      <div className="flex flex-col items-center space-y-2">
+        <div className="flex space-x-4">
+          <Button
+            onClick={handleFetchProducts}
+            disabled={isFetching}
+            variant="smart"
+          >
+            {isFetching ? 'Fetching Products...' : 'Fetch All Products'}
+          </Button>
+          <Button
+            onClick={handleDeleteProducts}
+            disabled={isDeleting}
+            variant="smart"
+          >
+            {isDeleting ? 'Deleting Products...' : 'Delete All Products'}
+          </Button>
+        </div>
         {fetchMessage && (
-          <p className="mt-2 text-sm text-gray-600">{fetchMessage}</p>
+          <p className="text-sm text-gray-600">{fetchMessage}</p>
         )}
-      </div>
-      <div>
-        <Button onClick={handleDeleteProducts} disabled={isDeleting}>
-          {isDeleting ? 'Deleting Products...' : 'Delete All Products'}
-        </Button>
         {deleteMessage && (
-          <p className="mt-2 text-sm text-gray-600">{deleteMessage}</p>
+          <p className="text-sm text-gray-600">{deleteMessage}</p>
         )}
       </div>
 
-      <div className="flex justify-center mt-6">
-        <Button onClick={handleRefreshCounts} disabled={isRefreshing}>
+      {/* Refresh and Update */}
+      <div className="flex flex-col items-center space-y-4">
+        <Button
+          onClick={handleRefreshCounts}
+          disabled={isRefreshing}
+          variant="smart"
+        >
           {isRefreshing ? 'Refreshing...' : '🔄 Refresh Counts'}
         </Button>
-      </div>
-
-      <div className="flex justify-center mt-6">
-        <Button onClick={handleUpdateProducts} disabled={false}>
+        <Button onClick={handleUpdateProducts} variant="smart">
           Update Products
         </Button>
       </div>
-
-      <div className="p-4">
-        <ManageShops shopNames={shopNames} />
-      </div>
-    </>
+    </div>
   );
 }
