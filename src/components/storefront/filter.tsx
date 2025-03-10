@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ParentType } from '@/lib/types';
 import DropdownSelector from '../ui/dropdown';
 import SortDropdown from '../ui/sortDropdown';
+import Button from '../ui/button';
 
 export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
@@ -226,25 +227,12 @@ export default function Filter({
         On Sale
       </label>
 
-      {/* TODO: Make this a generic button styling */}
-      <button
-        onClick={handleApplyFilters}
-        className="
-          border border-gray-400 text-sm text-black bg-white
-          rounded px-3 py-1 hover:cursor-pointer
-        "
-      >
+      <Button onClick={handleApplyFilters} variant="smart">
         Apply
-      </button>
-      <button
-        onClick={handleClearFilters}
-        className="
-          border border-gray-400 text-sm text-black bg-white
-          rounded px-3 py-1 hover:cursor-pointer
-        "
-      >
+      </Button>
+      <Button onClick={handleClearFilters} variant="smart">
         Clear
-      </button>
+      </Button>
 
       <div className="ml-auto">
         <SortDropdown
