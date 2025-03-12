@@ -7,8 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:5432/ozskate"
-  // url      = env("DATABASE_URL") // Use environment variable for PostgreSQL connection
+  url      = env("LOCAL_DB_URL")
 }
 
 // Auth
