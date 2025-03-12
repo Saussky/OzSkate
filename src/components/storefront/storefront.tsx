@@ -148,12 +148,14 @@ export default function Storefront({ user }: StorefrontProps) {
         ))}
       </div>
 
-      <div className="flex justify-between">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+      <div className="flex mt-2">
+        <div className="flex justify-between ml-auto">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </div>
   );
