@@ -13,7 +13,7 @@ export default function Layout({
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-8">
         <nav className="flex justify-center space-x-4">
-          <Link href="/admin/shops" className={`${linkStyle}`}>
+          <Link href="/admin" className={`${linkStyle}`}>
             Admin
           </Link>
 
