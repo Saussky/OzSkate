@@ -5,7 +5,7 @@ import { signOut } from './actions';
 import Button from '../button';
 
 type LoginBoxProps = {
-  initialUser: { username: string } | null;
+  initialUser: { username: string; admin: boolean } | null;
 };
 
 export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
@@ -44,6 +44,10 @@ export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
     }
   };
 
+  const goToAdmin = () => {
+    router.push('/admin');
+  };
+
   const goToAccount = () => {
     router.push('/account');
   };
@@ -64,6 +68,11 @@ export default function LoginBox({ initialUser }: LoginBoxProps): JSX.Element {
           <div className="font-medium">
             Welcome, <span className="font-bold">{username}</span>!
           </div>
+          {initialUser?.admin && (
+            <Button onClick={goToAdmin} variant="smart" size="small">
+              Admin
+            </Button>
+          )}
           <Button onClick={goToAccount} variant="primary" size="small">
             Account
           </Button>
