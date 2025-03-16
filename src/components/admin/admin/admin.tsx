@@ -18,15 +18,11 @@ export default function AdminComponent({
   const [currentProductCount, setCurrentProductCount] =
     useState<number>(productCount);
 
-  // Refresh Counts state and transition
   const [isRefreshing, startRefresh] = useTransition();
-
-  // Fetch Products state, transition, and message
   const [isFetching, startFetch] = useTransition();
-  const [fetchMessage, setFetchMessage] = useState<string>('');
-
-  // Delete Products state, transition, and message
   const [isDeleting, startDelete] = useTransition();
+
+  const [fetchMessage, setFetchMessage] = useState<string>('');
   const [deleteMessage, setDeleteMessage] = useState<string>('');
 
   const handleRefreshCounts = () => {
@@ -71,7 +67,6 @@ export default function AdminComponent({
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      {/* Stats Cards */}
       <div className="flex flex-wrap justify-center gap-8 mb-12">
         <div className="flex-1 max-w-sm p-6 bg-white rounded-lg shadow-lg">
           <p className="text-lg font-semibold text-gray-700">Number of Shops</p>
@@ -87,7 +82,6 @@ export default function AdminComponent({
         </div>
       </div>
 
-      {/* Fetch and Delete Products */}
       <div className="flex flex-col items-center space-y-2">
         <div className="flex space-x-4">
           <Button
@@ -113,7 +107,6 @@ export default function AdminComponent({
         )}
       </div>
 
-      {/* Refresh and Update */}
       <div className="flex flex-col items-center space-y-4">
         <Button
           onClick={handleRefreshCounts}
