@@ -5,6 +5,7 @@ import Button from '../../../components/ui/button';
 import { deleteAllProducts, refreshCounts } from './actions';
 import { updateAllProducts } from '@/lib/product/update';
 import { fetchAllProducts } from '@/lib/product/fetch';
+import Card from '@/components/ui/card';
 
 interface AdminComponentProps {
   shopCount: number;
@@ -88,18 +89,8 @@ export default function AdminComponent({
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex flex-wrap justify-center gap-8 mb-12">
-        <div className="flex-1 max-w-sm p-6 bg-white rounded-lg shadow-lg">
-          <p className="text-lg font-semibold text-gray-700">Number of Shops</p>
-          <p className="text-3xl font-bold text-blue-500">{currentShopCount}</p>
-        </div>
-        <div className="flex-1 max-w-sm p-6 bg-white rounded-lg shadow-lg">
-          <p className="text-lg font-semibold text-gray-700">
-            Number of Products
-          </p>
-          <p className="text-3xl font-bold text-blue-500">
-            {currentProductCount}
-          </p>
-        </div>
+        <Card title="Number of Shops">{currentShopCount}</Card>
+        <Card title="Number of Products">{currentProductCount}</Card>
       </div>
 
       <div className="flex flex-col items-center space-y-2">
@@ -111,6 +102,7 @@ export default function AdminComponent({
           >
             {isFetching ? 'Fetching Products...' : 'Fetch All Products'}
           </Button>
+
           <Button
             onClick={handleDeleteProducts}
             disabled={isDeleting}
@@ -135,6 +127,7 @@ export default function AdminComponent({
         >
           {isRefreshing ? 'Refreshing...' : '🔄 Refresh Counts'}
         </Button>
+
         <Button
           onClick={handleUpdateProducts}
           disabled={isUpdating}
@@ -142,15 +135,18 @@ export default function AdminComponent({
         >
           {isUpdating ? 'Updating Products...' : 'Update Products'}
         </Button>
+
         {updateMessage && (
           <p className="text-sm text-gray-600">{updateMessage}</p>
         )}
+
         {updateResult && (
-          <div className="mt-4 p-4 bg-green-100 rounded-md">
-            <p className="font-semibold">Update Summary:</p>
-            <p>Products Added: {updateResult.added}</p>
-            <p>Products with Price Change: {updateResult.priceChanged}</p>
-          </div>
+          <Card title="Update Summary">
+            <div className="text-base font-normal">
+              <p>Products Added: {updateResult.added}</p>
+              <p>Products with Price Change: {updateResult.priceChanged}</p>
+            </div>
+          </Card>
         )}
       </div>
     </div>
