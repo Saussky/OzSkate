@@ -23,36 +23,41 @@ export async function applyVendorRules(): Promise<void> {
   }
 }
 
-export async function updateAllProducts() {
+export async function updateAllProducts(): Promise<{ added: number; priceChanged: number }> {
+  let addedCount = 0;
+  let priceChangedCount = 0;
   const shops = await prisma.shop.findMany();
 
   for (const shop of shops) {
-    await processShopUpdates(shop);
+    const result = await processShopUpdates(shop);
+    addedCount += result.inserted;
+    priceChangedCount += result.priceChanged;
     console.log(`Finished updating products for shop: ${shop.name}`);
   }
 
-    await applyVendorRules();
-
+  await applyVendorRules();
   console.log("All shops processed in updateProducts.");
+  return { added: addedCount, priceChanged: priceChangedCount };
 }
 
-async function processShopUpdates(shop: any) {
+async function processShopUpdates(shop: any): Promise<{ inserted: number; priceChanged: number }> {
   const baseUrl = `${shop.url}/products.json`;
   const freshProductsRaw = await fetchShopifyProducts(baseUrl);
 
   if (freshProductsRaw.length === 0) {
     // Optionally handle no products found
-    return;
+    return { inserted: 0, priceChanged: 0 };
   }
 
   const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
 
-  // Filter fresh products that are new or have a differing updated_at timestamp.
-  const freshProductsToTransform = filterUpdatedFreshProducts(freshProductsRaw, localUpdatedAtMap, shop.id);
+  // Get the list of products needing update and count new inserts.
+  const { updatedProducts: freshProductsToTransform, insertedCount } =
+    await filterUpdatedFreshProducts(freshProductsRaw, localUpdatedAtMap, shop.id);
 
   if (freshProductsToTransform.length === 0) {
-    console.log('No fresh product updates needed.');
-    return;
+    console.log("No fresh product updates needed.");
+    return { inserted: insertedCount, priceChanged: 0 };
   }
 
   const transformedProducts = await transformProductsForUpdate(freshProductsToTransform);
@@ -63,21 +68,31 @@ async function processShopUpdates(shop: any) {
     include: { variants: true },
   });
 
+  let priceChanged = 0;
+
   for (const localProduct of localProductsFull) {
     const newProduct = newProductsMap.get(localProduct.id);
     if (!newProduct) {
       // TODO:  Possibly the product was deleted from Shopify
       continue;
     }
-    await updateLocalProduct(localProduct, newProduct);
+    const didPriceChange: boolean = await updateLocalProduct(localProduct, newProduct);
+    if (didPriceChange) {
+      priceChanged++;
+    }
     const variantsUpdated = await updateVariants(localProduct.variants, newProduct.variants ?? []);
     if (variantsUpdated) {
       await markProductOnSale(newProduct);
     }
   }
+
+  return { inserted: insertedCount, priceChanged };
 }
 
-async function markProductOnSale(product: { id: string; variants: Array<{ id: string; compareAtPrice: number | null }> }) {
+async function markProductOnSale(product: {
+  id: string;
+  variants: Array<{ id: string; compareAtPrice: number | null }>;
+}): Promise<void> {
   const onSaleVariant = product.variants.find((variant) => variant.compareAtPrice !== null);
   const onSale = !!onSaleVariant;
   const onSaleVariantId = onSaleVariant ? onSaleVariant.id : null;
@@ -102,31 +117,34 @@ async function getLocalProductsBriefMap(shopId: number): Promise<Map<string, Dat
   return new Map(localProductsBrief.map((product) => [product.id, product.updatedAt]));
 }
 
-function filterUpdatedFreshProducts(
+async function filterUpdatedFreshProducts(
   freshProductsRaw: any[],
   localUpdatedAtMap: Map<string, Date>,
-  shopId: number,
-): any[] {
-  const newProducts: any = [];
+  shopId: number
+): Promise<{ updatedProducts: any[]; insertedCount: number }> {
+  const newProducts: any[] = [];
 
-  const updatedProducts =  freshProductsRaw.filter((product) => {
+  // Filter to determine which products have updated_at differences.
+  const updatedProducts = freshProductsRaw.filter((product) => {
     const localUpdatedAt = localUpdatedAtMap.get(product.id.toString());
 
     if (!localUpdatedAt) {
       // No product id found, signifies new product
-      newProducts.push(product)
-      console.log('new product', product.title)
+      newProducts.push(product);
+      console.log("new product", product.title);
     }
 
-    return new Date(product.updated_at).getTime() !== localUpdatedAt?.getTime(); // TODO: Should we check the date is greater than? Could see shops/shopify screwing this up somehow
+    return new Date(product.updated_at).getTime() !== localUpdatedAt?.getTime();
   });
 
-  insertFreshProducts(newProducts, shopId)
 
-  return updatedProducts
+  const insertedCount = await insertFreshProducts(newProducts, shopId);
+  return { updatedProducts, insertedCount };
 }
-async function insertFreshProducts(freshProductsRaw: any[], shopId: number) {
+
+async function insertFreshProducts(freshProductsRaw: any[], shopId: number): Promise<number> {
   const transformedProducts = await transformProducts(freshProductsRaw, shopId);
+  let count = 0;
 
   for (const product of transformedProducts) {
     const { variants, ...productData } = product;
@@ -136,26 +154,26 @@ async function insertFreshProducts(freshProductsRaw: any[], shopId: number) {
       update: productData,
       create: productData,
     });
+    count++;
 
     if (Array.isArray(variants)) {
       for (const variant of variants) {
         await prisma.variant.upsert({
           where: { id: variant.id },
           update: variant,
-          create: { 
-            ...variant, 
-            shoeSize: variant.shoeSize || null, 
-            deckSize: variant.deckSize || null 
-          }
+          create: {
+            ...variant,
+            shoeSize: variant.shoeSize || null,
+            deckSize: variant.deckSize || null,
+          },
         });
       }
     }
   }
+  return count;
 }
 
-
-
-function buildProductsMap(products: any[]) {
+function buildProductsMap(products: any[]): Map<string, any> {
   const map = new Map<string, any>();
   for (const p of products) {
     map.set(p.id, p);
@@ -163,12 +181,21 @@ function buildProductsMap(products: any[]) {
   return map;
 }
 
-async function updateLocalProduct(localProduct: any, newProduct: any) {
+async function updateLocalProduct(localProduct: any, newProduct: any): Promise<boolean> {
   const productUpdates: Record<string, any> = {};
+  let priceChanged = false;
 
   if (localProduct.cheapestPrice !== newProduct.cheapestPrice) {
-    console.log('updating product price of ', localProduct.title, 'from', localProduct.cheapestPrice, 'to', newProduct.cheapestPrice)
+    console.log(
+      "updating product price of ",
+      localProduct.title,
+      "from",
+      localProduct.cheapestPrice,
+      "to",
+      newProduct.cheapestPrice
+    );
     productUpdates.cheapestPrice = newProduct.cheapestPrice;
+    priceChanged = true;
   }
 
   if (Object.keys(productUpdates).length > 0) {
@@ -177,6 +204,7 @@ async function updateLocalProduct(localProduct: any, newProduct: any) {
       data: productUpdates,
     });
   }
+  return priceChanged;
 }
 
 async function updateVariants(localVariants: any[], newVariants: any[]): Promise<boolean> {
@@ -209,5 +237,6 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
       });
     }
   }
+
   return compareAtPriceUpdated;
 }

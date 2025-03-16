@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useTransition } from 'react';
 import Button from '../../../components/ui/button';
 import { deleteAllProducts, refreshCounts } from './actions';
@@ -8,6 +9,11 @@ import { fetchAllProducts } from '@/lib/product/fetch';
 interface AdminComponentProps {
   shopCount: number;
   productCount: number;
+}
+
+interface UpdateResult {
+  added: number;
+  priceChanged: number;
 }
 
 export default function AdminComponent({
@@ -21,9 +27,12 @@ export default function AdminComponent({
   const [isRefreshing, startRefresh] = useTransition();
   const [isFetching, startFetch] = useTransition();
   const [isDeleting, startDelete] = useTransition();
+  const [isUpdating, startUpdate] = useTransition();
 
   const [fetchMessage, setFetchMessage] = useState<string>('');
   const [deleteMessage, setDeleteMessage] = useState<string>('');
+  const [updateMessage, setUpdateMessage] = useState<string>('');
+  const [updateResult, setUpdateResult] = useState<UpdateResult | null>(null);
 
   const handleRefreshCounts = () => {
     startRefresh(async () => {
@@ -61,8 +70,19 @@ export default function AdminComponent({
     });
   };
 
-  const handleUpdateProducts = async () => {
-    await updateAllProducts();
+  const handleUpdateProducts = () => {
+    startUpdate(async () => {
+      setUpdateMessage('Updating products...');
+      try {
+        const result: UpdateResult = await updateAllProducts();
+        setUpdateResult(result);
+        setUpdateMessage('Product update completed.');
+        setTimeout(() => setUpdateMessage(''), 3000);
+      } catch (error) {
+        console.error('Error:', error);
+        setUpdateMessage('An error occurred during product update.');
+      }
+    });
   };
 
   return (
@@ -115,9 +135,23 @@ export default function AdminComponent({
         >
           {isRefreshing ? 'Refreshing...' : '🔄 Refresh Counts'}
         </Button>
-        <Button onClick={handleUpdateProducts} variant="smart">
-          Update Products
+        <Button
+          onClick={handleUpdateProducts}
+          disabled={isUpdating}
+          variant="smart"
+        >
+          {isUpdating ? 'Updating Products...' : 'Update Products'}
         </Button>
+        {updateMessage && (
+          <p className="text-sm text-gray-600">{updateMessage}</p>
+        )}
+        {updateResult && (
+          <div className="mt-4 p-4 bg-green-100 rounded-md">
+            <p className="font-semibold">Update Summary:</p>
+            <p>Products Added: {updateResult.added}</p>
+            <p>Products with Price Change: {updateResult.priceChanged}</p>
+          </div>
+        )}
       </div>
     </div>
   );
