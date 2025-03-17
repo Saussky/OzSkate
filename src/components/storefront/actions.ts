@@ -40,6 +40,7 @@ export const getPaginatedProducts = async (
   ]);
 
   const mergedProducts = products.map((primary) => {
+    // TODO: Products either aren't being makred as duplicates correctly, or query in above function is wrong
     if (primary.duplicateProducts) {
       console.log('duplicate products', primary.duplicateProducts)
     } 
