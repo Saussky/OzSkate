@@ -51,7 +51,7 @@ export default function Storefront({ user }: StorefrontProps) {
       startTransition(async () => {
         const data = await getPaginatedProducts(page, 40, filters, sortOption);
 
-        const transformedProducts: ExtendedProduct[] = data.products.map(
+        const transformedProducts: ExtendedProduct[] = data.mergedProducts.map(
           (product) => {
             const image = product.image as ImageJson | null;
 

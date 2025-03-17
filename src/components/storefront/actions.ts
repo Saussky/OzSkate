@@ -14,7 +14,6 @@ export const getPaginatedProducts = async (
   const whereClause = await buildWhereClause(filters);
   const orderBy = await buildOrderByClause(sortOptions);
 
-
   const [products, totalProducts] = await prisma.$transaction([
     prisma.product.findMany({
       where: whereClause,
@@ -24,16 +23,64 @@ export const getPaginatedProducts = async (
       include: {
         shop: true,
         variants: true,
-      },
+        // Get all approved duplicates for each product
+        duplicateProducts: {
+          where: { approvedDuplicate: true },
+          include: {
+            shop: true,
+            variants: true
+          }
+        }
+      }
     }),
 
     prisma.product.count({
-      where: whereClause,
-    }),
+      where: whereClause
+    })
   ]);
 
+  const mergedProducts = products.map((primary) => {
+    if (primary.duplicateProducts) {
+      console.log('duplicate products', primary.duplicateProducts)
+    } 
+    // For the storefront, we want to show one product listing with an array of
+    // store/price info from itself and from each of its duplicates.
+
+    // Start with the primary product's data
+    const storeAndPrices = [
+      {
+        shopId: primary.shopId,
+        shopName: primary.shop.name,
+        variants: primary.variants,
+        cheapestPrice: primary.cheapestPrice
+      }
+    ];
+
+    // Add all approved duplicates
+    for (const dup of primary.duplicateProducts) {
+      storeAndPrices.push({
+        shopId: dup.shopId,
+        shopName: dup.shop.name,
+        variants: dup.variants,
+        cheapestPrice: dup.cheapestPrice
+      });
+
+      console.log('heres theres duplicates', dup)
+    }
+
+
+    return {
+      ...primary,
+      // We don't need to keep duplicateProducts as a separate array since we merged them
+      duplicateProducts: undefined,
+      allStorePrices: storeAndPrices
+    };
+  });
+
+
+
   return {
-    products,
+    mergedProducts,
     totalProducts,
     currentPage: page,
     totalPages: Math.ceil(totalProducts / limit),
