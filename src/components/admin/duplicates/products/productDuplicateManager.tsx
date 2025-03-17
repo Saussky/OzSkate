@@ -12,7 +12,6 @@ import ProductCard from '@/components/shared/product-card/productCard';
 import Pagination from '@/components/shared/pagination';
 
 export default function ProductDuplicateManager(): JSX.Element {
-  // State and transition for the "Find Duplicates" button.
   const [isFinding, startFinding] = useTransition();
 
   async function handleFindDuplicates() {
@@ -21,7 +20,6 @@ export default function ProductDuplicateManager(): JSX.Element {
     });
   }
 
-  // State for paginated duplicate data.
   const [duplicates, setDuplicates] = useState<ProductWithSuspectedDuplicate[]>(
     []
   );
