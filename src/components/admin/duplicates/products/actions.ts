@@ -10,14 +10,18 @@ export async function getPaginatedSuspectedDuplicates(page: number, limit: numbe
   const [duplicates, total] = await prisma.$transaction([
     prisma.product.findMany({
       where: {
-        suspectedDuplicateOfId: {
-          not: null,
+        suspectedDuplicateOfId: { not: null },
+        approvedDuplicate: false,
+        suspectedDuplicateOf: {
+          approvedDuplicate: false,
         },
       },
       include: {
         shop: true,
         suspectedDuplicateOf: {
-          include: { shop: true },
+          include: {
+            shop: true,
+          },
         },
       },
       skip: offset,
@@ -25,8 +29,10 @@ export async function getPaginatedSuspectedDuplicates(page: number, limit: numbe
     }),
     prisma.product.count({
       where: {
-        suspectedDuplicateOfId: {
-          not: null,
+        suspectedDuplicateOfId: { not: null },
+        approvedDuplicate: false,
+        suspectedDuplicateOf: {
+          approvedDuplicate: false,
         },
       },
     }),

@@ -41,9 +41,11 @@ export default function ProductDuplicateManager(): JSX.Element {
     setDuplicates((prev) => prev.filter((p) => p.id !== productId));
   }
 
-  async function handleMerge(originalId: string, duplicateId: string) {
-    await mergeProducts(originalId, duplicateId);
-    setDuplicates((prev) => prev.filter((p) => p.id !== originalId));
+  async function handleMerge(keepId: string, mergeId: string) {
+    await mergeProducts(keepId, mergeId);
+    setDuplicates((prev) =>
+      prev.filter((p) => p.id !== mergeId && p.id !== keepId)
+    );
   }
 
   const handlePageChange = (page: number) => setCurrentPage(page);
@@ -57,11 +59,11 @@ export default function ProductDuplicateManager(): JSX.Element {
       </div>
 
       {duplicates.length === 0 ? (
-        <div>No duplicates found.</div>
+        <div>No potential matches found.</div>
       ) : (
         duplicates.map((duplicate) => {
-          const original = duplicate.suspectedDuplicateOf;
-          if (!original) return null;
+          const otherProduct = duplicate.suspectedDuplicateOf;
+          if (!otherProduct) return null;
 
           return (
             <section
@@ -70,44 +72,45 @@ export default function ProductDuplicateManager(): JSX.Element {
             >
               <header className="mb-4">
                 <h2 className="text-xl font-semibold">
-                  Duplicate: {duplicate.title}
+                  Potential Match: {duplicate.title}
                 </h2>
               </header>
               <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
                 <div className="w-1/3">
                   <ProductCard
-                    id={original.id}
-                    title={original.title}
+                    id={otherProduct.id}
+                    title={otherProduct.title}
                     admin={false}
-                    price={String(original.cheapestPrice ?? '')}
-                    handle={original.handle}
-                    shop={original.shop}
-                    imageSrc={original.image?.src}
-                    parentType={original.parentType}
-                    childType={original.childType}
+                    price={String(otherProduct.cheapestPrice ?? '')}
+                    handle={otherProduct.handle}
+                    shop={otherProduct.shop}
+                    imageSrc={otherProduct.image?.src}
+                    parentType={otherProduct.parentType}
+                    childType={otherProduct.childType}
                   />
                 </div>
 
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <p className="text-sm text-gray-500 mb-2">Merge direction</p>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Choose merge action
+                  </p>
                   <Button
-                    onClick={() => handleMerge(original.id, duplicate.id)}
+                    onClick={() => handleMerge(otherProduct.id, duplicate.id)}
                     disabled={isPending}
                   >
-                    Original ⬅️ Duplicate
+                    Keep Left Product, Merge Right
                   </Button>
                   <Button
-                    onClick={() => handleMerge(duplicate.id, original.id)}
+                    onClick={() => handleMerge(duplicate.id, otherProduct.id)}
                     disabled={isPending}
                   >
-                    Original → Duplicate
+                    Keep Right Product, Merge Left
                   </Button>
                   <Button
                     onClick={() => handleReject(duplicate.id)}
                     disabled={isPending}
-                    // variant="danger"
                   >
-                    Not a Duplicate
+                    Not a Match
                   </Button>
                 </div>
 
