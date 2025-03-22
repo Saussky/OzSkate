@@ -72,7 +72,7 @@ export async function rejectDuplicate(productId: string) {
       where: { id: productId },
       data: {
         suspectedDuplicateOf: undefined,
-        approvedDuplicate: false,
+        approvedDuplicate: false, //TODO: I don't think this is right
       },
     });
   });

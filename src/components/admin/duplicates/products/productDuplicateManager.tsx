@@ -84,7 +84,12 @@ export default function ProductDuplicateManager(): JSX.Element {
                     price={String(otherProduct.cheapestPrice ?? '')}
                     handle={otherProduct.handle}
                     shop={otherProduct.shop}
-                    imageSrc={otherProduct.image?.src}
+                    imageSrc={
+                      typeof duplicate.image === 'object' &&
+                      duplicate.image !== null
+                        ? (duplicate.image as { src: string }).src
+                        : String(duplicate.image)
+                    }
                     parentType={otherProduct.parentType}
                     childType={otherProduct.childType}
                   />
@@ -122,7 +127,12 @@ export default function ProductDuplicateManager(): JSX.Element {
                     price={String(duplicate.cheapestPrice ?? '')}
                     handle={duplicate.handle}
                     shop={duplicate.shop}
-                    imageSrc={duplicate.image?.src}
+                    imageSrc={
+                      typeof duplicate.image === 'object' &&
+                      duplicate.image !== null
+                        ? (duplicate.image as { src: string }).src
+                        : String(duplicate.image)
+                    }
                     parentType={duplicate.parentType}
                     childType={duplicate.childType}
                   />
