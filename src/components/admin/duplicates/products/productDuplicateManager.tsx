@@ -1,6 +1,6 @@
 'use client';
+
 import React, { useEffect, useState, useTransition } from 'react';
-import { ProductWithSuspectedDuplicate } from '@/lib/types';
 import Button from '@/components/ui/button';
 import {
   getPaginatedSuspectedDuplicates,
@@ -10,45 +10,53 @@ import {
 } from './actions';
 import ProductCard from '@/components/shared/product-card/productCard';
 import Pagination from '@/components/shared/pagination';
+import { Prisma } from '@prisma/client';
+
+type DuplicatePair = Prisma.ProductDuplicateGetPayload<{
+  include: {
+    masterProduct: { include: { shop: true } };
+    duplicateProduct: { include: { shop: true } };
+  };
+}>;
 
 export default function ProductDuplicateManager(): JSX.Element {
   const [isFinding, startFinding] = useTransition();
-
-  async function handleFindDuplicates() {
-    startFinding(async () => {
-      await checkAllProductsForDuplicates();
-    });
-  }
-
-  const [duplicates, setDuplicates] = useState<ProductWithSuspectedDuplicate[]>(
-    []
-  );
+  const [duplicates, setDuplicates] = useState<DuplicatePair[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    startTransition(async () => {
-      const { duplicates: fetchedDuplicates, totalPages } =
-        await getPaginatedSuspectedDuplicates(currentPage, 10);
-      setDuplicates(fetchedDuplicates);
-      setTotalPages(totalPages);
+  async function handleFindDuplicates() {
+    startFinding(async () => {
+      await checkAllProductsForDuplicates();
+      await refreshDuplicates();
     });
-  }, [currentPage, startTransition]);
-
-  async function handleReject(productId: string) {
-    await rejectDuplicate(productId);
-    setDuplicates((prev) => prev.filter((p) => p.id !== productId));
   }
 
-  async function handleMerge(keepId: string, mergeId: string) {
-    await mergeProducts(keepId, mergeId);
-    setDuplicates((prev) =>
-      prev.filter((p) => p.id !== mergeId && p.id !== keepId)
+  async function refreshDuplicates() {
+    const { items, total } = await getPaginatedSuspectedDuplicates(
+      currentPage,
+      10
     );
+    setDuplicates(items);
+    setTotalPages(Math.ceil(total / 10));
   }
 
-  const handlePageChange = (page: number) => setCurrentPage(page);
+  useEffect(() => {
+    startTransition(() => {
+      refreshDuplicates();
+    });
+  }, [currentPage]);
+
+  async function handleReject(masterId: string, duplicateId: string) {
+    await rejectDuplicate(masterId, duplicateId);
+    await refreshDuplicates();
+  }
+
+  async function handleMerge(masterId: string, duplicateId: string) {
+    await mergeProducts(masterId, duplicateId);
+    await refreshDuplicates();
+  }
 
   return (
     <div className="space-y-8">
@@ -61,37 +69,36 @@ export default function ProductDuplicateManager(): JSX.Element {
       {duplicates.length === 0 ? (
         <div>No potential matches found.</div>
       ) : (
-        duplicates.map((duplicate) => {
-          const otherProduct = duplicate.suspectedDuplicateOf;
-          if (!otherProduct) return null;
+        duplicates.map((pair) => {
+          const { masterProduct, duplicateProduct } = pair;
 
           return (
             <section
-              key={duplicate.id}
+              key={pair.id}
               className="border border-gray-300 rounded p-4"
             >
               <header className="mb-4">
                 <h2 className="text-xl font-semibold">
-                  Potential Match: {duplicate.title}
+                  Potential Duplicate Pair
                 </h2>
               </header>
               <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
                 <div className="w-1/3">
                   <ProductCard
-                    id={otherProduct.id}
-                    title={otherProduct.title}
+                    id={masterProduct.id}
+                    title={masterProduct.title}
                     admin={false}
-                    price={String(otherProduct.cheapestPrice ?? '')}
-                    handle={otherProduct.handle}
-                    shop={otherProduct.shop}
+                    price={String(masterProduct.cheapestPrice ?? '')}
+                    handle={masterProduct.handle}
+                    shop={masterProduct.shop}
                     imageSrc={
-                      typeof duplicate.image === 'object' &&
-                      duplicate.image !== null
-                        ? (duplicate.image as { src: string }).src
-                        : String(duplicate.image)
+                      typeof masterProduct.image === 'object' &&
+                      masterProduct.image !== null
+                        ? (masterProduct.image as { src: string }).src
+                        : String(masterProduct.image)
                     }
-                    parentType={otherProduct.parentType}
-                    childType={otherProduct.childType}
+                    parentType={masterProduct.parentType}
+                    childType={masterProduct.childType}
                   />
                 </div>
 
@@ -100,19 +107,25 @@ export default function ProductDuplicateManager(): JSX.Element {
                     Choose merge action
                   </p>
                   <Button
-                    onClick={() => handleMerge(otherProduct.id, duplicate.id)}
+                    onClick={() =>
+                      handleMerge(masterProduct.id, duplicateProduct.id)
+                    }
                     disabled={isPending}
                   >
                     Keep Left Product, Merge Right
                   </Button>
                   <Button
-                    onClick={() => handleMerge(duplicate.id, otherProduct.id)}
+                    onClick={() =>
+                      handleMerge(duplicateProduct.id, masterProduct.id)
+                    }
                     disabled={isPending}
                   >
                     Keep Right Product, Merge Left
                   </Button>
                   <Button
-                    onClick={() => handleReject(duplicate.id)}
+                    onClick={() =>
+                      handleReject(masterProduct.id, duplicateProduct.id)
+                    }
                     disabled={isPending}
                   >
                     Not a Match
@@ -121,20 +134,20 @@ export default function ProductDuplicateManager(): JSX.Element {
 
                 <div className="w-1/3">
                   <ProductCard
-                    id={duplicate.id}
-                    title={duplicate.title}
+                    id={duplicateProduct.id}
+                    title={duplicateProduct.title}
                     admin={false}
-                    price={String(duplicate.cheapestPrice ?? '')}
-                    handle={duplicate.handle}
-                    shop={duplicate.shop}
+                    price={String(duplicateProduct.cheapestPrice ?? '')}
+                    handle={duplicateProduct.handle}
+                    shop={duplicateProduct.shop}
                     imageSrc={
-                      typeof duplicate.image === 'object' &&
-                      duplicate.image !== null
-                        ? (duplicate.image as { src: string }).src
-                        : String(duplicate.image)
+                      typeof duplicateProduct.image === 'object' &&
+                      duplicateProduct.image !== null
+                        ? (duplicateProduct.image as { src: string }).src
+                        : String(duplicateProduct.image)
                     }
-                    parentType={duplicate.parentType}
-                    childType={duplicate.childType}
+                    parentType={duplicateProduct.parentType}
+                    childType={duplicateProduct.childType}
                   />
                 </div>
               </div>
@@ -146,7 +159,7 @@ export default function ProductDuplicateManager(): JSX.Element {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={handlePageChange}
+        onPageChange={setCurrentPage}
       />
     </div>
   );
