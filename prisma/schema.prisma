@@ -63,10 +63,8 @@ model product {
   on_sale_variant_id String? // Null if no variants are on sale
   cheapestPrice      Float? // Cached minimum price of variants //TODO: Need to update this value when fetching data
 
-  suspectedDuplicateOf product? @relation("ProductDuplicates", fields: [suspectedDuplicateOfId], references: [id])
-  suspectedDuplicateOfId String?
-  approvedDuplicate    Boolean  @default(false)
-  duplicateProducts product[] @relation("ProductDuplicates")
+  duplicatesAsMaster    ProductDuplicate[] @relation("MasterProductDuplicates")
+  duplicatesAsDuplicate ProductDuplicate[] @relation("DuplicateProductDuplicates")
 
   @@index([shopId])
   @@index([title])
@@ -75,6 +73,28 @@ model product {
   @@index([childType])
   @@index([createdAt])
   @@index([updatedAt])
+}
+
+
+model ProductDuplicate {
+  id               String            @id @default(cuid())
+  masterProductId   String
+  duplicateProductId String
+  status           DuplicateStatus  @default(suspected)
+  reasons          Json?            // optional JSON field for similarity reasons
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  masterProduct    product @relation("MasterProductDuplicates", fields: [masterProductId], references: [id])
+  duplicateProduct product @relation("DuplicateProductDuplicates", fields: [duplicateProductId], references: [id])
+
+  @@unique([masterProductId, duplicateProductId])
+}
+
+enum DuplicateStatus {
+  suspected
+  confirmed
+  rejected
 }
 
 model variant {
