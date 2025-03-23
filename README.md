@@ -38,5 +38,5 @@ psql -h localhost -U postgres -d ozskate
 
 
 ```bash
- pm2 start npm --name next-app -- run dev
+ pm2 start npm --name next-app -- run start
  ```

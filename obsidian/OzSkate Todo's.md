@@ -66,3 +66,16 @@ TODO 2/3/25
 - Filters, search by brand like in depop
 - Clean up filters UI
 - Mobile UI
+
+TODO 23/3/25
+- Fix merged products, storing duplicates within the table of products isn't a good idea
+	- Separate
+- Running site in production mode
+	- Login isn't persisting in prod?
+		- Something to do with lucia file maybe? Cookies.set generally needs a "use server" but we can't have that in the same file as exporting a non-async function such as auth
+- HTTPS certification
+- Header too big in mobile
+- Admin controls in product to mark as duplicate
+	- Search for other products in this menu
+- Product updates also need to look for photos
+- Australian brands get a different card display, green and gold? red, yellow and black?
