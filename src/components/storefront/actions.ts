@@ -46,6 +46,7 @@ export const getPaginatedProducts = async (
       {
         shopId: primary.shopId,
         shopName: primary.shop.name,
+        state: primary.shop.state,
         variants: primary.variants,
         cheapestPrice: primary.cheapestPrice
       }
@@ -54,9 +55,12 @@ export const getPaginatedProducts = async (
     for (const { duplicateProduct } of primary.duplicatesAsMaster) {
       if (!duplicateProduct) continue;
 
+
+
       storeAndPrices.push({
         shopId: duplicateProduct.shopId,
         shopName: duplicateProduct.shop.name,
+        state: duplicateProduct.shop.state,
         variants: duplicateProduct.variants,
         cheapestPrice: duplicateProduct.cheapestPrice
       });
@@ -64,7 +68,7 @@ export const getPaginatedProducts = async (
 
     return {
       ...primary,
-      duplicatesAsMaster: undefined, // omit raw duplicates from response
+      // duplicatesAsMaster: undefined, // omit raw duplicates from response
       allStorePrices: storeAndPrices
     };
   });

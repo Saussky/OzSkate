@@ -16,10 +16,18 @@ type ImageJson = {
   alt?: string;
 };
 
+interface StorePriceInfo {
+  shopId: number;
+  shopName: string;
+  cheapestPrice: number | null;
+  variants: variant[];
+}
+
 export interface ExtendedProduct extends product {
   shop: shop;
   variants: variant[];
   image: ImageJson | null;
+  allStorePrices?: StorePriceInfo[];
 }
 
 interface StorefrontProps {
@@ -138,12 +146,13 @@ export default function Storefront({ user }: StorefrontProps) {
             id={product.id}
             admin={user?.admin || false}
             title={product.title}
-            price={product.cheapestPrice as unknown as string}
-            imageSrc={(product.image as ImageJson)?.src || '/placeholder.jpg'} //TODO: Double fallback
+            price={String(product.cheapestPrice ?? '')}
+            imageSrc={product.image?.src || '/placeholder.jpg'} //todo; fallback
             handle={product.handle}
             shop={product.shop}
             parentType={product.parentType}
             childType={product.childType}
+            allStorePrices={product.allStorePrices}
           />
         ))}
       </div>
