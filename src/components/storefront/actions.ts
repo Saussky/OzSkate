@@ -23,62 +23,55 @@ export const getPaginatedProducts = async (
       include: {
         shop: true,
         variants: true,
-        // Get all approved duplicates for each product
-        duplicateProducts: {
-          where: { approvedDuplicate: true },
+        // Get confirmed duplicates via join table
+        duplicatesAsMaster: {
+          where: { status: 'confirmed' },
           include: {
-            shop: true,
-            variants: true
+            duplicateProduct: {
+              include: {
+                shop: true,
+                variants: true
+              }
+            }
           }
         }
       }
     }),
 
-    prisma.product.count({
-      where: whereClause
-    })
+    prisma.product.count({ where: whereClause })
   ]);
 
   const mergedProducts = products.map((primary) => {
-    // TODO: Products either aren't being makred as duplicates correctly, or query in above function is wrong
-    if (primary.duplicateProducts) {
-      console.log('duplicate products', primary.duplicateProducts)
-    } 
-    // For the storefront, we want to show one product listing with an array of
-    // store/price info from itself and from each of its duplicates.
-
-    // Start with the primary product's data
     const storeAndPrices = [
       {
         shopId: primary.shopId,
         shopName: primary.shop.name,
+        state: primary.shop.state,
         variants: primary.variants,
         cheapestPrice: primary.cheapestPrice
       }
     ];
 
-    // Add all approved duplicates
-    for (const dup of primary.duplicateProducts) {
+    for (const { duplicateProduct } of primary.duplicatesAsMaster) {
+      if (!duplicateProduct) continue;
+
+
+
       storeAndPrices.push({
-        shopId: dup.shopId,
-        shopName: dup.shop.name,
-        variants: dup.variants,
-        cheapestPrice: dup.cheapestPrice
+        shopId: duplicateProduct.shopId,
+        shopName: duplicateProduct.shop.name,
+        state: duplicateProduct.shop.state,
+        variants: duplicateProduct.variants,
+        cheapestPrice: duplicateProduct.cheapestPrice
       });
-
-      console.log('heres theres duplicates', dup)
     }
-
 
     return {
       ...primary,
-      // We don't need to keep duplicateProducts as a separate array since we merged them
-      duplicateProducts: undefined,
+      // duplicatesAsMaster: undefined, // omit raw duplicates from response
       allStorePrices: storeAndPrices
     };
   });
-
-
 
   return {
     mergedProducts,
@@ -87,6 +80,7 @@ export const getPaginatedProducts = async (
     totalPages: Math.ceil(totalProducts / limit),
   };
 };
+
 
 export const getFilteredVendors = async (
   filters: FilterOption = {}

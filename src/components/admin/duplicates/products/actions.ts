@@ -2,136 +2,102 @@
 'use server';
 import { prisma } from '@/lib/prisma';
 import { checkProductSimilarity } from '@/lib/product/merge';
-import { ProductWithSuspectedDuplicate } from '@/lib/types';
+import { Prisma } from '@prisma/client';
 
-export async function getPaginatedSuspectedDuplicates(page: number, limit: number) {
-  const offset = (page - 1) * limit;
-
-  const [duplicates, total] = await prisma.$transaction([
-    prisma.product.findMany({
-      where: {
-        suspectedDuplicateOfId: { not: null },
-        approvedDuplicate: false,
-        suspectedDuplicateOf: {
-          approvedDuplicate: false,
-        },
+export async function getPaginatedSuspectedDuplicates(
+  page: number, 
+  pageSize: number
+): Promise<{
+  total: number;
+  items: Prisma.ProductDuplicateGetPayload<{
+    include: {
+      masterProduct: {
+        include: { shop: true }
       },
-      include: {
-        shop: true,
-        suspectedDuplicateOf: {
-          include: {
-            shop: true,
-          },
-        },
-      },
-      skip: offset,
-      take: limit,
+      duplicateProduct: {
+        include: { shop: true }
+      }
+    }
+  }>[];
+}> {
+  const [total, items] = await prisma.$transaction([
+    prisma.productDuplicate.count({
+      where: { status: 'suspected' },
     }),
-    prisma.product.count({
-      where: {
-        suspectedDuplicateOfId: { not: null },
-        approvedDuplicate: false,
-        suspectedDuplicateOf: {
-          approvedDuplicate: false,
+    prisma.productDuplicate.findMany({
+      where: { status: 'suspected' },
+      include: {
+        masterProduct: {
+          include: { shop: true },
+        },
+        duplicateProduct: {
+          include: { shop: true },
         },
       },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      orderBy: { createdAt: 'desc' },
     }),
   ]);
 
-  return {
-    duplicates: duplicates as ProductWithSuspectedDuplicate[],
-    totalPages: Math.ceil(total / limit),
-    total,
-  };
+  return { total, items };
 }
 
-export async function rejectDuplicate(productId: string) {
-  await prisma.$transaction(async (tx) => {
-    const product = await tx.product.findUnique({
-      where: { id: productId },
-      include: {
-        duplicateProducts: true,
-      },
-    });
 
-    if (!product) return;
+export async function rejectDuplicate(masterId: string, duplicateId: string): Promise<void> {
+  // Update the status to 'rejected' for the matching suspected duplicate entry, if it exists
+  await prisma.productDuplicate.updateMany({
+    where: {
+      OR: [
+        { masterProductId: masterId, duplicateProductId: duplicateId },
+        { masterProductId: duplicateId, duplicateProductId: masterId }
+      ],
+      status: 'suspected'
+    },
+    data: { status: 'rejected' }
+  });
 
-    for (const dup of product.duplicateProducts) {
-      await tx.product.update({
-        where: { id: dup.id },
-        data: {
-          duplicateProducts: {
-            disconnect: [{ id: productId }],
-          },
-          suspectedDuplicateOf: undefined,
-        },
-      });
+  // No need to remove the record; keeping it as 'rejected' ensures this pair won't be flagged again.
+}
+
+
+export async function mergeProducts(masterId: string, duplicateId: string): Promise<void> {
+  // Find the duplicate relationship record in either orientation
+  const existingRelation = await prisma.productDuplicate.findFirst({
+    where: {
+      OR: [
+        { masterProductId: masterId, duplicateProductId: duplicateId },
+        { masterProductId: duplicateId, duplicateProductId: masterId }
+      ]
     }
+  });
 
-    await tx.product.update({
-      where: { id: productId },
-      data: {
-        suspectedDuplicateOf: undefined,
-        approvedDuplicate: false, //TODO: I don't think this is right
-      },
+  if (existingRelation) {
+    // Update the existing suspected record to confirmed
+    await prisma.productDuplicate.update({
+      where: { id: existingRelation.id },
+      data: { status: 'confirmed' }
     });
-  });
-}
-
-export async function mergeProducts(originalId: string, duplicateId: string) {
-  const sourceProduct = await prisma.product.findUnique({
-    where: { id: originalId },
-    include: { duplicateProducts: true },
-  });
-
-  // TODO: Find where suspectedDuplicateId is also equal
-  const targetProduct = await prisma.product.findUnique({
-    where: { id: duplicateId },
-    include: { duplicateProducts: true },
-  });
-
-  // if (targetProduct?.duplicateProducts) {
-  //   throw new Error("Duplicate is a source for other duplicates")
-  // }
-
-  if (!sourceProduct || !targetProduct) {
-    throw new Error("One or both products not found");
+  } else {
+    // If no record exists (e.g. merging found manually), create a new confirmed duplicate entry
+    await prisma.productDuplicate.create({
+      data: {
+        masterProductId: masterId,
+        duplicateProductId: duplicateId,
+        status: 'confirmed',
+        reasons: undefined  // no reasons if it was a manual identification
+      }
+    });
   }
 
-  
-  await prisma.$transaction([
-    prisma.product.update({
-      where: { id: originalId },
-      data: {
-        duplicateProducts: {
-          connect: [{ id: duplicateId }],
-        },
-      },
-    }),
-    prisma.product.update({
-      where: { id: duplicateId },
-      data: {
-        approvedDuplicate: true,
-      },
-    }),
-  ]);
-
-  console.log(`Marked products ${originalId} and ${duplicateId} as duplicates with approval.`);
+  // (Optional) Merge product data: e.g., transfer any necessary info from duplicate product to master product.
+  // You might also delete or deactivate the duplicate product from the Product table if it's truly merged.
+  // This depends on your application requirements and is separate from tracking the duplicate relationship.
 }
 
 
 
 
-async function getAllProducts() {  
-  const allProducts = await prisma.product.findMany({
-    include: {
-      variants: true,
-      shop: true,
-    },
-  });
-  
-  return allProducts;
-}
 
 
 function groupProductsByChildType(products: any[]): Record<string, any[]> {
@@ -182,28 +148,105 @@ function findDuplicatesWithinChildType(products: any[]): {
 }
 
 //TODO: Investigate further
-async function markProductsAsSuspectedDuplicates(p1: any, p2: any) {
-  try {
-    await prisma.$transaction([
-      prisma.product.update({
-        where: { id: p1.id },
-        data: {
-          suspectedDuplicateOf: {
-            connect: { id: p2.id },
-          },
-        },
-      }),
-    ]);
-    console.log(`DB updated: ${p1.title} and ${p2.title} marked as duplicates.`);
-  } catch (err) {
-    console.error("Error updating products as duplicates:", err);
+export async function markProductsAsSuspectedDuplicates(
+  productAId: string, 
+  productBId: string, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _reasons?: Prisma.JsonValue
+): Promise<void> {
+  // Enforce a consistent ordering for master/duplicate to avoid duplicates in reverse.
+  // For example, use the smaller ID as the master product (or apply another rule such as creation date).
+  let masterId = productAId;
+  let duplicateId = productBId;
+  if (productBId < productAId) {
+    masterId = productBId;
+    duplicateId = productAId;
   }
+
+  // Check if this pair already exists in any status (suspected, confirmed, or rejected)
+  const existing = await prisma.productDuplicate.findFirst({
+    where: {
+      OR: [
+        { masterProductId: masterId, duplicateProductId: duplicateId },
+        { masterProductId: duplicateId, duplicateProductId: masterId }
+      ]
+    }
+  });
+  if (existing) {
+    // If a relationship exists, do nothing:
+    // - If status is 'rejected', we don't want to flag it again.
+    // - If 'suspected' or 'confirmed', it's already handled.
+    return;
+  }
+
+  // Insert a new suspected duplicate record
+  await prisma.productDuplicate.create({
+    data: {
+      masterProductId: masterId,
+      duplicateProductId: duplicateId,
+      status: 'suspected',
+      // reasons: reasons // store similarity reasons if provided
+    }
+  });
 }
 
+
+// // A helper function for grouping products by childType
+// function groupProductsByChildType(products: any[]): Record<string, any[]> {
+//   const productsByChildType: Record<string, any[]> = {};
+
+//   for (const product of products) {
+//     const childType = product.childType || "Uncategorised";
+//     if (!productsByChildType[childType]) {
+//       productsByChildType[childType] = [];
+//     }
+//     productsByChildType[childType].push(product);
+//   }
+
+//   return productsByChildType;
+// }
+
+// // Identify duplicates within each childType using checkProductSimilarity
+// function findDuplicatesWithinChildType(products: any[]) {
+//   const results: { product1: any; product2: any; reasons: string[] }[] = [];
+
+//   for (let i = 0; i < products.length; i++) {
+//     for (let j = i + 1; j < products.length; j++) {
+//       const product1 = products[i];
+//       const product2 = products[j];
+
+//       // Only compare products from different stores
+//       if (product1.shopId === product2.shopId) continue;
+
+//       const similarityResult = checkProductSimilarity(product1, product2);
+//       if (similarityResult.isSimilar) {
+//         results.push({
+//           product1,
+//           product2,
+//           reasons: similarityResult.reasons,
+//         });
+//       }
+//     }
+//   }
+
+//   return results;
+// }
+
 export async function checkAllProductsForDuplicates() {
-  const allProducts = await getAllProducts();
-  const cleanProducts = allProducts.filter(product => !product.approvedDuplicate)
-  const productsByChildType = groupProductsByChildType(cleanProducts);
+  // Fetch all products, including any fields needed for similarity checks
+  const allProducts = await prisma.product.findMany({
+    include: {
+      shop: true,    // e.g. to filter out same-store comparisons
+      variants: true // only if needed for similarity checks
+    },
+    where: {
+      // e.g. skip any product that’s already confirmed duplicate (optional)
+      // approvedDuplicate: false
+    },
+  });
+
+  // Group products by childType
+  const productsByChildType = groupProductsByChildType(allProducts);
 
   // Check duplicates within each childType
   for (const [childType, products] of Object.entries(productsByChildType)) {
@@ -212,17 +255,17 @@ export async function checkAllProductsForDuplicates() {
     const results = findDuplicatesWithinChildType(products);
 
     if (results.length > 0) {
-      console.log(
-        `Found ${results.length} potential duplicates in childType: ${childType}`
-      );
+      console.log(`Found ${results.length} potential duplicates in childType: ${childType}`);
 
       for (const { product1, product2, reasons } of results) {
         console.log(
-          `- Duplicate Pair: "${product1.title}" (Store: ${product1.shop.name}) <-> "${product2.title}" (Store: ${product2.shop.name})`
+          `- Duplicate Pair: "${product1.title}" (Store: ${product1.shop?.name}) <-> "${product2.title}" (Store: ${product2.shop?.name})`
         );
         console.log(`  Reasons: ${reasons.join(", ")}`);
 
-        await markProductsAsSuspectedDuplicates(product1, product2);
+        await markProductsAsSuspectedDuplicates(product1.id, product2.id, {
+          reasons,
+        });
       }
     } else {
       console.log(`No duplicates found in childType: ${childType}`);

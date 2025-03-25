@@ -1,7 +1,7 @@
 'use server';
+import { validateRequest } from '@/lib/cookies';
 import './globals.css';
 import Storefront from '@/components/storefront/storefront';
-import { validateRequest } from '@/lib/auth';
 
 export default async function Home() {
   const { user } = await validateRequest();

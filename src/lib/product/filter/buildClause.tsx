@@ -83,7 +83,7 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     whereClause.onSale = true;
   }
 
-  whereClause.approvedDuplicate = false; // Filter out duplicates
+  // whereClause.approvedDuplicate = false; // Filter out duplicates
   return whereClause;
 };
 

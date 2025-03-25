@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { deleteSessionCookie } from "../../../lib/cookies";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/lucia";
 
 export default async function handler(
   req: NextApiRequest,

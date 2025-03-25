@@ -1,8 +1,7 @@
 'use server';
-import { validateRequest } from "@/lib/auth";
+import { validateRequest } from "@/lib/cookies";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
-
 
 export async function changePassword(currentPassword: string, newPassword: string) {
   const { user } = await validateRequest();

@@ -1,6 +1,6 @@
 import { getShopNames } from '@/components/admin/admin/actions';
 import ManageShops from '@/components/admin/shops/manageShops';
-import { validateRequest } from '@/lib/auth';
+import { validateRequest } from '@/lib/cookies';
 
 export default async function AdminShops() {
   const { user } = await validateRequest();

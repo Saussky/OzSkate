@@ -4,7 +4,7 @@ import {
   getShopCount,
 } from '@/components/admin/admin/actions';
 import AdminComponent from '@/components/admin/admin/admin';
-import { validateRequest } from '@/lib/auth';
+import { validateRequest } from '@/lib/cookies';
 
 export default async function Admin() {
   const { user } = await validateRequest();
