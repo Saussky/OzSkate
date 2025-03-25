@@ -19,6 +19,7 @@ type ImageJson = {
 interface StorePriceInfo {
   shopId: number;
   shopName: string;
+  state: string;
   cheapestPrice: number | null;
   variants: variant[];
 }
