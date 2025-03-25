@@ -13,8 +13,6 @@ export const auth = new Lucia(adapter, {
   sessionExpiresIn: new TimeSpan(1, "w"), // 1 week
 });
 
-
-
 // IMPORTANT!
 declare module "lucia" {
   interface Register {
