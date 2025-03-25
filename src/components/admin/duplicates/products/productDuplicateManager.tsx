@@ -1,16 +1,15 @@
-'use client';
-
-import React, { useEffect, useState, useTransition } from 'react';
-import Button from '@/components/ui/button';
+"use client";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
+import Button from "@/components/ui/button";
 import {
   getPaginatedSuspectedDuplicates,
   rejectDuplicate,
   mergeProducts,
   checkAllProductsForDuplicates,
-} from './actions';
-import ProductCard from '@/components/shared/product-card/productCard';
-import Pagination from '@/components/shared/pagination';
-import { Prisma } from '@prisma/client';
+} from "./actions";
+import ProductCard from "@/components/shared/product-card/productCard";
+import Pagination from "@/components/shared/pagination";
+import { Prisma } from "@prisma/client";
 
 type DuplicatePair = Prisma.ProductDuplicateGetPayload<{
   include: {
@@ -33,16 +32,14 @@ export default function ProductDuplicateManager(): JSX.Element {
     });
   }
 
-  //TODO:
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  async function refreshDuplicates() {
+  const refreshDuplicates = useCallback(async () => {
     const { items, total } = await getPaginatedSuspectedDuplicates(
       currentPage,
       10
     );
     setDuplicates(items);
     setTotalPages(Math.ceil(total / 10));
-  }
+  }, [currentPage]);
 
   useEffect(() => {
     startTransition(() => {
@@ -64,7 +61,7 @@ export default function ProductDuplicateManager(): JSX.Element {
     <div className="space-y-8">
       <div className="mb-4">
         <Button onClick={handleFindDuplicates} disabled={isFinding}>
-          {isFinding ? 'Finding Duplicates...' : 'Find Duplicates'}
+          {isFinding ? "Finding Duplicates..." : "Find Duplicates"}
         </Button>
       </div>
 
@@ -90,11 +87,11 @@ export default function ProductDuplicateManager(): JSX.Element {
                     id={masterProduct.id}
                     title={masterProduct.title}
                     admin={false}
-                    price={String(masterProduct.cheapestPrice ?? '')}
+                    price={String(masterProduct.cheapestPrice ?? "")}
                     handle={masterProduct.handle}
                     shop={masterProduct.shop}
                     imageSrc={
-                      typeof masterProduct.image === 'object' &&
+                      typeof masterProduct.image === "object" &&
                       masterProduct.image !== null
                         ? (masterProduct.image as { src: string }).src
                         : String(masterProduct.image)
@@ -139,11 +136,11 @@ export default function ProductDuplicateManager(): JSX.Element {
                     id={duplicateProduct.id}
                     title={duplicateProduct.title}
                     admin={false}
-                    price={String(duplicateProduct.cheapestPrice ?? '')}
+                    price={String(duplicateProduct.cheapestPrice ?? "")}
                     handle={duplicateProduct.handle}
                     shop={duplicateProduct.shop}
                     imageSrc={
-                      typeof duplicateProduct.image === 'object' &&
+                      typeof duplicateProduct.image === "object" &&
                       duplicateProduct.image !== null
                         ? (duplicateProduct.image as { src: string }).src
                         : String(duplicateProduct.image)
