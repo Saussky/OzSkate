@@ -1,5 +1,5 @@
 "use server";
-import { validateRequest } from "@/lib/auth";
+import { validateRequest } from "@/lib/cookies";
 import { prisma } from "@/lib/prisma";
 
 // TODO: There needs to be a way to make sure the product type doesn't get updated when the application performs product updates

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Header from '@/components/ui/header/header';
-import { validateRequest } from '@/lib/auth';
+import { validateRequest } from '@/lib/cookies';
 
 export const metadata: Metadata = {
   title: 'OzSkate',

@@ -1,6 +1,6 @@
 'use server';
 import ProductDuplicateManager from '@/components/admin/duplicates/products/productDuplicateManager';
-import { validateRequest } from '@/lib/auth';
+import { validateRequest } from '@/lib/cookies';
 
 export default async function ProductDuplicates() {
   const { user } = await validateRequest();

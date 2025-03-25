@@ -33,6 +33,8 @@ export default function ProductDuplicateManager(): JSX.Element {
     });
   }
 
+  //TODO:
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   async function refreshDuplicates() {
     const { items, total } = await getPaginatedSuspectedDuplicates(
       currentPage,
@@ -46,7 +48,7 @@ export default function ProductDuplicateManager(): JSX.Element {
     startTransition(() => {
       refreshDuplicates();
     });
-  }, [currentPage]);
+  }, [currentPage, refreshDuplicates]);
 
   async function handleReject(masterId: string, duplicateId: string) {
     await rejectDuplicate(masterId, duplicateId);
