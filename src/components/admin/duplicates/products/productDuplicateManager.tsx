@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useCallback, useEffect, useState, useTransition } from 'react';
 import Button from '@/components/ui/button';
 import {
   getPaginatedSuspectedDuplicates,
@@ -32,16 +32,14 @@ export default function ProductDuplicateManager(): JSX.Element {
     });
   }
 
-  //TODO:
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  async function refreshDuplicates() {
+  const refreshDuplicates = useCallback(async () => {
     const { items, total } = await getPaginatedSuspectedDuplicates(
       currentPage,
       10
     );
     setDuplicates(items);
     setTotalPages(Math.ceil(total / 10));
-  }
+  }, [currentPage]);
 
   useEffect(() => {
     startTransition(() => {
