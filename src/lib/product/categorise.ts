@@ -22,7 +22,6 @@ type CategorisedProduct<
     : null;
 };
 
-// TODO: Polos, Tank tops need to be categorised
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
@@ -31,7 +30,7 @@ const childTypeKeywordsPerParent: {
   Clothing: {
     Jumpers: ["jumper", "hoodie", "sweater", "pullover", "jumpers", "hoodies", "sweaters", "pullovers"],
     Shirts: ["shirt", "button up", "long sleeve", "shirts", "ss shirt", "jersey", "jerseys"],
-    "T-Shirts": ["t-shirt", "tee", "t shirt", "t-shirts", "t shirts", "tees"],
+    "T-Shirts": ["t-shirt", "tee", "t shirt", "t-shirts", "t shirts", "tees", "tank", "tank-top", "s/s shirt", "s/s shirts", "polo", "polos"],
     Pants: ["pants", "jeans", "trousers"],
     Shorts: ["shorts", "short"],
     "Women's Tops": [
