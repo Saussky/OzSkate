@@ -73,7 +73,7 @@ export async function mergeProducts(masterId: string, duplicateId: string): Prom
         masterProductId: masterId,
         duplicateProductId: duplicateId,
         status: 'confirmed',
-        reasons: undefined  // no reasons if it was a manual identification
+        reasons: {},  // no reasons if it was a manual identification
       }
     });
   }
