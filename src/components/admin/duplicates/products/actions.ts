@@ -4,19 +4,10 @@ import { prisma } from '@/lib/prisma';
 import { checkProductSimilarity } from '@/lib/product/merge';
 import { Prisma } from '@prisma/client';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const duplicateInclude = {
-  masterProduct: { include: { shop: true } },
-  duplicateProduct: { include: { shop: true } },
-} as const;
-
 export async function getPaginatedSuspectedDuplicates(
   page: number,
   pageSize: number
-): Promise<{
-  total: number;
-  items: Prisma.ProductDuplicateGetPayload<{ include: typeof duplicateInclude }>[];
-}> {
+) {
   const [total, items] = await prisma.$transaction([
     prisma.productDuplicate.count({
       where: { status: 'suspected' },
