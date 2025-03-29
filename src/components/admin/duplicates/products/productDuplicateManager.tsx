@@ -19,6 +19,7 @@ import Pagination from '@/components/shared/pagination';
 
 export default function ProductDuplicateManager(): JSX.Element {
   const [isFinding, startFinding] = useTransition();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [duplicates, setDuplicates] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
