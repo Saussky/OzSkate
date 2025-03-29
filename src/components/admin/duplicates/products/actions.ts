@@ -21,7 +21,7 @@ export async function getPaginatedSuspectedDuplicates(
         duplicateProduct: {
           include: { shop: true },
         },
-      },
+      } as any,
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: { createdAt: 'desc' },

@@ -9,18 +9,17 @@ import {
 } from './actions';
 import ProductCard from '@/components/shared/product-card/productCard';
 import Pagination from '@/components/shared/pagination';
-import { Prisma } from '@prisma/client';
 
-type DuplicatePair = Prisma.ProductDuplicateGetPayload<{
-  include: {
-    masterProduct: { include: { shop: true } };
-    duplicateProduct: { include: { shop: true } };
-  };
-}>;
+// type DuplicatePair = Prisma.ProductDuplicateGetPayload<{
+//   include: {
+//     masterProduct: { include: { shop: true } };
+//     duplicateProduct: { include: { shop: true } };
+//   };
+// }>;
 
 export default function ProductDuplicateManager(): JSX.Element {
   const [isFinding, startFinding] = useTransition();
-  const [duplicates, setDuplicates] = useState<DuplicatePair[]>([]);
+  const [duplicates, setDuplicates] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isPending, startTransition] = useTransition();
