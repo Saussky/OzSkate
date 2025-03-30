@@ -81,3 +81,7 @@ TODO 23/3/25
 - Australian brands get a different card display, green and gold? red, yellow and black?
 - Shop dropdown needs to be a multiselect
 - Product master might not be available, then it gets filtered out when one of the duplicates might actually be in stock
+
+FIRST PRIORITY
+- Login fix
+- HTTPS
