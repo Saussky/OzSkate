@@ -5,9 +5,21 @@ import { checkProductSimilarity } from '@/lib/product/merge';
 import { Prisma } from '@prisma/client';
 
 export async function getPaginatedSuspectedDuplicates(
-  page: number,
+  page: number, 
   pageSize: number
-) {
+): Promise<{
+  total: number;
+  items: Prisma.ProductDuplicateGetPayload<{
+    include: {
+      masterProduct: {
+        include: { shop: true }
+      },
+      duplicateProduct: {
+        include: { shop: true }
+      }
+    }
+  }>[];
+}> {
   const [total, items] = await prisma.$transaction([
     prisma.productDuplicate.count({
       where: { status: 'suspected' },
@@ -21,7 +33,7 @@ export async function getPaginatedSuspectedDuplicates(
         duplicateProduct: {
           include: { shop: true },
         },
-      } as any,
+      },
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: { createdAt: 'desc' },
