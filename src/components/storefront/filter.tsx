@@ -1,54 +1,57 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { ParentType } from '@/lib/types';
-import DropdownSelector from '../ui/dropdown';
-import SortDropdown from '../ui/sortDropdown';
-import Button from '../ui/button';
+"use client";
+import React, { useEffect, useState } from "react";
+import { ParentType } from "@/lib/types";
+import DropdownSelector from "../ui/dropdown";
+import SortDropdown from "../ui/sortDropdown";
+import Button from "../ui/button";
+import MultiSelectDropdown, {
+  MultiSelectDropdownOption,
+} from "../ui/multiSelect";
 
 export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
-    'Jumpers',
-    'Shirts',
-    'T-Shirts',
-    'Pants',
-    'Shorts',
+    "Jumpers",
+    "Shirts",
+    "T-Shirts",
+    "Pants",
+    "Shorts",
     "Women's Tops",
     "Women's Bottoms",
-    'Hats',
-    'Beanies',
-    'Socks',
+    "Hats",
+    "Beanies",
+    "Socks",
   ],
   Skateboards: [
-    'Decks',
-    'Completes',
-    'Trucks',
-    'Wheels',
-    'Bearings',
-    'Tools',
-    'Hardware',
-    'Griptape',
+    "Decks",
+    "Completes",
+    "Trucks",
+    "Wheels",
+    "Bearings",
+    "Tools",
+    "Hardware",
+    "Griptape",
   ],
-  'Protective Gear': ['Pads', 'Helmets', 'Other'],
-  Shoes: ['Mens', 'Youth', 'Womens'],
-  Bags: ['Backpacks', 'Tote Bags'],
+  "Protective Gear": ["Pads", "Helmets", "Other"],
+  Shoes: ["Mens", "Youth", "Womens"],
+  Bags: ["Backpacks", "Tote Bags"],
   Accessories: [
-    'Belts',
-    'Watches',
-    'Sunglasses',
-    'Literature',
-    'Wax',
-    'Keychains',
-    'Jewellery',
-    'Other',
+    "Belts",
+    "Watches",
+    "Sunglasses",
+    "Literature",
+    "Wax",
+    "Keychains",
+    "Jewellery",
+    "Other",
   ],
 };
 
 interface FilterProps {
   onFilterChange: (
-    filters: Record<string, string | number | boolean | null>
+    filters: Record<string, string | number | boolean | null | string[]>
   ) => void;
   brands: string[];
-  shops: string[];
+  shops: string[]; // Available shop options (e.g. ["Shop1", "Shop2", ...])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialFilters: any;
   onSortChange: (sortOption: string) => void;
@@ -64,25 +67,32 @@ export default function Filter({
   sortOption,
 }: FilterProps) {
   const [parentType, setParentType] = useState<ParentType | null>(null);
-  const [childType, setChildType] = useState<string>('');
+  const [childType, setChildType] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
-  const [brand, setBrand] = useState<string>('');
-  const [shop, setShop] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [brand, setBrand] = useState<string>("");
+  const [selectedShops, setSelectedShops] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
-    setParentType(initialFilters.parentType || '');
-    setChildType(initialFilters.childType || '');
+    setParentType(initialFilters.parentType || "");
+    setChildType(initialFilters.childType || "");
     setMaxPrice(initialFilters.maxPrice || null);
     setOnSale(initialFilters.onSale || false);
     setShoeSize(initialFilters.shoeSize || null);
     setDeckSize(initialFilters.deckSize || null);
-    setBrand(initialFilters.vendor || '');
-    setShop(initialFilters.shop || '');
-    setSearchTerm(initialFilters.searchTerm || '');
+    setBrand(initialFilters.vendor || "");
+    // Ensure initialFilters.shop is an array. If not, convert it.
+    setSelectedShops(
+      Array.isArray(initialFilters.shop)
+        ? initialFilters.shop
+        : initialFilters.shop
+        ? [initialFilters.shop]
+        : []
+    );
+    setSearchTerm(initialFilters.searchTerm || "");
   }, [initialFilters]);
 
   const handleApplyFilters = () => {
@@ -94,36 +104,36 @@ export default function Filter({
       shoeSize,
       deckSize,
       vendor: brand,
-      shop,
+      shops: selectedShops,
       searchTerm,
     });
   };
 
   const handleClearFilters = () => {
     setParentType(null);
-    setChildType('');
+    setChildType("");
     setMaxPrice(null);
     setOnSale(false);
     setShoeSize(null);
     setDeckSize(null);
-    setBrand('');
-    setShop('');
-    setSearchTerm('');
+    setBrand("");
+    setSelectedShops([]);
+    setSearchTerm("");
 
     onFilterChange({
-      parentType: '',
-      childType: '',
-      maxPrice: '',
+      parentType: "",
+      childType: "",
+      maxPrice: "",
       onSale: false,
       shoeSize: null,
       deckSize: null,
-      vendor: '',
-      shop: '',
-      searchTerm: '',
+      vendor: "",
+      shops: [],
+      searchTerm: "",
     });
   };
 
-  // Get list of parent types (the keys of childTypePerParent)
+  // List of parent types
   const parentTypes = Object.keys(childTypePerParent) as ParentType[];
 
   // Child types for the selected parent type
@@ -132,26 +142,31 @@ export default function Filter({
       ? childTypePerParent[parentType]
       : [];
 
-  // TODO: Do this properly
-  const availableShoeSizes = ['7', '8', '9', '10', '11', '12'];
+  // Dummy available sizes
+  const availableShoeSizes = ["7", "8", "9", "10", "11", "12"];
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
 
   const sortOptions = [
-    // { value: 'relevance', label: 'Relevance' }, TODO: this
-    { value: 'price-asc', label: 'Price: low to high' },
-    { value: 'price-desc', label: 'Price: high to low' },
-    { value: 'latest', label: 'Newly Listed' },
+    { value: "price-asc", label: "Price: low to high" },
+    { value: "price-desc", label: "Price: high to low" },
+    { value: "latest", label: "Newly Listed" },
   ];
+
+  // Convert available shops to multi-select options.
+  const shopOptions = shops.map((shop) => ({
+    value: shop,
+    label: shop,
+  }));
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
       <DropdownSelector
         label="Parent Type"
-        value={parentType || ''}
+        value={parentType || ""}
         onChange={(val) => {
           setParentType(val as ParentType);
           // Reset related filters
-          setChildType('');
+          setChildType("");
           setShoeSize(null);
           setDeckSize(null);
         }}
@@ -166,19 +181,19 @@ export default function Filter({
         disabled={!parentType}
       />
 
-      {parentType === 'Shoes' && (
+      {parentType === "Shoes" && (
         <DropdownSelector
           label="Shoe Size"
-          value={shoeSize?.toString() || ''}
+          value={shoeSize?.toString() || ""}
           onChange={(val) => setShoeSize(val ? Number(val) : null)}
           options={availableShoeSizes}
         />
       )}
 
-      {childType === 'Decks' && (
+      {childType === "Decks" && (
         <DropdownSelector
           label="Deck Size"
-          value={deckSize?.toString() || ''}
+          value={deckSize?.toString() || ""}
           onChange={(val) => setDeckSize(val ? Number(val) : null)}
           options={availableDeckSizes.map((size) => size.toString())}
         />
@@ -191,11 +206,12 @@ export default function Filter({
         options={brands}
       />
 
-      <DropdownSelector
-        label="Shop"
-        value={shop}
-        onChange={setShop}
-        options={shops}
+      <MultiSelectDropdown
+        label="Shops"
+        value={selectedShops}
+        onChange={setSelectedShops}
+        options={shopOptions}
+        placeholder="Shops"
       />
 
       <input
@@ -208,7 +224,7 @@ export default function Filter({
           rounded px-3 py-1 text-sm
           focus:outline-none focus:ring-1 focus:ring-blue-500
         "
-        style={{ minWidth: '150px' }}
+        style={{ minWidth: "150px" }}
       />
 
       <label
