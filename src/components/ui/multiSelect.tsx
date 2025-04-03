@@ -46,14 +46,15 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     }
   };
 
-  // When nothing is selected, show the placeholder
-  const displayText =
-    value.length > 0
-      ? options
-          .filter((opt) => value.includes(opt.value))
-          .map((opt) => opt.label)
-          .join(", ")
-      : placeholder;
+  let displayText: string;
+  if (value.length === 0) {
+    displayText = placeholder;
+  } else if (value.length === 1) {
+    const selectedOption = options.find((opt) => opt.value === value[0]);
+    displayText = selectedOption ? selectedOption.label : placeholder;
+  } else {
+    displayText = `${value.length} ${placeholder} selected`;
+  }
 
   return (
     <div ref={containerRef} className="relative inline-block w-full md:w-auto">
@@ -64,7 +65,6 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         disabled={disabled}
       >
         <span>{displayText}</span>
-        {/* TODO: This svg sucks */}
         <svg
           className="w-3 h-3 ml-4"
           fill="none"
