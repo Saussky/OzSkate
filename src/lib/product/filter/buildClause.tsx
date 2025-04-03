@@ -18,7 +18,7 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     whereClause.vendor = filters.vendor;
   }
 
-  if (filters.shops) {
+  if (filters.shops && (filters.shops as string[]).length > 0) {
     whereClause.shop = {
       name: { in: filters.shops },
     };

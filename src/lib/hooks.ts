@@ -27,7 +27,7 @@ export default function useStoreFrontQueryParams() {
       ? Number(searchParams.get('deckSize'))
       : null,
     vendor: searchParams.get('vendor') || '',
-    shop: searchParams.get('shop') || '',
+    shops: searchParams.get('shops') ? searchParams.get('shops')!.split(',') : [],
     searchTerm: searchParams.get('searchTerm') || '',
   };
 

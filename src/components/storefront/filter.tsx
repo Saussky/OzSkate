@@ -4,9 +4,7 @@ import { ParentType } from "@/lib/types";
 import DropdownSelector from "../ui/dropdown";
 import SortDropdown from "../ui/sortDropdown";
 import Button from "../ui/button";
-import MultiSelectDropdown, {
-  MultiSelectDropdownOption,
-} from "../ui/multiSelect";
+import MultiSelectDropdown from "../ui/multiSelect";
 
 export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
