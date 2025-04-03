@@ -59,11 +59,26 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     <div ref={containerRef} className="relative inline-block w-full md:w-auto">
       <button
         type="button"
-        className="border border-gray-400 text-black bg-white rounded px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 hover:cursor-pointer w-full text-left"
+        className="border border-gray-400 text-black bg-white rounded px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 hover:cursor-pointer w-full flex items-center justify-between"
         onClick={() => setOpen(!open)}
         disabled={disabled}
       >
-        {displayText}
+        <span>{displayText}</span>
+        {/* TODO: This svg sucks */}
+        <svg
+          className="w-3 h-3 ml-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
       </button>
 
       {open && (
