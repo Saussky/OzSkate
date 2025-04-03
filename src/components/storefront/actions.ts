@@ -7,7 +7,7 @@ import { FilterOption } from "@/lib/types";
 export const getPaginatedProducts = async (
   page: number,
   limit: number,
-  filters: Record<string, string | number | boolean | null> = {},
+  filters: FilterOption = {},
   sortOptions?: string
 ) => {
   const offset = (page - 1) * limit;

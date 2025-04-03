@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use server';
-import { FilterOption } from '@/lib/types';
-import { Prisma } from '@prisma/client';
+"use server";
+import { FilterOption } from "@/lib/types";
+import { Prisma } from "@prisma/client";
 
 export const buildWhereClause = async (filters: FilterOption = {}) => {
   const whereClause: Record<string, any> = {};
@@ -18,16 +18,16 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     whereClause.vendor = filters.vendor;
   }
 
-  if (filters.shop) {
+  if (filters.shops) {
     whereClause.shop = {
-      name: filters.shop,
+      name: { in: filters.shops },
     };
   }
 
   if (filters.searchTerm) {
     whereClause.OR = [
-      { title: { contains: filters.searchTerm, mode: 'insensitive' } },
-      { vendor: { contains: filters.searchTerm, mode: 'insensitive' } },
+      { title: { contains: filters.searchTerm, mode: "insensitive" } },
+      { vendor: { contains: filters.searchTerm, mode: "insensitive" } },
       // { description: { contains: filters.searchTerm, mode: 'insensitive' } },
       // { handle: { contains: filters.searchTerm, mode: 'insensitive' } },
     ];
@@ -90,12 +90,12 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
 export const buildOrderByClause = async (sortOptions?: string) => {
   const orderBy: Prisma.productOrderByWithRelationInput[] = [];
 
-  if (sortOptions === 'price-asc') {
-    orderBy.push({ cheapestPrice: 'asc' });
-  } else if (sortOptions === 'price-desc') {
-    orderBy.push({ cheapestPrice: 'desc' });
+  if (sortOptions === "price-asc") {
+    orderBy.push({ cheapestPrice: "asc" });
+  } else if (sortOptions === "price-desc") {
+    orderBy.push({ cheapestPrice: "desc" });
   } else {
-    orderBy.push({ createdAt: 'desc' });
+    orderBy.push({ createdAt: "desc" });
   }
 
   return orderBy;
