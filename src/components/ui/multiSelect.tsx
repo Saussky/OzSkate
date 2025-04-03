@@ -7,7 +7,6 @@ export interface MultiSelectDropdownOption {
 }
 
 export interface MultiSelectDropdownProps {
-  label: string;
   value: string[];
   onChange: (value: string[]) => void;
   options: MultiSelectDropdownOption[];
@@ -16,7 +15,6 @@ export interface MultiSelectDropdownProps {
 }
 
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
-  label,
   value,
   onChange,
   options,
@@ -59,9 +57,6 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
   return (
     <div ref={containerRef} className="relative inline-block w-full md:w-auto">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label} (Select multiple)
-      </label>
       <button
         type="button"
         className="border border-gray-400 text-black bg-white rounded px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 hover:cursor-pointer w-full text-left"
@@ -70,8 +65,9 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       >
         {displayText}
       </button>
+
       {open && (
-        <div className="absolute z-10 mt-1 w-full bg-white border border-gray-400 rounded shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-10 mt-1 left-0 w-64 bg-white border border-gray-400 rounded shadow-lg max-h-60 overflow-auto">
           {options.map((option) => (
             <label
               key={option.value}

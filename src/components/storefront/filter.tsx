@@ -207,7 +207,6 @@ export default function Filter({
       />
 
       <MultiSelectDropdown
-        label="Shops"
         value={selectedShops}
         onChange={setSelectedShops}
         options={shopOptions}
