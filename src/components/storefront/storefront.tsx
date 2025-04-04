@@ -1,13 +1,13 @@
 'use client';
 import { useCallback, useEffect, useState, useTransition } from 'react';
+import Filter from '@/components/storefront/filter';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
+import useStoreFrontQueryParams from '@/lib/hooks';
 import Pagination from '../shared/pagination';
 import ProductCard from '../shared/product-card/productCard';
-import Filter from '@/components/storefront/filter';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
 import { getShopNames } from '../admin/admin/actions';
-import useStoreFrontQueryParams from '@/lib/hooks';
 
 type ImageJson = {
   src: string;
@@ -101,8 +101,9 @@ export default function Storefront({ user }: StorefrontProps) {
     loadProducts(page);
   };
 
-  // Filter update
-  const handleFilterChange = (newFilters: FilterOption) => {
+  const handleFilterChange = (
+    newFilters: Record<string, string | string[] | number | boolean | null>
+  ) => {
     setFilters(newFilters);
     setCurrentPage(1);
   };
@@ -142,7 +143,7 @@ export default function Storefront({ user }: StorefrontProps) {
             admin={user?.admin || false}
             title={product.title}
             price={String(product.cheapestPrice ?? '')}
-            imageSrc={product.image?.src || '/placeholder.jpg'}
+            imageSrc={product.image?.src || '/placeholder.jpg'} //todo; fallback
             handle={product.handle}
             shop={product.shop}
             parentType={product.parentType}

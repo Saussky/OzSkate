@@ -1,5 +1,5 @@
-'use client';
-import React from 'react';
+"use client";
+import React from "react";
 
 interface DropdownSelectorProps {
   label: string; // Label shown as the first option (e.g., "Category")
@@ -7,6 +7,7 @@ interface DropdownSelectorProps {
   onChange: (value: string) => void; // Callback when user selects a new value
   options: string[]; // List of dropdown options
   disabled?: boolean;
+  multiple?: boolean;
 }
 
 /**
@@ -19,10 +20,12 @@ export default function DropdownSelector({
   onChange,
   options,
   disabled = false,
+  multiple = false,
 }: DropdownSelectorProps) {
   return (
     <div className="inline-block">
       <select
+        multiple={multiple}
         className="
           border border-gray-400 text-black bg-white 
           rounded px-3 py-1 text-sm
