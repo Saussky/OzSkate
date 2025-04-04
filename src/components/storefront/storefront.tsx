@@ -1,13 +1,13 @@
 'use client';
 import { useCallback, useEffect, useState, useTransition } from 'react';
-import Filter from '@/components/storefront/filter';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
-import useStoreFrontQueryParams from '@/lib/hooks';
 import Pagination from '../shared/pagination';
 import ProductCard from '../shared/product-card/productCard';
+import Filter from '@/components/storefront/filter';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
 import { getShopNames } from '../admin/admin/actions';
+import useStoreFrontQueryParams from '@/lib/hooks';
 
 type ImageJson = {
   src: string;
@@ -36,42 +36,34 @@ interface StorefrontProps {
 }
 
 export default function Storefront({ user }: StorefrontProps) {
-  const { initialFilters, initialSortOption, initialPage, updateQueryParams } =
-    useStoreFrontQueryParams();
+  const { queryParams, setQueryParams } = useStoreFrontQueryParams();
+  const [filters, setFilters] = useState<FilterOption>(queryParams.filters);
+  const [sortOption, setSortOption] = useState<string>(queryParams.sortOption);
+  const [currentPage, setCurrentPage] = useState<number>(queryParams.page);
 
   const [products, setProducts] = useState<ExtendedProduct[]>([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [filters, setFilters] = useState<FilterOption>(initialFilters);
-  const [sortOption, setSortOption] = useState<string>(initialSortOption);
-  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [brands, setBrands] = useState<string[]>([]);
   const [shops, setShops] = useState<string[]>([]);
 
+  // TODO: Use
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isPending, startTransition] = useTransition(); // TODO: Implement spinner
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    updateQueryParams(filters, sortOption, currentPage);
-  }, [filters, sortOption, currentPage, updateQueryParams]);
+    setQueryParams({ filters, sortOption, page: currentPage });
+  }, [filters, sortOption, currentPage, setQueryParams]);
 
-  // TODO: Load products at page level?
+  // Load products from server actions
   const loadProducts = useCallback(
     (page: number) => {
       startTransition(async () => {
         const data = await getPaginatedProducts(page, 40, filters, sortOption);
-
-        const transformedProducts: ExtendedProduct[] = data.mergedProducts.map(
-          (product) => {
-            const image = product.image as ImageJson | null;
-
-            return {
-              ...product,
-              image,
-            };
-          }
-        );
-
-        setProducts(transformedProducts);
+        const transformed: ExtendedProduct[] = data.mergedProducts.map((p) => ({
+          ...p,
+          image: p.image as ImageJson | null, // TODO: Why are we doing this the types are f'ed anyway
+        }));
+        setProducts(transformed);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
       });
@@ -80,9 +72,11 @@ export default function Storefront({ user }: StorefrontProps) {
   );
 
   useEffect(() => {
+    // Always reset to first page when filters or sort changes
     loadProducts(1);
   }, [filters, sortOption, loadProducts]);
 
+  // Load the list of vendors (brands)
   useEffect(() => {
     const loadVendors = async () => {
       const filteredVendors = await getFilteredVendors(filters);
@@ -90,30 +84,30 @@ export default function Storefront({ user }: StorefrontProps) {
         filteredVendors.filter((vendor): vendor is string => vendor !== null)
       );
     };
-
     loadVendors();
   }, [filters]);
 
+  // Load shop names
   useEffect(() => {
     const loadShopNames = async () => {
       const shopNames = await getShopNames();
       setShops(shopNames);
     };
-
     loadShopNames();
   }, []);
 
+  // Pagination handler
   const handlePageChange = (page: number) => {
     loadProducts(page);
   };
 
-  const handleFilterChange = (
-    newFilters: Record<string, string | number | boolean | null>
-  ) => {
+  // Filter update
+  const handleFilterChange = (newFilters: FilterOption) => {
     setFilters(newFilters);
     setCurrentPage(1);
   };
 
+  // Sort update
   const handleSortChange = (option: string) => {
     setSortOption(option);
     setCurrentPage(1);
@@ -126,7 +120,7 @@ export default function Storefront({ user }: StorefrontProps) {
           onFilterChange={handleFilterChange}
           brands={brands}
           shops={shops}
-          initialFilters={initialFilters}
+          initialFilters={queryParams.filters} // or use the local state
           onSortChange={handleSortChange}
           sortOption={sortOption}
         />
@@ -148,7 +142,7 @@ export default function Storefront({ user }: StorefrontProps) {
             admin={user?.admin || false}
             title={product.title}
             price={String(product.cheapestPrice ?? '')}
-            imageSrc={product.image?.src || '/placeholder.jpg'} //todo; fallback
+            imageSrc={product.image?.src || '/placeholder.jpg'}
             handle={product.handle}
             shop={product.shop}
             parentType={product.parentType}
@@ -158,14 +152,12 @@ export default function Storefront({ user }: StorefrontProps) {
         ))}
       </div>
 
-      <div className="flex mt-2">
-        <div className="flex justify-between ml-auto">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
+      <div className="flex mt-2 justify-between">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );
