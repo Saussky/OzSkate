@@ -96,7 +96,6 @@ export default function Storefront({ user }: StorefrontProps) {
     loadShopNames();
   }, []);
 
-  // Pagination handler
   const handlePageChange = (page: number) => {
     loadProducts(page);
   };
@@ -108,7 +107,6 @@ export default function Storefront({ user }: StorefrontProps) {
     setCurrentPage(1);
   };
 
-  // Sort update
   const handleSortChange = (option: string) => {
     setSortOption(option);
     setCurrentPage(1);
@@ -121,7 +119,7 @@ export default function Storefront({ user }: StorefrontProps) {
           onFilterChange={handleFilterChange}
           brands={brands}
           shops={shops}
-          initialFilters={queryParams.filters} // or use the local state
+          initialFilters={queryParams.filters}
           onSortChange={handleSortChange}
           sortOption={sortOption}
         />

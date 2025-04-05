@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FilterOption } from '@/lib/types';
 
-/** You can adjust these defaults as needed. */
 const defaultFilters: FilterOption = {
   parentType: '',
   childType: '',
@@ -76,14 +75,14 @@ export default function useStoreFrontQueryParams() {
 
         if (
           value !== defaultValue && // different from default
-          value !== null && // not null
-          value !== '' // not empty string
+          value !== null &&
+          value !== '' 
         ) {
           query.set(key, String(value));
         }
 
-        // Special handling for 'onSale' if you want to omit 'false'
-        // e.g. if (key === 'onSale' && value === true) query.set('onSale', 'true');
+        
+        // TODO: if (key === 'onSale' && value === true) query.set('onSale', 'true');
       });
 
       if (sortOption !== defaultSortOption) {
