@@ -37,15 +37,17 @@ export default function BrandsDuplicateManager() {
       return;
     }
     try {
-      // First, update all products in this group to the selected vendor
+      // Update all products in this group to the selected vendor
       await updateVendorGroup(group, selectedVendor);
-      // Then, add a vendor rule for every non-standard vendor in the group
+
+      // Add a vendor rule for every non-standard vendor in the group
       for (const vendor of group) {
         if (vendor !== selectedVendor) {
           await addVendorRule(vendor, selectedVendor);
         }
       }
-      // Remove the standardised group from the list immediately
+
+      // Remove the standardised group from the list
       setVendorGroups((prev) => prev.filter((_, idx) => idx !== groupIndex));
       setSelectedVendors((prev) => {
         const newSelections = { ...prev };
