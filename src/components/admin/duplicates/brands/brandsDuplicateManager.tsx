@@ -33,7 +33,7 @@ export default function BrandsDuplicateManager() {
   const handleUpdateGroup = async (group: string[], groupIndex: number) => {
     const selectedVendor = selectedVendors[groupIndex];
     if (!selectedVendor) {
-      alert('Please select a vendor to standardize.');
+      alert('Please select a vendor to standardise.');
       return;
     }
     try {
@@ -45,7 +45,7 @@ export default function BrandsDuplicateManager() {
           await addVendorRule(vendor, selectedVendor);
         }
       }
-      // Remove the standardized group from the list immediately
+      // Remove the standardised group from the list immediately
       setVendorGroups((prev) => prev.filter((_, idx) => idx !== groupIndex));
       setSelectedVendors((prev) => {
         const newSelections = { ...prev };
@@ -103,7 +103,7 @@ export default function BrandsDuplicateManager() {
             disabled={isPending}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           >
-            Standardize Group
+            Standardise Group
           </button>
         </div>
       ))}
