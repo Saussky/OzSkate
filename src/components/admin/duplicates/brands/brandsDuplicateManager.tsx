@@ -70,21 +70,25 @@ export default function BrandsDuplicateManager() {
 
   return (
     <div className="space-y-8 p-4">
-      <h1 className="text-2xl font-bold">Vendor Standardization</h1>
+      <h1 className="text-2xl font-bold">Vendor Standardisation</h1>
+
       {vendorGroups.map((groupObj, index) => (
         <div key={index} className="border border-gray-300 p-4 rounded">
           <h2 className="text-xl font-semibold mb-2">
             Group {index + 1} (Total Vendors: {groupObj.group.length})
           </h2>
+
           <ul className="mb-4">
             {groupObj.group.map((vendor) => (
               <li key={vendor}>{vendor}</li>
             ))}
           </ul>
+
           <div className="mb-4">
             <label className="block mb-2 font-medium">
               Select standard vendor:
             </label>
+
             <select
               value={selectedVendors[index] || ''}
               onChange={(e) => handleSelectionChange(index, e.target.value)}
@@ -100,6 +104,7 @@ export default function BrandsDuplicateManager() {
               ))}
             </select>
           </div>
+
           <button
             onClick={() => handleUpdateGroup(groupObj.group, index)}
             disabled={isPending}

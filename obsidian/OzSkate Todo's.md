@@ -83,7 +83,19 @@ TODO 23/3/25
 - Australian brands get a different card display, green and gold? red, yellow and black?
 - Shop dropdown needs to be a multiselect - DONE(ish)
 - Product master might not be available, then it gets filtered out when one of the duplicates might actually be in stock
+	- This needs to be separated into a function to automatically set one, and then put it in the duplicates queue again?
 
 FIRST PRIORITY
 - Login fix
 - HTTPS
+
+TODO 6/4/2025
+- Login needs to work with uname AND email
+- Mobile design
+- Be able to mark duplicate through storefront somehow as admin
+- Filter to hide items with no photos, automatically on
+- Handling of duplicates that are unavailable
+	- they should automaticallly lose 'master' status
+	- re put back in the queue to check which should be master if multiple duplicates
+- Renaming parent and child type to whatever depop use, just front-end
+- GPT logo creation?
