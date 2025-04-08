@@ -65,7 +65,7 @@ export default function BrandsDuplicateManager() {
   }
 
   if (vendorGroups.length === 0) {
-    return <div>Loading vendor groups...</div>;
+    return <div>Loading vendor groups...</div>; //TODO: Spinner
   }
 
   return (
