@@ -99,3 +99,4 @@ TODO 6/4/2025
 	- re put back in the queue to check which should be master if multiple duplicates
 - Renaming parent and child type to whatever depop use, just front-end
 - GPT logo creation?
+- Fix product update errors
