@@ -27,14 +27,25 @@ export async function updateAllProducts(): Promise<{ added: number; priceChanged
   let priceChangedCount = 0;
   const shops = await prisma.shop.findMany();
 
-  for (const shop of shops) {
-    const result = await processShopUpdates(shop);
-    addedCount += result.inserted;
-    priceChangedCount += result.priceChanged;
-    console.log(`Finished updating products for shop: ${shop.name}`);
+ for (const shop of shops) {
+    try {
+      const result = await processShopUpdates(shop);
+      addedCount += result.inserted;
+      priceChangedCount += result.priceChanged;
+      console.log(`Finished updating products for shop: ${shop.name}`);
+    } catch (error) {
+      console.error(`Error updating shop ${shop.name}:`, error);
+      // TODO: Something with this error
+    }
   }
 
-  await applyVendorRules();
+  try {
+    await applyVendorRules();
+  } catch (error) {
+    console.error("Error applying vendor rules:", error);
+    // TODO: Again
+  }
+  
   console.log("All shops processed in updateProducts.");
   return { added: addedCount, priceChanged: priceChangedCount };
 }

@@ -77,7 +77,6 @@ export default function AdminComponent({
         const result: UpdateResult = await updateAllProducts();
         setUpdateResult(result);
         setUpdateMessage('Product update completed.');
-        setTimeout(() => setUpdateMessage(''), 3000);
       } catch (error) {
         console.error('Error:', error);
         setUpdateMessage('An error occurred during product update.');
