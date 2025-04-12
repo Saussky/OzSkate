@@ -26,6 +26,7 @@ interface ProductCardProps {
   }[];
 }
 
+// TODO: Text ellipsises too early
 export default function MobileProductCard({
   id,
   title,
