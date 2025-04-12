@@ -1,5 +1,4 @@
 'use client';
-
 import { ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -26,7 +25,6 @@ interface ProductCardProps {
   }[];
 }
 
-// TODO: Text ellipsises too early
 export default function MobileProductCard({
   id,
   title,
@@ -91,7 +89,6 @@ export default function MobileProductCard({
                   x{allStorePrices.length}
                 </span>
               </div>
-
               <div className="absolute right-0 mt-1 hidden group-hover:block bg-white border border-gray-300 rounded shadow-md p-2 flex-col gap-1 max-h-32 overflow-y-auto">
                 {allStorePrices.map((store) => (
                   <div key={store.shopId} className="text-xs">
@@ -118,15 +115,12 @@ export default function MobileProductCard({
         <h2
           className={`
             mt-2 text-lg font-bold text-gray-800 cursor-pointer
-            ${
-              expanded
-                ? ''
-                : 'overflow-hidden text-ellipsis whitespace-nowrap block'
-            }
+            ${expanded ? '' : 'line-clamp-3'}
+            overflow-hidden
           `}
-          style={{ maxWidth: '230px' }}
           onClick={(e) => {
-            e.preventDefault(); // So it doesn’t navigate
+            // Prevent card navigation so we can handle text toggle
+            e.preventDefault();
             setExpanded((prev) => !prev);
           }}
         >
