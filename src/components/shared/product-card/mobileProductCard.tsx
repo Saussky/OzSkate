@@ -115,11 +115,6 @@ export default function MobileProductCard({
           />
         </div>
 
-        {/*
-          We use conditional classes to clamp text:
-            - If NOT expanded => single-line ellipsized
-            - If expanded => normal text
-        */}
         <h2
           className={`
             mt-2 text-lg font-bold text-gray-800 cursor-pointer
@@ -129,7 +124,7 @@ export default function MobileProductCard({
                 : 'overflow-hidden text-ellipsis whitespace-nowrap block'
             }
           `}
-          style={{ maxWidth: '230px' }} // or whatever width you want for ellipsis
+          style={{ maxWidth: '230px' }}
           onClick={(e) => {
             e.preventDefault(); // So it doesn’t navigate
             setExpanded((prev) => !prev);
