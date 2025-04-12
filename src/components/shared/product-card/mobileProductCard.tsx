@@ -1,4 +1,5 @@
 'use client';
+
 import { ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -15,7 +16,7 @@ interface ProductCardProps {
   imageSrc?: string;
   handle: string;
   shop: shop;
-  parentType?: string | null; // TODO: type
+  parentType?: string | null;
   childType?: string | null;
   allStorePrices?: {
     shopId: number;
@@ -25,8 +26,7 @@ interface ProductCardProps {
   }[];
 }
 
-// TODO: Implement string parent product type types
-export default function ProductCard({
+export default function MobileProductCard({
   id,
   title,
   admin,
@@ -60,12 +60,16 @@ export default function ProductCard({
     setMenuOpen(false);
   }
 
-  //TODO: Cleanup hover
   return (
     <a href={productUrl} target="_blank" rel="noopener noreferrer">
-      <div className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group">
+      {/* 
+        For mobile, remove fixed aspect ratio.
+        You can use a flex or grid layout to allow the image to size properly.
+      */}
+      <div className="border rounded-lg shadow-md p-4 w-full bg-white relative group">
         <p>{shop.name}</p>
 
+        {/* If you need the multi-store price tooltip, keep it */}
         {allStorePrices && allStorePrices.length > 1 && (
           <div className="absolute top-2 right-2 z-20">
             <div className="relative group">
@@ -89,7 +93,6 @@ export default function ProductCard({
                 </span>
               </div>
 
-              {/* Tooltip on hover */}
               <div className="absolute right-0 mt-1 hidden group-hover:block bg-white border border-gray-300 rounded shadow-md p-2 flex-col gap-1 max-h-32 overflow-y-auto">
                 {allStorePrices.map((store) => (
                   <div key={store.shopId} className="text-xs">
@@ -104,17 +107,16 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="relative aspect-[1/1] bg-white">
+        <div className="relative w-full h-64 bg-white">
           <Image
             src={imageSrc || fallbackImageSrc}
             alt={title}
-            layout="fill"
-            objectFit="cover"
-            className="rounded"
+            fill
+            className="object-cover rounded"
           />
         </div>
 
-        <h2 className="mt-2 text-xl font-bold text-gray-800">{title}</h2>
+        <h2 className="mt-2 text-lg font-bold text-gray-800">{title}</h2>
 
         <div className="flex justify-between items-center">
           <p className="text-gray-600 mt-1">${price}</p>

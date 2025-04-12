@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FilterOption } from '@/lib/types';
 
@@ -101,4 +101,24 @@ export default function useStoreFrontQueryParams() {
     queryParams,
     setQueryParams,
   };
+}
+
+
+export function useIsMobile(breakpoint = 640) { //TODO: More specific breakpoint, investigate sizes.
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < breakpoint);
+    };
+
+    // Check immediately on mount
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [breakpoint]);
+
+  return isMobile;
 }

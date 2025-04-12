@@ -3,11 +3,12 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import Filter from '@/components/storefront/filter';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
-import useStoreFrontQueryParams from '@/lib/hooks';
+import useStoreFrontQueryParams, { useIsMobile } from '@/lib/hooks';
 import Pagination from '../shared/pagination';
 import ProductCard from '../shared/product-card/productCard';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
 import { getShopNames } from '../admin/admin/actions';
+import MobileProductCard from '../shared/product-card/mobileProductCard';
 
 type ImageJson = {
   src: string;
@@ -45,6 +46,8 @@ export default function Storefront({ user }: StorefrontProps) {
   const [totalPages, setTotalPages] = useState(1);
   const [brands, setBrands] = useState<string[]>([]);
   const [shops, setShops] = useState<string[]>([]);
+
+  const isMobile = useIsMobile(); // defaults to 640px; can customize
 
   // TODO: Use
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -134,21 +137,37 @@ export default function Storefront({ user }: StorefrontProps) {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            admin={user?.admin || false}
-            title={product.title}
-            price={String(product.cheapestPrice ?? '')}
-            imageSrc={product.image?.src || '/placeholder.jpg'} //todo; fallback
-            handle={product.handle}
-            shop={product.shop}
-            parentType={product.parentType}
-            childType={product.childType}
-            allStorePrices={product.allStorePrices}
-          />
-        ))}
+        {products.map((product) =>
+          isMobile ? (
+            <MobileProductCard
+              key={product.id}
+              id={product.id}
+              admin={user?.admin || false}
+              title={product.title}
+              price={String(product.cheapestPrice ?? '')}
+              imageSrc={product.image?.src || '/placeholder.jpg'}
+              handle={product.handle}
+              shop={product.shop}
+              parentType={product.parentType}
+              childType={product.childType}
+              allStorePrices={product.allStorePrices}
+            />
+          ) : (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              admin={user?.admin || false}
+              title={product.title}
+              price={String(product.cheapestPrice ?? '')}
+              imageSrc={product.image?.src || '/placeholder.jpg'} //TODO
+              handle={product.handle}
+              shop={product.shop}
+              parentType={product.parentType}
+              childType={product.childType}
+              allStorePrices={product.allStorePrices}
+            />
+          )
+        )}
       </div>
 
       <div className="flex mt-2 justify-between">
