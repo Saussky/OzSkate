@@ -91,6 +91,7 @@ FIRST PRIORITY
 
 TODO 6/4/2025
 - Login needs to work with uname AND email
+	- -it does, uname is case sensitive
 - Mobile design
 - Be able to mark duplicate through storefront somehow as admin
 - Filter to hide items with no photos, automatically on
@@ -100,3 +101,4 @@ TODO 6/4/2025
 - Renaming parent and child type to whatever depop use, just front-end
 - GPT logo creation?
 - Fix product update errors
+	- Isn't an error, it just takes too long, need to fire events or write updates to a new table and display them
