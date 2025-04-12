@@ -50,6 +50,9 @@ export default function MobileProductCard({
     return childType ?? childOptions[0];
   });
 
+  // New state to toggle truncated vs. expanded text
+  const [expanded, setExpanded] = useState(false);
+
   function handleMenuToggle(e: React.MouseEvent) {
     e.preventDefault();
     setMenuOpen((prev) => !prev);
@@ -62,14 +65,9 @@ export default function MobileProductCard({
 
   return (
     <a href={productUrl} target="_blank" rel="noopener noreferrer">
-      {/* 
-        For mobile, remove fixed aspect ratio.
-        You can use a flex or grid layout to allow the image to size properly.
-      */}
       <div className="border rounded-lg shadow-md p-4 w-full bg-white relative group">
         <p>{shop.name}</p>
 
-        {/* If you need the multi-store price tooltip, keep it */}
         {allStorePrices && allStorePrices.length > 1 && (
           <div className="absolute top-2 right-2 z-20">
             <div className="relative group">
@@ -116,7 +114,28 @@ export default function MobileProductCard({
           />
         </div>
 
-        <h2 className="mt-2 text-lg font-bold text-gray-800">{title}</h2>
+        {/*
+          We use conditional classes to clamp text:
+            - If NOT expanded => single-line ellipsized
+            - If expanded => normal text
+        */}
+        <h2
+          className={`
+            mt-2 text-lg font-bold text-gray-800 cursor-pointer
+            ${
+              expanded
+                ? ''
+                : 'overflow-hidden text-ellipsis whitespace-nowrap block'
+            }
+          `}
+          style={{ maxWidth: '230px' }} // or whatever width you want for ellipsis
+          onClick={(e) => {
+            e.preventDefault(); // So it doesn’t navigate
+            setExpanded((prev) => !prev);
+          }}
+        >
+          {title}
+        </h2>
 
         <div className="flex justify-between items-center">
           <p className="text-gray-600 mt-1">${price}</p>
