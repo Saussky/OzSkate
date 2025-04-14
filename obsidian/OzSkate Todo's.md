@@ -102,3 +102,18 @@ TODO 6/4/2025
 - GPT logo creation?
 - Fix product update errors
 	- Isn't an error, it just takes too long, need to fire events or write updates to a new table and display them
+
+TODO 14/4/2025
+- Figure out launch
+- Make more distinct mobile plan
+	- Header + filters
+	- Use iphone for testing
+- Saving users filter preferences
+	- Cookies?
+- Removing scooter + snow 
+	- Filter by name, type or remove the shops?
+- Duplicates that are unavailable
+- Renaming of parent and child type
+- Mark duplicate through product card
+- Filter non-photos
+- Track new products and price changes and store, view in admin
