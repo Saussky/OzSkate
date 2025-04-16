@@ -112,8 +112,11 @@ TODO 14/4/2025
 	- Cookies?
 - Removing scooter + snow 
 	- Filter by name, type or remove the shops?
+- Multiple brand select option
+- Search select
 - Duplicates that are unavailable
 - Renaming of parent and child type
 - Mark duplicate through product card
 - Filter non-photos
 - Track new products and price changes and store, view in admin
+- Site analytics!

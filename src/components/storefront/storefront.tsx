@@ -3,12 +3,13 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import Filter from '@/components/storefront/filter';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
-import useStoreFrontQueryParams, { useIsMobile } from '@/lib/hooks';
+// import useStoreFrontQueryParams, { useIsMobile } from '@/lib/hooks';
 import Pagination from '../shared/pagination';
 import ProductCard from '../shared/product-card/productCard';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
 import { getShopNames } from '../admin/admin/actions';
-import MobileProductCard from '../shared/product-card/mobileProductCard';
+import useStoreFrontQueryParams from '@/lib/hooks';
+// import MobileProductCard from '../shared/product-card/mobileProductCard';
 
 type ImageJson = {
   src: string;
@@ -47,7 +48,7 @@ export default function Storefront({ user }: StorefrontProps) {
   const [brands, setBrands] = useState<string[]>([]);
   const [shops, setShops] = useState<string[]>([]);
 
-  const isMobile = useIsMobile(); // defaults to 640px; can customize
+  // const isMobile = useIsMobile(); // defaults to 640px; can customize
 
   // TODO: Use
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
