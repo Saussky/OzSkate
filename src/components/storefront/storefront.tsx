@@ -136,38 +136,22 @@ export default function Storefront({ user }: StorefrontProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {products.map((product) =>
-          isMobile ? (
-            <MobileProductCard
-              key={product.id}
-              id={product.id}
-              admin={user?.admin || false}
-              title={product.title}
-              price={String(product.cheapestPrice ?? '')}
-              imageSrc={product.image?.src || '/placeholder.jpg'}
-              handle={product.handle}
-              shop={product.shop}
-              parentType={product.parentType}
-              childType={product.childType}
-              allStorePrices={product.allStorePrices}
-            />
-          ) : (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              admin={user?.admin || false}
-              title={product.title}
-              price={String(product.cheapestPrice ?? '')}
-              imageSrc={product.image?.src || '/placeholder.jpg'} //TODO
-              handle={product.handle}
-              shop={product.shop}
-              parentType={product.parentType}
-              childType={product.childType}
-              allStorePrices={product.allStorePrices}
-            />
-          )
-        )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            id={product.id}
+            admin={user?.admin || false}
+            title={product.title}
+            price={String(product.cheapestPrice ?? '')}
+            imageSrc={product.image?.src || '/placeholder.jpg'} //TODO
+            handle={product.handle}
+            shop={product.shop}
+            parentType={product.parentType}
+            childType={product.childType}
+            allStorePrices={product.allStorePrices}
+          />
+        ))}
       </div>
 
       <div className="flex mt-2 justify-between">
