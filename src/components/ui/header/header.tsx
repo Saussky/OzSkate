@@ -1,24 +1,25 @@
 'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
 import { User } from 'lucia-auth';
 import LoginBox from './loginBox';
-import Link from 'next/link';
 
-type HeaderProps = {
+interface HeaderProps {
   user: User | null;
-};
+}
 
 export default function Header({ user }: HeaderProps) {
   return (
-    <header
-      className="
-        flex justify-between items-center
-        border border-gray-400 px-6 shadow-sm
-      "
-    >
-      <Link href="/" className="text-4xl font-bold tracking-wide">
-        <span className="border-color-black outline-4 text-red-600">
-          OzSkate
-        </span>
+    <header className="flex justify-between items-center border border-gray-400 px-6 shadow-sm">
+      <Link href="/" className="flex items-center">
+        <Image
+          src="/ozskate_lolgo.png"
+          alt="OzSkate Logo"
+          width={150}
+          height={40}
+          priority
+        />
       </Link>
 
       <LoginBox initialUser={user} />

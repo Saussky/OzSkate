@@ -120,3 +120,5 @@ TODO 14/4/2025
 - Filter non-photos
 - Track new products and price changes and store, view in admin
 - Site analytics!
+- Chron job for updating products, and clearing npm cache?
+	- Figure out better way to do build process
