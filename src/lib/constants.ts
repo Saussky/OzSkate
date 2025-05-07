@@ -90,11 +90,6 @@ export const skateboardShops = [
     state: "NSW",
   },
   {
-    name: "Twelve Board Store",
-    url: "https://twelveboardstore.com.au",
-    state: "VIC",
-  },
-  {
     name: "Postal Skateboards",
     url: "https://postalskateboards.com.au",
     state: "QLD",
