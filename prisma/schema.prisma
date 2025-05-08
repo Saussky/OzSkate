@@ -44,7 +44,7 @@ model shop {
 model product {
   id          String    @id @default(cuid())
   shopId      Int
-  shop        shop      @relation(fields: [shopId], references: [id])
+  shop        shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   title       String
   handle      String
   description String?
@@ -85,8 +85,8 @@ model ProductDuplicate {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
-  masterProduct    product @relation("MasterProductDuplicates", fields: [masterProductId], references: [id])
-  duplicateProduct product @relation("DuplicateProductDuplicates", fields: [duplicateProductId], references: [id])
+  masterProduct      product        @relation("MasterProductDuplicates", fields: [masterProductId], references: [id], onDelete: Cascade)
+  duplicateProduct   product        @relation("DuplicateProductDuplicates", fields: [duplicateProductId], references: [id], onDelete: Cascade)
 
   @@unique([masterProductId, duplicateProductId])
 }
@@ -100,7 +100,7 @@ enum DuplicateStatus {
 model variant {
   id             String   @id @default(cuid())
   productId      String
-  product        product  @relation(fields: [productId], references: [id])
+  product        product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   title          String?
   option1        String?
   option2        String?
