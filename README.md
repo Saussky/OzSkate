@@ -26,6 +26,12 @@ npx prisma generate
 
 After running generate command, the next-app must be restarted
 
+# Create migration
+
+```bash
+npx prisma migrate dev --name <descriptive_snake_case_name>
+```
+
 # Postgres Docker
 
 ```bash
@@ -36,6 +42,8 @@ docker run --name ozskate -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgre
 psql -h localhost -U postgres -d ozskate
 ```
 
+
+# Start app on ec2
 
 ```bash
  pm2 start npm --name next-app -- run start
