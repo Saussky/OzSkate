@@ -11,17 +11,16 @@ interface HeaderProps {
 
 export default function Header({ user }: HeaderProps) {
   return (
-    <header className="flex justify-between items-center border border-gray-400 px-6 shadow-sm">
-      <Link href="/" className="flex items-center">
+    <header className="flex justify-between items-center border border-gray-400 px-6 shadow-sm h-[64px]">
+      <Link href="/" className="relative h-full w-[150px] overflow-hidden">
         <Image
-          src="/ozskate_lolgo.png"
+          src="/ozskate_logo.png"
           alt="OzSkate Logo"
-          width={150}
-          height={40}
+          fill
           priority
+          className="object-cover object-center mt-0.5"
         />
       </Link>
-
       <LoginBox initialUser={user} />
     </header>
   );
