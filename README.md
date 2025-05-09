@@ -32,6 +32,12 @@ After running generate command, the next-app must be restarted
 npx prisma migrate dev --name <descriptive_snake_case_name>
 ```
 
+# Run migrations
+
+``` bash
+npx prisma migrate deploy
+```
+
 # Postgres Docker
 
 ```bash
