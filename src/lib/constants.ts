@@ -95,3 +95,5 @@ export const skateboardShops = [
     state: "NSW",
   },
 ];
+
+export const ignoreVendors = ['cruzr', 'mamba'];

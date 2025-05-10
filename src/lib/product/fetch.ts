@@ -2,6 +2,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { transformProducts } from "./transform";
+import { ignoreVendors } from "../constants";
 
 
 export async function fetchAllProducts() {
@@ -36,6 +37,12 @@ export async function fetchAllProducts() {
   }
 }
 
+function shouldIgnoreVendor(vendor: unknown): boolean {
+  return (
+    typeof vendor === 'string' &&
+    ignoreVendors.includes(vendor.trim().toLowerCase())
+  );
+}
 
 export async function processShop(shop: any) {
   const baseUrl = shop.url + '/products.json';
@@ -48,7 +55,17 @@ export async function processShop(shop: any) {
     return;
   }
 
-  const transformedProducts = transformProducts(allProducts, shop.id);
+  const filteredProducts = allProducts.filter(
+    (p) =>
+      !shouldIgnoreVendor(p.vendor)
+  );
+
+  if (filteredProducts.length === 0) {
+    console.log(`All fetched products for ${shop.name} were ignored.`);
+    return;
+  }
+
+  const transformedProducts = transformProducts(filteredProducts, shop.id);
 
   for (const product of transformedProducts) {
     const { variants, ...productData } = product;
