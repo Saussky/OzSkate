@@ -6,7 +6,6 @@ import { Prisma } from '@prisma/client';
 export const buildWhereClause = async (filters: FilterOption = {}) => {
   const whereClause: Record<string, any> = {};
 
-  // 1️⃣ Top‐level product filters
   if (filters.parentType) {
     whereClause.parentType = filters.parentType;
   }
@@ -34,10 +33,9 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     ];
   }
 
-  const variantConditions: any[] = [
-    { price: { gt: 0 } }, // never grab free products
-    { available: true },
-  ];
+  whereClause.cheapestPrice = { gt: 0 };
+
+  const variantConditions: any[] = [{ price: { gt: 0 } }, { available: true }];
 
   if (filters.maxPrice) {
     const maxPrice = Number(filters.maxPrice);
