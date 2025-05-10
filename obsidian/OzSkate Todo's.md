@@ -115,7 +115,7 @@ TODO 14/4/2025
 - Multiple brand select option
 - Search select
 - Duplicates that are unavailable
-- Renaming of parent and child type
+- Renaming of parent and child type - DONE
 - Mark duplicate through product card
 - Filter non-photos
 - Track new products and price changes and store, view in admin
