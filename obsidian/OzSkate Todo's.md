@@ -110,7 +110,7 @@ TODO 14/4/2025
 	- Use iphone for testing
 - Saving users filter preferences
 	- Cookies?
-- Removing scooter + snow 
+- Removing scooter + snow - DONE
 	- Filter by name, type or remove the shops?
 - Multiple brand select option
 - Search select
