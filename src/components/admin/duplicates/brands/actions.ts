@@ -5,20 +5,20 @@ import levenshtein from 'fast-levenshtein';
 /**
  * Remove the words "skateboards" or "skateboarding" from the vendor name.
  */
-function sanitizeVendorName(vendor: string): string {
+function sanitiseVendorName(vendor: string): string {
   return vendor.replace(/\b(skateboards?|skateboarding)\b/gi, '').trim();
 }
 
 /**
  * Computes the Levenshtein-based similarity between two vendor names.
- * The vendor names are sanitized to ignore "Skateboards" or "Skateboarding".
+ * The vendor names are sanitised to ignore "Skateboards" or "Skateboarding".
  * Returns a value between 0 (completely different) and 1 (identical).
  */
 function titleSimilarity(title1: string, title2: string): number {
-  const sanitizedTitle1 = sanitizeVendorName(title1);
-  const sanitizedTitle2 = sanitizeVendorName(title2);
-  const distance = levenshtein.get(sanitizedTitle1.toLowerCase(), sanitizedTitle2.toLowerCase());
-  const maxLength = Math.max(sanitizedTitle1.length, sanitizedTitle2.length);
+  const sanitisedTitle1 = sanitiseVendorName(title1);
+  const sanitisedTitle2 = sanitiseVendorName(title2);
+  const distance = levenshtein.get(sanitisedTitle1.toLowerCase(), sanitisedTitle2.toLowerCase());
+  const maxLength = Math.max(sanitisedTitle1.length, sanitisedTitle2.length);
   return maxLength === 0 ? 1 : 1 - distance / maxLength;
 }
 
