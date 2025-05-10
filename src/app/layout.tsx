@@ -6,7 +6,6 @@ import { validateRequest } from '@/lib/cookies';
 export const metadata: Metadata = {
   title: 'OzSkate',
   description: 'All Aussie core skateshops in one place',
-  viewport: 'width=device-width, initial-scale=1',
 };
 
 // TODO: Pass user into the children via context as well
