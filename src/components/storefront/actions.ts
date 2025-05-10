@@ -55,8 +55,6 @@ export const getPaginatedProducts = async (
     for (const { duplicateProduct } of primary.duplicatesAsMaster) {
       if (!duplicateProduct) continue;
 
-
-
       storeAndPrices.push({
         shopId: duplicateProduct.shopId,
         shopName: duplicateProduct.shop.name,
