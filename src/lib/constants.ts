@@ -70,11 +70,6 @@ export const skateboardShops = [
     state: "QLD",
   },
   {
-    name: "Skate Connection",
-    url: "https://www.skateconnection.com.au",
-    state: "QLD",
-  },
-  {
     name: "Soggy Bones",
     url: "https://www.soggybones.com",
     state: "WA",
@@ -88,11 +83,6 @@ export const skateboardShops = [
     name: "Truckstop Sk8",
     url: "https://www.truckstopsk8.com.au",
     state: "NSW",
-  },
-  {
-    name: "Twelve Board Store", // TODO: Remove all non skateboarding categories
-    url: "https://twelveboardstore.com.au",
-    state: "VIC",
   },
   {
     name: "Postal Skateboards",
