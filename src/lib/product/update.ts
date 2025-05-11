@@ -153,7 +153,7 @@ async function filterUpdatedFreshProducts(
 }
 
 async function insertFreshProducts(freshProductsRaw: any[], shopId: number): Promise<number> {
-  const transformedProducts = await transformProducts(freshProductsRaw, shopId);
+  const transformedProducts = transformProducts(freshProductsRaw, shopId);
   let count = 0;
 
   for (const product of transformedProducts) {
@@ -217,11 +217,18 @@ async function updateLocalProduct(localProduct: any, newProduct: any): Promise<b
   return priceChanged;
 }
 
+/**
+ * Update local variants based on the freshly fetched ones.
+ * Also updates availability if it has changed.
+ * @returns `true` if any variant was updated (price, compareAtPrice, or availability)
+ */
 async function updateVariants(localVariants: any[], newVariants: any[]): Promise<boolean> {
-  let compareAtPriceUpdated = false;
-  const newVariantMap = new Map<string, any>();
-  for (const variant of newVariants) {
-    newVariantMap.set(variant.id, variant);
+  let variantsUpdated = false;
+
+  // Build a quick lookup of the new variants by ID
+  const newVariantMap = new Map<string, typeof newVariants[0]>();
+  for (const v of newVariants) {
+    newVariantMap.set(v.id, v);
   }
 
   for (const localVariant of localVariants) {
@@ -231,15 +238,45 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
     const variantUpdates: Record<string, any> = {};
 
     if (localVariant.price !== newVariant.price) {
-      console.log('updating variant price');
+      console.log(
+        'updating variant price for',
+        localVariant.id,
+        'from',
+        localVariant.price,
+        'to',
+        newVariant.price
+      );
       variantUpdates.price = newVariant.price;
-    }
-    if (localVariant.compareAtPrice !== newVariant.compareAtPrice) {
-      console.log('updating compare at price of variant ', localVariant.title);
-      variantUpdates.compareAtPrice = newVariant.compareAtPrice;
-      compareAtPriceUpdated = true;
+      variantsUpdated = true;
     }
 
+    if (localVariant.compareAtPrice !== newVariant.compareAtPrice) {
+      console.log(
+        'updating compareAtPrice for variant',
+        localVariant.id,
+        'from',
+        localVariant.compareAtPrice,
+        'to',
+        newVariant.compareAtPrice
+      );
+      variantUpdates.compareAtPrice = newVariant.compareAtPrice;
+      variantsUpdated = true;
+    }
+
+    if (localVariant.available !== newVariant.available) {
+      console.log(
+        'updating availability for variant',
+        localVariant.id,
+        'from',
+        localVariant.available,
+        'to',
+        newVariant.available
+      );
+      variantUpdates.available = newVariant.available;
+      variantsUpdated = true;
+    }
+
+    // If we collected any updates, persist them
     if (Object.keys(variantUpdates).length > 0) {
       await prisma.variant.update({
         where: { id: localVariant.id },
@@ -248,5 +285,5 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
     }
   }
 
-  return compareAtPriceUpdated;
+  return variantsUpdated;
 }
