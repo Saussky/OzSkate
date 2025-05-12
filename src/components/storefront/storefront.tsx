@@ -91,7 +91,6 @@ export default function Storefront({ user }: StorefrontProps) {
     loadVendors();
   }, [filters]);
 
-  // Load shop names
   useEffect(() => {
     const loadShopNames = async () => {
       const shopNames = await getShopNames();
