@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FilterOption, ParentType } from '@/lib/types';
 import DropdownSelector from '../ui/dropdown';
 import SortDropdown from '../ui/sortDropdown';
@@ -69,7 +69,14 @@ export default function Filter({
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
   const [brand, setBrand] = useState<string>('');
-  const [selectedShops, setSelectedShops] = useState<string[]>([]);
+  const [selectedShops, setSelectedShops] = useState<string[]>(() =>
+    Array.isArray(initialFilters.shops)
+      ? initialFilters.shops
+      : initialFilters.shops
+      ? [initialFilters.shops]
+      : []
+  );
+  console.log('selected shops', selectedShops);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
@@ -80,12 +87,13 @@ export default function Filter({
     setShoeSize(initialFilters.shoeSize || null);
     setDeckSize(initialFilters.deckSize || null);
     setBrand(initialFilters.vendor || '');
+
     // Ensure initialFilters.shop is an array. If not, convert it.
     setSelectedShops(
-      Array.isArray(initialFilters.shop)
-        ? initialFilters.shop
-        : initialFilters.shop
-        ? [initialFilters.shop]
+      Array.isArray(initialFilters.shops)
+        ? initialFilters.shops
+        : initialFilters.shops
+        ? [initialFilters.shops]
         : []
     );
     setSearchTerm(initialFilters.searchTerm || '');
@@ -149,11 +157,15 @@ export default function Filter({
     { value: 'latest', label: 'Newly Listed' },
   ];
 
-  // Convert available shops to multi-select options.
-  const shopOptions = shops.map((shop) => ({
-    value: shop,
-    label: shop,
-  }));
+  const shopOptions = useMemo(() => {
+    const optionSet = new Map<string, string>();
+    shops.forEach((s) => optionSet.set(s, s));
+    selectedShops.forEach((s) => optionSet.set(s, s));
+    return Array.from(optionSet.values()).map((shop) => ({
+      value: shop,
+      label: shop,
+    }));
+  }, [shops, selectedShops]);
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
