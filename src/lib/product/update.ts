@@ -84,6 +84,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
     const newProduct = newProductsMap.get(localProduct.id);
     if (!newProduct) {
       // TODO:  Possibly the product was deleted from Shopify
+      console.log('OI OI \n\n\n OI  OI this item has been deleted... probably')
       continue;
     }
     const didPriceChange: boolean = await updateLocalProduct(localProduct, newProduct);

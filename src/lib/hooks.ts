@@ -11,7 +11,7 @@ const defaultFilters: FilterOption = {
   shoeSize: null,
   deckSize: null,
   vendor: '',
-  shop: '',
+  shops: [],
   searchTerm: '',
 };
 
@@ -44,7 +44,7 @@ export default function useStoreFrontQueryParams() {
         ? Number(searchParams.get('deckSize'))
         : defaultFilters.deckSize,
       vendor: searchParams.get('vendor') ?? defaultFilters.vendor,
-      shop: searchParams.get('shop') ?? defaultFilters.shop,
+      shops: searchParams.getAll('shops') ?? defaultFilters.shops,
       searchTerm: searchParams.get('searchTerm') ?? defaultFilters.searchTerm,
     };
 
@@ -73,17 +73,19 @@ export default function useStoreFrontQueryParams() {
       Object.entries(filters).forEach(([key, value]) => {
         const defaultValue = defaultFilters[key as keyof FilterOption];
 
-        if (
-          value !== defaultValue && // different from default
-          value !== null &&
-          value !== '' 
-        ) {
-          query.set(key, String(value));
-        }
-
-        
+      if (
+        value !== defaultValue &&
+        value !== null &&
+        !(Array.isArray(value) ? value.length === 0 : value === '')
+      ) {
+       if (Array.isArray(value)) {
+         value.forEach((v) => query.append(key, String(v)));
+       } else {
+         query.set(key, String(value));
+      }
+      }
+    });
         // TODO: if (key === 'onSale' && value === true) query.set('onSale', 'true');
-      });
 
       if (sortOption !== defaultSortOption) {
         query.set('sortOption', sortOption);
