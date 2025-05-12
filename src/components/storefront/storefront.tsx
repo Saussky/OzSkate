@@ -103,9 +103,7 @@ export default function Storefront({ user }: StorefrontProps) {
     loadProducts(page);
   };
 
-  const handleFilterChange = (
-    newFilters: Record<string, string | string[] | number | boolean | null>
-  ) => {
+  const handleFilterChange = (newFilters: FilterOption) => {
     setFilters(newFilters);
     setCurrentPage(1);
   };

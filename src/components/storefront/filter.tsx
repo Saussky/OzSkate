@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { ParentType } from '@/lib/types';
+import { FilterOption, ParentType } from '@/lib/types';
 import DropdownSelector from '../ui/dropdown';
 import SortDropdown from '../ui/sortDropdown';
 import Button from '../ui/button';
@@ -45,9 +45,7 @@ export const childTypePerParent: Record<ParentType, string[]> = {
 };
 
 interface FilterProps {
-  onFilterChange: (
-    filters: Record<string, string | number | boolean | null | string[]>
-  ) => void;
+  onFilterChange: (filters: FilterOption) => void;
   brands: string[];
   shops: string[]; // Available shop options (e.g. ["Shop1", "Shop2", ...])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
