@@ -138,16 +138,8 @@ export default function Storefront({ user }: StorefrontProps) {
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            id={product.id}
             admin={user?.admin || false}
-            title={product.title}
-            price={String(product.cheapestPrice ?? '')}
-            imageSrc={product.image?.src || '/placeholder.jpg'} //TODO
-            handle={product.handle}
-            shop={product.shop}
-            parentType={product.parentType}
-            childType={product.childType}
-            allStorePrices={product.allStorePrices}
+            product={product}
           />
         ))}
       </div>

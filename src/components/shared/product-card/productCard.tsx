@@ -2,43 +2,40 @@
 import { ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
-import { shop } from '@prisma/client';
 import { childTypePerParent } from '../../storefront/filter';
-import ProductEditMenu from '../../storefront/productEditMenu';
 import { setProductTypes } from './actions';
+import ProductEditMenu from './product-menu/menu';
+import { ExtendedProduct } from '@/components/storefront/storefront';
 
 interface ProductCardProps {
-  id: string;
-  title: string;
+  product: ExtendedProduct; // everything lives inside here
   admin: boolean;
-  price: string;
-  imageSrc?: string;
-  handle: string;
-  shop: shop;
-  parentType?: string | null; // TODO: type
-  childType?: string | null;
-  allStorePrices?: {
-    shopId: number;
-    shopName: string;
-    state: string;
-    cheapestPrice: number | null;
-  }[];
 }
 
 // TODO: Implement string parent product type types
-export default function ProductCard({
-  id,
-  title,
-  admin,
-  price,
-  imageSrc,
-  handle,
-  shop,
-  parentType,
-  childType,
-  allStorePrices,
-}: ProductCardProps) {
-  const fallbackImageSrc = '/placeholder.jpg';
+export default function ProductCard({ admin, product }: ProductCardProps) {
+  const {
+    id,
+    title,
+    handle,
+    shop,
+    image,
+    cheapestPrice,
+    parentType,
+    childType,
+    tags,
+    createdAt,
+    updatedAt,
+    variants,
+    allStorePrices,
+  } = product;
+
+  const normalisedTags: string[] = Array.isArray(tags)
+    ? tags
+    : typeof tags === 'string' && tags.length > 0
+    ? tags.split(',').map((t) => t.trim())
+    : [];
+  const displaySrc: string = image?.src ?? '/placeholder.jpg';
   const productUrl = shop.url + '/products/' + handle;
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -106,7 +103,7 @@ export default function ProductCard({
 
         <div className="relative aspect-[1/1] bg-white">
           <Image
-            src={imageSrc || fallbackImageSrc}
+            src={displaySrc}
             alt={title}
             layout="fill"
             objectFit="cover"
@@ -117,7 +114,7 @@ export default function ProductCard({
         <h2 className="mt-2 text-xl font-bold text-gray-800">{title}</h2>
 
         <div className="flex justify-between items-center">
-          <p className="text-gray-600 mt-1">${price}</p>
+          <p className="text-gray-600 mt-1">${cheapestPrice}</p>
           <div className="relative inline-block mt-2">
             <button
               onClick={handleMenuToggle}
@@ -129,6 +126,14 @@ export default function ProductCard({
             {admin && (
               <ProductEditMenu
                 menuOpen={menuOpen}
+                onClose={() => setMenuOpen(false)}
+                id={id}
+                title={title}
+                handle={handle}
+                tags={normalisedTags}
+                createdAt={createdAt}
+                updatedAt={updatedAt}
+                variantsCount={variants.length}
                 selectedParent={selectedParent}
                 setSelectedParent={setSelectedParent}
                 selectedChild={selectedChild}
