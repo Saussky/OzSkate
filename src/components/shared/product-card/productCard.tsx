@@ -133,7 +133,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
                 tags={normalisedTags}
                 createdAt={createdAt}
                 updatedAt={updatedAt}
-                variantsCount={variants.length}
+                variantsCount={variants?.length || 0}
                 selectedParent={selectedParent}
                 setSelectedParent={setSelectedParent}
                 selectedChild={selectedChild}

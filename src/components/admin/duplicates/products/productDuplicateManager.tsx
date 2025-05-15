@@ -10,6 +10,7 @@ import {
 import ProductCard from '@/components/shared/product-card/productCard';
 import Pagination from '@/components/shared/pagination';
 import { Prisma } from '@prisma/client';
+import { ExtendedProduct } from '@/components/storefront/storefront';
 
 type DuplicatePair = Prisma.ProductDuplicateGetPayload<{
   include: {
@@ -84,20 +85,8 @@ export default function ProductDuplicateManager(): JSX.Element {
               <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
                 <div className="w-1/3">
                   <ProductCard
-                    id={masterProduct.id}
-                    title={masterProduct.title}
+                    product={masterProduct as ExtendedProduct}
                     admin={false}
-                    price={String(masterProduct.cheapestPrice ?? '')}
-                    handle={masterProduct.handle}
-                    shop={masterProduct.shop}
-                    imageSrc={
-                      typeof masterProduct.image === 'object' &&
-                      masterProduct.image !== null
-                        ? (masterProduct.image as { src: string }).src
-                        : String(masterProduct.image)
-                    }
-                    parentType={masterProduct.parentType}
-                    childType={masterProduct.childType}
                   />
                 </div>
 
@@ -133,20 +122,8 @@ export default function ProductDuplicateManager(): JSX.Element {
 
                 <div className="w-1/3">
                   <ProductCard
-                    id={duplicateProduct.id}
-                    title={duplicateProduct.title}
+                    product={duplicateProduct as ExtendedProduct}
                     admin={false}
-                    price={String(duplicateProduct.cheapestPrice ?? '')}
-                    handle={duplicateProduct.handle}
-                    shop={duplicateProduct.shop}
-                    imageSrc={
-                      typeof duplicateProduct.image === 'object' &&
-                      duplicateProduct.image !== null
-                        ? (duplicateProduct.image as { src: string }).src
-                        : String(duplicateProduct.image)
-                    }
-                    parentType={duplicateProduct.parentType}
-                    childType={duplicateProduct.childType}
                   />
                 </div>
               </div>

@@ -28,7 +28,7 @@ interface StorePriceInfo {
 
 export interface ExtendedProduct extends product {
   shop: shop;
-  variants: variant[];
+  variants?: variant[];
   image: ImageJson | null;
   allStorePrices?: StorePriceInfo[];
 }
