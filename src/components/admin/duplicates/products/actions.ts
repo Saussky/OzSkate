@@ -91,14 +91,7 @@ export async function mergeProducts(masterId: string, duplicateId: string): Prom
   }
 
   // (Optional) Merge product data: e.g., transfer any necessary info from duplicate product to master product.
-  // You might also delete or deactivate the duplicate product from the Product table if it's truly merged.
-  // This depends on your application requirements and is separate from tracking the duplicate relationship.
 }
-
-
-
-
-
 
 function groupProductsByChildType(products: any[]): Record<string, any[]> {
   const productsByChildType: Record<string, any[]> = {};
@@ -154,10 +147,12 @@ export async function markProductsAsSuspectedDuplicates(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _reasons?: Prisma.JsonValue
 ): Promise<void> {
-  // Enforce a consistent ordering for master/duplicate to avoid duplicates in reverse.
-  // For example, use the smaller ID as the master product (or apply another rule such as creation date).
+
   let masterId = productAId;
   let duplicateId = productBId;
+
+  // Enforce a consistent ordering for master/duplicate to avoid duplicates in reverse.
+  // For example, use the smaller ID as the master product (or apply another rule such as creation date).
   if (productBId < productAId) {
     masterId = productBId;
     duplicateId = productAId;
@@ -190,54 +185,12 @@ export async function markProductsAsSuspectedDuplicates(
   });
 }
 
-
-// // A helper function for grouping products by childType
-// function groupProductsByChildType(products: any[]): Record<string, any[]> {
-//   const productsByChildType: Record<string, any[]> = {};
-
-//   for (const product of products) {
-//     const childType = product.childType || "Uncategorised";
-//     if (!productsByChildType[childType]) {
-//       productsByChildType[childType] = [];
-//     }
-//     productsByChildType[childType].push(product);
-//   }
-
-//   return productsByChildType;
-// }
-
-// // Identify duplicates within each childType using checkProductSimilarity
-// function findDuplicatesWithinChildType(products: any[]) {
-//   const results: { product1: any; product2: any; reasons: string[] }[] = [];
-
-//   for (let i = 0; i < products.length; i++) {
-//     for (let j = i + 1; j < products.length; j++) {
-//       const product1 = products[i];
-//       const product2 = products[j];
-
-//       // Only compare products from different stores
-//       if (product1.shopId === product2.shopId) continue;
-
-//       const similarityResult = checkProductSimilarity(product1, product2);
-//       if (similarityResult.isSimilar) {
-//         results.push({
-//           product1,
-//           product2,
-//           reasons: similarityResult.reasons,
-//         });
-//       }
-//     }
-//   }
-
-//   return results;
-// }
-
 export async function checkAllProductsForDuplicates() {
-  // Fetch all products, including any fields needed for similarity checks
+
   const allProducts = await prisma.product.findMany({
     include: {
-      shop: true,    // e.g. to filter out same-store comparisons
-      variants: true // only if needed for similarity checks
+      shop: true,  
+      variants: true 
     },
     where: {
       // e.g. skip any product that’s already confirmed duplicate (optional)
@@ -245,13 +198,11 @@ export async function checkAllProductsForDuplicates() {
     },
   });
 
-  // Group products by childType
   const productsByChildType = groupProductsByChildType(allProducts);
 
   // Check duplicates within each childType
   for (const [childType, products] of Object.entries(productsByChildType)) {
     console.log(`Checking products under childType: ${childType}`);
-
     const results = findDuplicatesWithinChildType(products);
 
     if (results.length > 0) {
@@ -261,7 +212,6 @@ export async function checkAllProductsForDuplicates() {
         console.log(
           `- Duplicate Pair: "${product1.title}" (Store: ${product1.shop?.name}) <-> "${product2.title}" (Store: ${product2.shop?.name})`
         );
-        console.log(`  Reasons: ${reasons.join(", ")}`);
 
         await markProductsAsSuspectedDuplicates(product1.id, product2.id, {
           reasons,
