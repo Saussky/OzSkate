@@ -70,12 +70,14 @@ const ProductEditMenu: React.FC<Props> = ({
           >
             View product info
           </button>
+
           <button
             className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
             onClick={() => setView('types')}
           >
             Change product types
           </button>
+
           <button
             className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
             onClick={() => setView('duplicate')}

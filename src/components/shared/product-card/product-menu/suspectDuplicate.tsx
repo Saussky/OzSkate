@@ -16,7 +16,7 @@ const SuspectedDuplicate: React.FC<Props> = ({ onBack, onClose }) => (
     />
 
     <p className="mt-3 text-sm">
-      Placeholder – implement the duplicate‑marking flow here.
+      Placeholder - implement the duplicate-marking flow here.
     </p>
   </div>
 );
