@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { transformProductsForUpdate, transformProducts } from "./transform";
 import { fetchShopifyProducts } from "./fetch";
+import { product } from "@prisma/client";
 
 export async function applyVendorRules(): Promise<void> {
   const rules = await prisma.vendorRule.findMany();
@@ -94,7 +95,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
       priceChanged++;
     }
 
-    const variantsUpdated = await updateVariants(localProduct.variants, newProduct.variants ?? []);
+    const variantsUpdated = await updateVariants({ title: localProduct.title, id: localProduct.id }, localProduct.variants, newProduct.variants ?? []);
     if (variantsUpdated) {
       await markProductOnSale(newProduct);
     }
@@ -226,7 +227,7 @@ async function updateLocalProduct(localProduct: any, newProduct: any): Promise<b
  * Also updates availability if it has changed.
  * @returns `true` if any variant was updated (price, compareAtPrice, or availability)
  */
-async function updateVariants(localVariants: any[], newVariants: any[]): Promise<boolean> {
+async function updateVariants(product: Partial<product>, localVariants: any[], newVariants: any[]): Promise<boolean> {
   let variantsUpdated = false;
 
   // Build a quick lookup of the new variants by ID
@@ -237,14 +238,14 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
 
   for (const localVariant of localVariants) {
     const newVariant = newVariantMap.get(localVariant.id);
-    if (!newVariant) continue;
+    if (!newVariant) continue; // TODO: Also deleted?
 
     const variantUpdates: Record<string, any> = {};
 
     if (localVariant.price !== newVariant.price) {
       console.log(
         'updating variant price for',
-        localVariant.id,
+        product.id + ' ' + product.title + ' ' + localVariant.title,
         'from',
         localVariant.price,
         'to',
@@ -257,7 +258,7 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
     if (localVariant.compareAtPrice !== newVariant.compareAtPrice) {
       console.log(
         'updating compareAtPrice for variant',
-        localVariant.id,
+        product.id + ' ' + product.title + ' ' + localVariant.title,
         'from',
         localVariant.compareAtPrice,
         'to',
@@ -270,7 +271,7 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
     if (localVariant.available !== newVariant.available) {
       console.log(
         'updating availability for variant',
-        localVariant.id,
+        product.id + ' ' + product.title + ' ' + localVariant.title,
         'from',
         localVariant.available,
         'to',
@@ -280,7 +281,6 @@ async function updateVariants(localVariants: any[], newVariants: any[]): Promise
       variantsUpdated = true;
     }
 
-    // If we collected any updates, persist them
     if (Object.keys(variantUpdates).length > 0) {
       await prisma.variant.update({
         where: { id: localVariant.id },

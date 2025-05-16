@@ -60,7 +60,7 @@ model product {
   publishedAt DateTime
 
   onSale             Boolean
-  on_sale_variant_id String? // Null if no variants are on sale
+  on_sale_variant_id String? // Null if no variants are on sale // TODO: If multiple variants are on sale?
   cheapestPrice      Float? // Cached minimum price of variants //TODO: Need to update this value when fetching data
 
   duplicatesAsMaster    ProductDuplicate[] @relation("MasterProductDuplicates")
