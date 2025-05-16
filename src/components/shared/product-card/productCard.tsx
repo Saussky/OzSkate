@@ -1,5 +1,5 @@
 'use client';
-import { ParentType } from '@/lib/types';
+import { ChildType, ParentType } from '@/lib/types';
 import Image from 'next/image';
 import { useState } from 'react';
 import { childTypePerParent } from '../../storefront/filter';
@@ -8,7 +8,7 @@ import ProductEditMenu from './product-menu/menu';
 import { ExtendedProduct } from '@/components/storefront/storefront';
 
 interface ProductCardProps {
-  product: ExtendedProduct; // everything lives inside here
+  product: ExtendedProduct;
   admin: boolean;
 }
 
@@ -43,6 +43,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     (parentType as ParentType) ?? 'Clothing'
   );
   const [selectedChild, setSelectedChild] = useState<string>(() => {
+    //TODO: Fix type to 'ChildType'
     const childOptions = childTypePerParent[selectedParent];
     return childType ?? childOptions[0];
   });
@@ -53,7 +54,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
   }
 
   async function handleUpdateTypes() {
-    await setProductTypes(id, selectedParent, selectedChild);
+    await setProductTypes(id, selectedParent, selectedChild as ChildType);
     setMenuOpen(false);
   }
 
@@ -115,6 +116,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
 
         <div className="flex justify-between items-center">
           <p className="text-gray-600 mt-1">${cheapestPrice}</p>
+
           <div className="relative inline-block mt-2">
             <button
               onClick={(e) => {

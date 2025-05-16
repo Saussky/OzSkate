@@ -1,12 +1,12 @@
 "use server";
 import { validateRequest } from "@/lib/cookies";
 import { prisma } from "@/lib/prisma";
+import { ChildType, ParentType } from "@/lib/types";
 
-// TODO: There needs to be a way to make sure the product type doesn't get updated when the application performs product updates
 export async function setProductTypes(
   productId: string,
-  parentType: string, // TODO: Use real types
-  childType: string
+  parentType: ParentType, // TODO: Use real types
+  childType: ChildType
 ) {
   try {
     const { user } = await validateRequest();

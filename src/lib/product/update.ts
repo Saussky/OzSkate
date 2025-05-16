@@ -104,6 +104,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   return { inserted: insertedCount, priceChanged };
 }
 
+// TODO: If multiple variants are on sale? Get the cheapest?
 async function markProductOnSale(product: {
   id: string;
   variants: Array<{ id: string; compareAtPrice: number | null }>;
