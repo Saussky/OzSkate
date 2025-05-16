@@ -49,7 +49,6 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
 
   function handleMenuToggle(e: React.MouseEvent) {
     e.preventDefault();
-    e.stopPropagation();
     setMenuOpen((prev) => !prev);
   }
 
@@ -118,7 +117,11 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
           <p className="text-gray-600 mt-1">${cheapestPrice}</p>
           <div className="relative inline-block mt-2">
             <button
-              onClick={handleMenuToggle}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleMenuToggle(e);
+              }}
               className="border border-gray-300 px-2 py-1 rounded"
             >
               :

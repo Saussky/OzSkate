@@ -58,7 +58,6 @@ export default function Storefront({ user }: StorefrontProps) {
     setQueryParams({ filters, sortOption, page: currentPage });
   }, [filters, sortOption, currentPage, setQueryParams]);
 
-  // Load products from server actions
   const loadProducts = useCallback(
     (page: number) => {
       startTransition(async () => {
@@ -75,12 +74,11 @@ export default function Storefront({ user }: StorefrontProps) {
     [filters, sortOption]
   );
 
+  // Always reset to first page when filters or sort changes
   useEffect(() => {
-    // Always reset to first page when filters or sort changes
     loadProducts(1);
   }, [filters, sortOption, loadProducts]);
 
-  // Load the list of vendors (brands)
   useEffect(() => {
     const loadVendors = async () => {
       const filteredVendors = await getFilteredVendors(filters);

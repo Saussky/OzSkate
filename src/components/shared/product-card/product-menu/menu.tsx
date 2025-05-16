@@ -57,6 +57,9 @@ const ProductEditMenu: React.FC<Props> = ({
     onClose,
   };
 
+  const menuButtonStyling =
+    'block w-full text-left px-3 py-2 hover:bg-gray-100 rounded';
+
   return (
     <div
       className="absolute right-0 bottom-full mb-2 bg-white border shadow-lg rounded z-50"
@@ -64,22 +67,19 @@ const ProductEditMenu: React.FC<Props> = ({
     >
       {view === 'main' && (
         <div className="p-2 text-sm">
-          <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
-            onClick={() => setView('info')}
-          >
+          <button className={menuButtonStyling} onClick={() => setView('info')}>
             View product info
           </button>
 
           <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+            className={menuButtonStyling}
             onClick={() => setView('types')}
           >
             Change product types
           </button>
 
           <button
-            className="block w-full text-left px-3 py-2 hover:bg-gray-100 rounded"
+            className={menuButtonStyling}
             onClick={() => setView('duplicate')}
           >
             Mark as suspected duplicate
