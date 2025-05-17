@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import { User } from 'lucia-auth';
 import LoginBox from './loginBox';
@@ -19,7 +18,12 @@ const MobileLoginModal: React.FC<MobileLoginBoxProps> = ({
         type="button"
         onClick={onClose}
         aria-label="Close login"
-        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        className="
+          absolute top-4 right-4 p-2
+          text-2xl text-gray-700
+          rounded-full
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+        "
       >
         ×
       </button>
