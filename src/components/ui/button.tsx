@@ -38,7 +38,8 @@ export default function Button({
    */
   const baseStyle = `
     ${sizeClasses}
-    rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed bg-white
+    rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed bg-white 
+    whitespace-nowrap flex-shrink-0
   `;
 
   /**
