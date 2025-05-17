@@ -46,8 +46,8 @@ export const childTypePerParent: Record<ParentType, string[]> = {
 
 interface FilterProps {
   onFilterChange: (filters: FilterOption) => void;
-  brands: string[];
-  shops: string[]; // Available shop options (e.g. ["Shop1", "Shop2", ...])
+  allBrands: string[];
+  allShops: string[]; // Available shop options (e.g. ["Shop1", "Shop2", ...])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialFilters: any;
   onSortChange: (sortOption: string) => void;
@@ -56,8 +56,8 @@ interface FilterProps {
 
 export default function Filter({
   onFilterChange,
-  brands,
-  shops,
+  allBrands,
+  allShops,
   initialFilters,
   onSortChange,
   sortOption,
@@ -68,7 +68,13 @@ export default function Filter({
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
-  const [brand, setBrand] = useState<string>('');
+  const [brands, setBrands] = useState<string[]>(() =>
+    Array.isArray(initialFilters.brands)
+      ? initialFilters.brands
+      : initialFilters.brands
+      ? [initialFilters.brands]
+      : []
+  );
   const [selectedShops, setSelectedShops] = useState<string[]>(() =>
     Array.isArray(initialFilters.shops)
       ? initialFilters.shops
@@ -86,7 +92,6 @@ export default function Filter({
     setOnSale(initialFilters.onSale || false);
     setShoeSize(initialFilters.shoeSize || null);
     setDeckSize(initialFilters.deckSize || null);
-    setBrand(initialFilters.vendor || '');
 
     // Ensure initialFilters.shop is an array. If not, convert it.
     setSelectedShops(
@@ -94,6 +99,14 @@ export default function Filter({
         ? initialFilters.shops
         : initialFilters.shops
         ? [initialFilters.shops]
+        : []
+    );
+
+    setBrands(
+      Array.isArray(initialFilters.brands)
+        ? initialFilters.brands
+        : initialFilters.brands
+        ? [initialFilters.brands]
         : []
     );
     setSearchTerm(initialFilters.searchTerm || '');
@@ -107,7 +120,7 @@ export default function Filter({
       onSale,
       shoeSize,
       deckSize,
-      vendor: brand,
+      brands,
       shops: selectedShops,
       searchTerm,
     });
@@ -120,7 +133,7 @@ export default function Filter({
     setOnSale(false);
     setShoeSize(null);
     setDeckSize(null);
-    setBrand('');
+    setBrands([]);
     setSelectedShops([]);
     setSearchTerm('');
 
@@ -131,7 +144,7 @@ export default function Filter({
       onSale: false,
       shoeSize: null,
       deckSize: null,
-      vendor: '',
+      brands: [],
       shops: [],
       searchTerm: '',
     });
@@ -159,13 +172,23 @@ export default function Filter({
 
   const shopOptions = useMemo(() => {
     const optionSet = new Map<string, string>();
-    shops.forEach((s) => optionSet.set(s, s));
+    allShops.forEach((s) => optionSet.set(s, s));
     selectedShops.forEach((s) => optionSet.set(s, s));
     return Array.from(optionSet.values()).map((shop) => ({
       value: shop,
       label: shop,
     }));
-  }, [shops, selectedShops]);
+  }, [allShops, selectedShops]);
+
+  const brandOptions = useMemo(() => {
+    const optionSet = new Map<string, string>();
+    allBrands.forEach((s) => optionSet.set(s, s));
+    selectedShops.forEach((s) => optionSet.set(s, s));
+    return Array.from(optionSet.values()).map((shop) => ({
+      value: shop,
+      label: shop,
+    }));
+  }, [allBrands, selectedShops]);
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -209,11 +232,19 @@ export default function Filter({
       )}
 
       {/* TODO: change to multi select */}
-      <DropdownSelector
+      {/* TODO: australian brand identifier */}
+      {/* <DropdownSelector
         label="Brand"
         value={brand}
         onChange={setBrand}
-        options={brands}
+        options={allBrands}
+      /> */}
+
+      <MultiSelectDropdown
+        value={brands}
+        onChange={setBrands}
+        options={brandOptions}
+        label="Brands"
       />
 
       <MultiSelectDropdown

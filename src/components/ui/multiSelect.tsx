@@ -1,4 +1,3 @@
-// src/shared/ui/multiSelectDropdown.tsx
 import React, { useState, useRef, useEffect } from 'react';
 
 export interface MultiSelectDropdownOption {
@@ -14,6 +13,7 @@ export interface MultiSelectDropdownProps {
   label: string;
 }
 
+// TODO: Not displaying text for multiple brand selection, though filter is applying correctly
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   value,
   onChange,

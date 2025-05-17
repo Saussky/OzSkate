@@ -10,7 +10,7 @@ const defaultFilters: FilterOption = {
   onSale: false,
   shoeSize: null,
   deckSize: null,
-  vendor: '',
+  brands: [],
   shops: [],
   searchTerm: '',
 };
@@ -43,7 +43,7 @@ export default function useStoreFrontQueryParams() {
       deckSize: searchParams.get('deckSize')
         ? Number(searchParams.get('deckSize'))
         : defaultFilters.deckSize,
-      vendor: searchParams.get('vendor') ?? defaultFilters.vendor,
+      brands: searchParams.get('brands') ?? defaultFilters.brands,
       shops: searchParams.getAll('shops') ?? defaultFilters.shops,
       searchTerm: searchParams.get('searchTerm') ?? defaultFilters.searchTerm,
     };
@@ -82,7 +82,7 @@ export default function useStoreFrontQueryParams() {
          value.forEach((v) => query.append(key, String(v)));
        } else {
          query.set(key, String(value));
-      }
+        }
       }
     });
         // TODO: if (key === 'onSale' && value === true) query.set('onSale', 'true');

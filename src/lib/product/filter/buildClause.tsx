@@ -18,6 +18,10 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     whereClause.vendor = filters.vendor;
   }
 
+  if (filters.brands && (filters.brands as string[]).length > 0) {
+    whereClause.vendor = { in: filters.brands as string[] };
+  }
+
   if (filters.shops && (filters.shops as string[]).length > 0) {
     whereClause.shop = {
       name: { in: filters.shops as string[] },

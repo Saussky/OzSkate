@@ -116,8 +116,8 @@ export default function Storefront({ user }: StorefrontProps) {
       <div className="flex flex-col space-y-1 mb-2">
         <Filter
           onFilterChange={handleFilterChange}
-          brands={brands}
-          shops={shops}
+          allBrands={brands}
+          allShops={shops}
           initialFilters={queryParams.filters}
           onSortChange={handleSortChange}
           sortOption={sortOption}
