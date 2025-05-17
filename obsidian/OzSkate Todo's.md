@@ -122,3 +122,24 @@ TODO 14/4/2025
 - Site analytics!
 - Chron job for updating products, and clearing npm cache?
 	- Figure out better way to do build process
+
+TODO 17/5/2025
+- Multi select for brands
+	- Modify query params
+- Group shops via state
+	- Select options as '---VIC---', unclickable
+		- Order via users location proximity?
+	- Or just display state Melbourne Melee logo next to them
+		- Might be a pain for mobile
+- Mobile filter display and mobile header display
+	- PRIORITY #1
+- Press enter to apply filters
+- Get proper image for non-photos, check these specific products for photo update
+- Cookies investigation
+- Professional sign up UX
+	- Store user data here instead of cookies
+- Mark as suspected duplicate through new action menu
+- Duplicates that are unavailable
+- Analytics
+- Chron jobs
+- Logging
