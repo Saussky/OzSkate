@@ -219,7 +219,7 @@ export default function Filter({
         value={selectedShops}
         onChange={setSelectedShops}
         options={shopOptions}
-        placeholder="Shops"
+        label="Shops"
       />
 
       <input

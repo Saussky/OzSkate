@@ -1,5 +1,5 @@
 // src/shared/ui/multiSelectDropdown.tsx
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 
 export interface MultiSelectDropdownOption {
   value: string;
@@ -11,15 +11,15 @@ export interface MultiSelectDropdownProps {
   onChange: (value: string[]) => void;
   options: MultiSelectDropdownOption[];
   disabled?: boolean;
-  placeholder?: string;
+  label: string;
 }
 
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   value,
   onChange,
   options,
+  label,
   disabled = false,
-  placeholder = "Set Shops",
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,8 +34,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const toggleOption = (optionValue: string) => {
@@ -48,12 +48,12 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
   let displayText: string;
   if (value.length === 0) {
-    displayText = placeholder;
+    displayText = label;
   } else if (value.length === 1) {
     const selectedOption = options.find((opt) => opt.value === value[0]);
-    displayText = selectedOption ? selectedOption.label : placeholder;
+    displayText = selectedOption ? selectedOption.label : label;
   } else {
-    displayText = `${value.length} ${placeholder} selected`;
+    displayText = `${value.length} ${label} selected`;
   }
 
   return (
