@@ -52,8 +52,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
 
   return (
     <div className="bg-white text-black rounded p-4 flex flex-col space-y-4">
-      {error && <div className="text-red-500 text-sm">{error}</div>}
-
       {username ? (
         <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
           <div className="font-medium">
@@ -84,6 +82,8 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
           onSubmit={handleLogin}
           className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2"
         >
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -91,6 +91,7 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             required
             className="w-full md:w-auto flex-1 border border-gray-400 bg-white placeholder-gray-400 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+
           <input
             type="password"
             value={password}
@@ -109,6 +110,7 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             >
               Log In
             </Button>
+
             <Button
               onClick={() => router.push('/signup')}
               variant="secondary"
