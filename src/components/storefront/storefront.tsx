@@ -45,8 +45,8 @@ export default function Storefront({ user }: StorefrontProps) {
 
   const [products, setProducts] = useState<ExtendedProduct[]>([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [brands, setBrands] = useState<string[]>([]);
-  const [shops, setShops] = useState<string[]>([]);
+  const [allBrands, setAllBrands] = useState<string[]>([]);
+  const [allShops, setAllShops] = useState<string[]>([]);
 
   // const isMobile = useIsMobile(); // defaults to 640px; can customize
 
@@ -82,7 +82,7 @@ export default function Storefront({ user }: StorefrontProps) {
   useEffect(() => {
     const loadVendors = async () => {
       const filteredVendors = await getFilteredVendors(filters);
-      setBrands(
+      setAllBrands(
         filteredVendors.filter((vendor): vendor is string => vendor !== null)
       );
     };
@@ -92,7 +92,7 @@ export default function Storefront({ user }: StorefrontProps) {
   useEffect(() => {
     const loadShopNames = async () => {
       const shopNames = await getShopNames();
-      setShops(shopNames);
+      setAllShops(shopNames);
     };
     loadShopNames();
   }, []);
@@ -116,8 +116,8 @@ export default function Storefront({ user }: StorefrontProps) {
       <div className="flex flex-col space-y-1 mb-2">
         <Filter
           onFilterChange={handleFilterChange}
-          allBrands={brands}
-          allShops={shops}
+          allBrands={allBrands}
+          allShops={allShops}
           initialFilters={queryParams.filters}
           onSortChange={handleSortChange}
           sortOption={sortOption}

@@ -43,7 +43,7 @@ export default function useStoreFrontQueryParams() {
       deckSize: searchParams.get('deckSize')
         ? Number(searchParams.get('deckSize'))
         : defaultFilters.deckSize,
-      brands: searchParams.get('brands') ?? defaultFilters.brands,
+      brands: searchParams.getAll('brands') ?? defaultFilters.brands,
       shops: searchParams.getAll('shops') ?? defaultFilters.shops,
       searchTerm: searchParams.get('searchTerm') ?? defaultFilters.searchTerm,
     };

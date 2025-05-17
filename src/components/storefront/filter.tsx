@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FilterOption, ParentType } from '@/lib/types';
 import DropdownSelector from '../ui/dropdown';
 import SortDropdown from '../ui/sortDropdown';
@@ -68,13 +68,9 @@ export default function Filter({
   const [onSale, setOnSale] = useState(false);
   const [shoeSize, setShoeSize] = useState<number | null>(null);
   const [deckSize, setDeckSize] = useState<number | null>(null);
-  const [brands, setBrands] = useState<string[]>(() =>
-    Array.isArray(initialFilters.brands)
-      ? initialFilters.brands
-      : initialFilters.brands
-      ? [initialFilters.brands]
-      : []
-  );
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const [brands, setBrands] = useState<string[]>([]);
   const [selectedShops, setSelectedShops] = useState<string[]>(() =>
     Array.isArray(initialFilters.shops)
       ? initialFilters.shops
@@ -82,8 +78,6 @@ export default function Filter({
       ? [initialFilters.shops]
       : []
   );
-  console.log('selected shops', selectedShops);
-  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     setParentType(initialFilters.parentType || '');
@@ -170,26 +164,6 @@ export default function Filter({
     { value: 'latest', label: 'Newly Listed' },
   ];
 
-  const shopOptions = useMemo(() => {
-    const optionSet = new Map<string, string>();
-    allShops.forEach((s) => optionSet.set(s, s));
-    selectedShops.forEach((s) => optionSet.set(s, s));
-    return Array.from(optionSet.values()).map((shop) => ({
-      value: shop,
-      label: shop,
-    }));
-  }, [allShops, selectedShops]);
-
-  const brandOptions = useMemo(() => {
-    const optionSet = new Map<string, string>();
-    allBrands.forEach((s) => optionSet.set(s, s));
-    selectedShops.forEach((s) => optionSet.set(s, s));
-    return Array.from(optionSet.values()).map((shop) => ({
-      value: shop,
-      label: shop,
-    }));
-  }, [allBrands, selectedShops]);
-
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
       <DropdownSelector
@@ -231,26 +205,18 @@ export default function Filter({
         />
       )}
 
-      {/* TODO: change to multi select */}
       {/* TODO: australian brand identifier */}
-      {/* <DropdownSelector
-        label="Brand"
-        value={brand}
-        onChange={setBrand}
-        options={allBrands}
-      /> */}
-
       <MultiSelectDropdown
         value={brands}
         onChange={setBrands}
-        options={brandOptions}
+        options={allBrands}
         label="Brands"
       />
 
       <MultiSelectDropdown
         value={selectedShops}
         onChange={setSelectedShops}
-        options={shopOptions}
+        options={allShops}
         label="Shops"
       />
 

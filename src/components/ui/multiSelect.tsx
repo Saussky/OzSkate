@@ -1,20 +1,15 @@
+'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import ChevronDown from './icons/chevronDown';
-
-export interface MultiSelectDropdownOption {
-  value: string;
-  label: string;
-}
 
 export interface MultiSelectDropdownProps {
   value: string[];
   onChange: (value: string[]) => void;
-  options: MultiSelectDropdownOption[];
+  options: string[];
   disabled?: boolean;
   label: string;
 }
 
-// TODO: Not displaying text for multiple brand selection, though filter is applying correctly
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   value,
   onChange,
@@ -27,10 +22,10 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
   // Close dropdown if clicked outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        !containerRef.current.contains(e.target as Node)
       ) {
         setOpen(false);
       }
@@ -39,20 +34,20 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const toggleOption = (optionValue: string) => {
-    if (value.includes(optionValue)) {
-      onChange(value.filter((val) => val !== optionValue));
+  const toggleOption = (opt: string) => {
+    if (value.includes(opt)) {
+      onChange(value.filter((v) => v !== opt));
     } else {
-      onChange([...value, optionValue]);
+      onChange([...value, opt]);
     }
   };
 
+  // determine button text
   let displayText: string;
   if (value.length === 0) {
     displayText = label;
   } else if (value.length === 1) {
-    const selectedOption = options.find((opt) => opt.value === value[0]);
-    displayText = selectedOption ? selectedOption.label : label;
+    displayText = value[0];
   } else {
     displayText = `${value.length} ${label} selected`;
   }
@@ -61,28 +56,28 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     <div ref={containerRef} className="relative inline-block w-full md:w-auto">
       <button
         type="button"
-        className="border border-gray-400 text-black bg-white rounded px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 hover:cursor-pointer w-full flex items-center justify-between"
-        onClick={() => setOpen(!open)}
         disabled={disabled}
+        className="w-full flex items-center justify-between border border-gray-400 bg-white px-3 py-1 text-sm text-black rounded focus:outline-none focus:ring-1 focus:ring-blue-500 hover:cursor-pointer"
+        onClick={() => setOpen((o) => !o)}
       >
         <span>{displayText}</span>
         <ChevronDown className="w-3 h-3 ml-4" />
       </button>
 
       {open && (
-        <div className="absolute z-10 mt-1 left-0 w-64 bg-white border border-gray-400 rounded shadow-lg max-h-60 overflow-auto">
-          {options.map((option) => (
+        <div className="absolute left-0 mt-1 w-64 max-h-60 overflow-auto rounded border border-gray-400 bg-white shadow-lg z-10">
+          {options.map((opt) => (
             <label
-              key={option.value}
+              key={opt}
               className="flex items-center px-2 py-1 hover:bg-gray-100 cursor-pointer"
             >
               <input
                 type="checkbox"
                 className="mr-2"
-                checked={value.includes(option.value)}
-                onChange={() => toggleOption(option.value)}
+                checked={value.includes(opt)}
+                onChange={() => toggleOption(opt)}
               />
-              {option.label}
+              {opt}
             </label>
           ))}
         </div>
