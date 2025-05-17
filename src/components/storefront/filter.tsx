@@ -208,6 +208,7 @@ export default function Filter({
         />
       )}
 
+      {/* TODO: change to multi select */}
       <DropdownSelector
         label="Brand"
         value={brand}
