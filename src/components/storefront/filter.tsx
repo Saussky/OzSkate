@@ -168,7 +168,6 @@ export default function Filter({
     <div className="flex flex-col space-y-2 md:flex-row md:flex-wrap md:space-y-0 md:space-x-2 mb-4">
       <div className="w-full md:w-auto">
         <DropdownSelector
-          // className="w-full"
           value={parentType || ''}
           label="Category"
           onChange={(val) => {
@@ -207,8 +206,8 @@ export default function Filter({
       {childType === 'Decks' && (
         <div className="w-full md:w-auto">
           <DropdownSelector
-            // className="w-full"
             label="Deck Size"
+            // className="w-full"
             value={deckSize?.toString() || ''}
             onChange={(val) => setDeckSize(val ? Number(val) : null)}
             options={availableDeckSizes.map((s) => s.toString())}
@@ -218,7 +217,6 @@ export default function Filter({
 
       <div className="w-full md:w-auto">
         <MultiSelectDropdown
-          // className="w-full"
           value={brands}
           onChange={setBrands}
           options={allBrands}
@@ -228,7 +226,6 @@ export default function Filter({
 
       <div className="w-full md:w-auto">
         <MultiSelectDropdown
-          // className="w-full"
           value={selectedShops}
           onChange={setSelectedShops}
           options={allShops}
@@ -281,7 +278,6 @@ export default function Filter({
 
       <div className="w-full md:w-auto md:ml-auto">
         <SortDropdown
-          // className="w-full"
           options={sortOptions}
           selectedOption={sortOption}
           onChange={onSortChange}

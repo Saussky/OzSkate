@@ -20,9 +20,7 @@ export default function SortDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * Closes the dropdown if the user clicks outside of it.
-   */
+  // close on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -33,9 +31,7 @@ export default function SortDropdown({
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleOptionClick = (value: string) => {
@@ -44,26 +40,34 @@ export default function SortDropdown({
   };
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div
+      ref={dropdownRef}
+      className="
+        relative inline-block
+        text-center md:text-left
+        w-full md:w-auto
+      "
+    >
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => setIsOpen((o) => !o)}
         className="
-          inline-flex items-center 
-          border border-gray-400 bg-white text-black text-sm 
-          rounded px-3 py-1 
+          flex justify-center md:justify-start items-center
+          w-full md:w-auto
+          border border-gray-400 bg-white text-black text-sm
+          rounded px-3 py-1
           hover:cursor-pointer
         "
       >
         <span className="mr-1">⇅</span>
-        Sort
+        <span>Sort</span>
       </button>
 
       {isOpen && (
         <div
           className="
-            absolute right-0 mt-2 w-48 
-            bg-white border border-gray-200 
+            absolute right-0 mt-2 w-48
+            bg-white border border-gray-200
             rounded shadow-lg z-50
           "
         >
@@ -71,7 +75,7 @@ export default function SortDropdown({
             <div
               key={opt.value}
               className="
-                flex items-center px-3 py-2 
+                flex items-center px-3 py-2
                 hover:bg-gray-100 cursor-pointer
               "
               onClick={() => handleOptionClick(opt.value)}

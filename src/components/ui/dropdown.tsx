@@ -2,18 +2,14 @@
 import React from 'react';
 
 interface DropdownSelectorProps {
-  label: string; // Label shown as the first option (e.g., "Category")
-  value: string; // Currently selected value
-  onChange: (value: string) => void; // Callback when user selects a new value
-  options: string[]; // List of dropdown options
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
   disabled?: boolean;
   multiple?: boolean;
 }
 
-/**
- * A generic dropdown selector component with a placeholder-like label
- * and simple Tailwind styling to mimic the screenshot’s style.
- */
 export default function DropdownSelector({
   label,
   value,
@@ -23,14 +19,14 @@ export default function DropdownSelector({
   multiple = false,
 }: DropdownSelectorProps) {
   return (
-    <div className="inline-block">
+    <div className="inline-block w-full md:w-auto">
       <select
         multiple={multiple}
         className="
           border border-gray-400 text-black bg-white 
           rounded px-3 py-1 text-sm
           focus:outline-none focus:ring-1 focus:ring-blue-500
-          hover:cursor-pointer
+          hover:cursor-pointer w-full md:w-auto
         "
         disabled={disabled}
         value={value}
