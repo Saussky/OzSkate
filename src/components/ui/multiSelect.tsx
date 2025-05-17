@@ -42,15 +42,9 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     }
   };
 
-  // determine button text
-  let displayText: string;
-  if (value.length === 0) {
-    displayText = label;
-  } else if (value.length === 1) {
-    displayText = value[0];
-  } else {
-    displayText = `${value.length} ${label} selected`;
-  }
+  let displayText = label;
+  if (value.length === 1) displayText = value[0];
+  else if (value.length > 1) displayText = `${value.length} ${label} selected`;
 
   return (
     <div ref={containerRef} className="relative inline-block w-full md:w-auto">

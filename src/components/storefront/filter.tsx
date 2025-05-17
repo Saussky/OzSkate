@@ -248,7 +248,6 @@ export default function Filter({
         />
       </div>
 
-      {/* On Sale */}
       <div className="w-full md:w-auto">
         <label
           className="
