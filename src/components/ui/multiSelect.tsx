@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ChevronDown from './icons/chevronDown';
 
 export interface MultiSelectDropdownOption {
   value: string;
@@ -65,20 +66,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         disabled={disabled}
       >
         <span>{displayText}</span>
-        <svg
-          className="w-3 h-3 ml-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        <ChevronDown className="w-3 h-3 ml-4" />
       </button>
 
       {open && (
