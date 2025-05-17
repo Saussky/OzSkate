@@ -85,7 +85,6 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
           className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2"
         >
           <input
-            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
