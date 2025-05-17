@@ -165,99 +165,123 @@ export default function Filter({
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-4">
-      <DropdownSelector
-        label="Category"
-        value={parentType || ''}
-        onChange={(val) => {
-          setParentType(val as ParentType);
-          // TODO: Do we need to reset more fields?
-          setChildType('');
-          setShoeSize(null);
-          setDeckSize(null);
-        }}
-        options={parentTypes}
-      />
+    <div className="flex flex-col space-y-2 md:flex-row md:flex-wrap md:space-y-0 md:space-x-2 mb-4">
+      <div className="w-full md:w-auto">
+        <DropdownSelector
+          // className="w-full"
+          value={parentType || ''}
+          label="Category"
+          onChange={(val) => {
+            setParentType(val as ParentType);
+            setChildType('');
+            setShoeSize(null);
+            setDeckSize(null);
+          }}
+          options={parentTypes}
+        />
+      </div>
 
-      <DropdownSelector
-        label="Sub-Category"
-        value={childType}
-        onChange={setChildType}
-        options={childTypes}
-        disabled={!parentType}
-      />
+      <div className="w-full md:w-auto">
+        <DropdownSelector
+          // className="w-full"
+          label="Sub-Category"
+          value={childType}
+          onChange={setChildType}
+          options={childTypes}
+          disabled={!parentType}
+        />
+      </div>
 
       {parentType === 'Shoes' && (
-        <DropdownSelector
-          label="Shoe Size"
-          value={shoeSize?.toString() || ''}
-          onChange={(val) => setShoeSize(val ? Number(val) : null)}
-          options={availableShoeSizes}
-        />
+        <div className="w-full md:w-auto">
+          <DropdownSelector
+            // className="w-full"
+            label="Shoe Size"
+            value={shoeSize?.toString() || ''}
+            onChange={(val) => setShoeSize(val ? Number(val) : null)}
+            options={availableShoeSizes}
+          />
+        </div>
       )}
 
       {childType === 'Decks' && (
-        <DropdownSelector
-          label="Deck Size"
-          value={deckSize?.toString() || ''}
-          onChange={(val) => setDeckSize(val ? Number(val) : null)}
-          options={availableDeckSizes.map((size) => size.toString())}
-        />
+        <div className="w-full md:w-auto">
+          <DropdownSelector
+            // className="w-full"
+            label="Deck Size"
+            value={deckSize?.toString() || ''}
+            onChange={(val) => setDeckSize(val ? Number(val) : null)}
+            options={availableDeckSizes.map((s) => s.toString())}
+          />
+        </div>
       )}
 
-      {/* TODO: australian brand identifier */}
-      <MultiSelectDropdown
-        value={brands}
-        onChange={setBrands}
-        options={allBrands}
-        label="Brands"
-      />
-
-      <MultiSelectDropdown
-        value={selectedShops}
-        onChange={setSelectedShops}
-        options={allShops}
-        label="Shops"
-      />
-
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="
-          border border-gray-400 text-black bg-white
-          rounded px-3 py-1 text-sm
-          focus:outline-none focus:ring-1 focus:ring-blue-500
-        "
-        style={{ minWidth: '150px' }}
-      />
-
-      <label
-        className="
-          flex items-center text-sm
-          px-3 py-1 border border-gray-400 bg-white rounded
-          hover:cursor-pointer
-        "
-      >
-        <input
-          type="checkbox"
-          checked={onSale}
-          onChange={(e) => setOnSale(e.target.checked)}
-          className="mr-1"
+      <div className="w-full md:w-auto">
+        <MultiSelectDropdown
+          // className="w-full"
+          value={brands}
+          onChange={setBrands}
+          options={allBrands}
+          label="Brands"
         />
-        On Sale
-      </label>
+      </div>
 
-      <Button onClick={handleApplyFilters} variant="smart">
-        Apply
-      </Button>
-      <Button onClick={handleClearFilters} variant="smart">
-        Clear
-      </Button>
+      <div className="w-full md:w-auto">
+        <MultiSelectDropdown
+          // className="w-full"
+          value={selectedShops}
+          onChange={setSelectedShops}
+          options={allShops}
+          label="Shops"
+        />
+      </div>
 
-      <div className="ml-auto">
+      <div className="w-full md:w-auto">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="
+            w-full
+            border border-gray-400 text-black bg-white
+            rounded px-3 py-1 text-sm
+            focus:outline-none focus:ring-1 focus:ring-blue-500
+          "
+        />
+      </div>
+
+      {/* On Sale */}
+      <div className="w-full md:w-auto">
+        <label
+          className="
+            flex items-center w-full md:w-auto
+            px-3 py-1 border border-gray-400 bg-white rounded
+            hover:cursor-pointer text-sm
+          "
+        >
+          <input
+            type="checkbox"
+            checked={onSale}
+            onChange={(e) => setOnSale(e.target.checked)}
+            className="mr-1"
+          />
+          On Sale
+        </label>
+      </div>
+
+      <div className="flex flex-col sm:flex-row w-full md:w-auto space-y-2 sm:space-y-0 sm:space-x-2">
+        <Button onClick={handleApplyFilters} variant="smart">
+          Apply
+        </Button>
+        <Button onClick={handleClearFilters} variant="smart">
+          Clear
+        </Button>
+      </div>
+
+      <div className="w-full md:w-auto md:ml-auto">
         <SortDropdown
+          // className="w-full"
           options={sortOptions}
           selectedOption={sortOption}
           onChange={onSortChange}
