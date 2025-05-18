@@ -126,6 +126,7 @@ TODO 14/4/2025
 TODO 17/5/2025
 - Multi select for brands
 	- Modify query params
+	- DONE, might need to change to default dropdown to get native mobile ui
 - Group shops via state
 	- Select options as '---VIC---', unclickable
 		- Order via users location proximity?
@@ -133,6 +134,7 @@ TODO 17/5/2025
 		- Might be a pain for mobile
 - Mobile filter display and mobile header display
 	- PRIORITY #1
+	- DONE, could still use work but in a neater position
 - Press enter to apply filters
 - Get proper image for non-photos, check these specific products for photo update
 - Cookies investigation
@@ -143,3 +145,4 @@ TODO 17/5/2025
 - Analytics
 - Chron jobs
 - Logging
+- On sale needs to be updated properly on updating products
