@@ -43,7 +43,6 @@ export const childTypePerParent: Record<ParentType, string[]> = {
     'Other',
   ],
 };
-
 interface FilterProps {
   onFilterChange: (filters: FilterOption) => void;
   allBrands: string[];
@@ -164,6 +163,15 @@ export default function Filter({
     { value: 'latest', label: 'Newly Listed' },
   ];
 
+  const [isMobileUA, setIsMobileUA] = useState(false);
+  console.log(isMobileUA);
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    // tweak this regex to match the devices you care about
+    const mobileTest = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i;
+    setIsMobileUA(mobileTest.test(ua));
+  }, []);
+
   return (
     <div className="flex flex-col space-y-2 md:flex-row md:flex-wrap md:space-y-0 md:space-x-2 mb-4">
       <div className="w-full md:w-auto">
@@ -216,21 +224,49 @@ export default function Filter({
       )}
 
       <div className="w-full md:w-auto">
-        <MultiSelectDropdown
-          value={brands}
-          onChange={setBrands}
-          options={allBrands}
-          label="Brands"
-        />
+        {!isMobileUA ? (
+          <MultiSelectDropdown
+            value={brands}
+            onChange={setBrands}
+            options={allBrands}
+            label="Brands"
+          />
+        ) : (
+          <DropdownSelector
+            multiple
+            value={
+              brands.length === 1
+                ? brands[0]
+                : `${brands.length} brands selected`
+            }
+            onChange={(val) => setBrands(val ? val.split(',') : [])}
+            options={allBrands}
+            label="Brands"
+          />
+        )}
       </div>
 
       <div className="w-full md:w-auto">
-        <MultiSelectDropdown
-          value={selectedShops}
-          onChange={setSelectedShops}
-          options={allShops}
-          label="Shops"
-        />
+        {!isMobileUA ? (
+          <MultiSelectDropdown
+            value={selectedShops}
+            onChange={setSelectedShops}
+            options={allShops}
+            label="Shops"
+          />
+        ) : (
+          <DropdownSelector
+            multiple
+            value={
+              selectedShops.length === 1
+                ? selectedShops[0]
+                : `${selectedShops.length} shops selected`
+            }
+            onChange={(val) => setSelectedShops(val ? val.split(',') : [])}
+            options={allShops}
+            label="Shops"
+          />
+        )}
       </div>
 
       <div className="w-full md:w-auto">
