@@ -70,7 +70,7 @@ export default function Filter({
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const [brands, setBrands] = useState<string[]>([]);
-  const [selectedShops, setSelectedShops] = useState<string[]>(() =>
+  const [shops, setShops] = useState<string[]>(() =>
     Array.isArray(initialFilters.shops)
       ? initialFilters.shops
       : initialFilters.shops
@@ -87,7 +87,7 @@ export default function Filter({
     setDeckSize(initialFilters.deckSize || null);
 
     // Ensure initialFilters.shop is an array. If not, convert it.
-    setSelectedShops(
+    setShops(
       Array.isArray(initialFilters.shops)
         ? initialFilters.shops
         : initialFilters.shops
@@ -114,7 +114,7 @@ export default function Filter({
       shoeSize,
       deckSize,
       brands,
-      shops: selectedShops,
+      shops: shops,
       searchTerm,
     });
   };
@@ -127,7 +127,7 @@ export default function Filter({
     setShoeSize(null);
     setDeckSize(null);
     setBrands([]);
-    setSelectedShops([]);
+    setShops([]);
     setSearchTerm('');
 
     onFilterChange({
@@ -249,8 +249,8 @@ export default function Filter({
       <div className="w-full md:w-auto">
         {!isMobileUA ? (
           <MultiSelectDropdown
-            value={selectedShops}
-            onChange={setSelectedShops}
+            value={shops}
+            onChange={setShops}
             options={allShops}
             label="Shops"
           />
@@ -258,11 +258,9 @@ export default function Filter({
           <DropdownSelector
             multiple
             value={
-              selectedShops.length === 1
-                ? selectedShops[0]
-                : `${selectedShops.length} shops selected`
+              shops.length === 1 ? shops[0] : `${shops.length} shops selected`
             }
-            onChange={(val) => setSelectedShops(val ? val.split(',') : [])}
+            onChange={(val) => setShops(val ? val.split(',') : [])}
             options={allShops}
             label="Shops"
           />
