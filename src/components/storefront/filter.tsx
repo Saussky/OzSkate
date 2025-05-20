@@ -86,6 +86,7 @@ export default function Filter({
     setShoeSize(initialFilters.shoeSize || null);
     setDeckSize(initialFilters.deckSize || null);
 
+    //TODO: Overkill
     // Ensure initialFilters.shop is an array. If not, convert it.
     setShops(
       Array.isArray(initialFilters.shops)

@@ -19,6 +19,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [displayOptions, setDisplayOptions] = useState<string[]>(options);
 
   // Close dropdown if clicked outside
   useEffect(() => {
@@ -33,6 +34,19 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Update option order only when dropdown opens
+  useEffect(() => {
+    if (open) {
+      const sorted = [...options].sort((a, b) => {
+        const aSel = value.includes(a) ? 0 : 1;
+        const bSel = value.includes(b) ? 0 : 1;
+        if (aSel !== bSel) return aSel - bSel;
+        return a.localeCompare(b);
+      });
+      setDisplayOptions(sorted);
+    }
+  }, [open]);
 
   const toggleOption = (opt: string) => {
     if (value.includes(opt)) {
@@ -60,7 +74,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
       {open && (
         <div className="absolute left-0 mt-1 w-64 max-h-60 overflow-auto rounded border border-gray-400 bg-white shadow-lg z-10">
-          {options.map((opt) => (
+          {displayOptions.map((opt) => (
             <label
               key={opt}
               className="flex items-center px-2 py-1 hover:bg-gray-100 cursor-pointer"

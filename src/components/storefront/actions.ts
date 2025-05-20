@@ -79,7 +79,7 @@ export const getPaginatedProducts = async (
   };
 };
 
-
+//TODO: Isn't updating, still shows all vendors
 export const getFilteredVendors = async (
   filters: FilterOption = {}
 ) => {
