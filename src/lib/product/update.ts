@@ -239,7 +239,10 @@ async function updateVariants(product: Partial<product>, localVariants: any[], n
 
   for (const localVariant of localVariants) {
     const newVariant = newVariantMap.get(localVariant.id);
-    if (!newVariant) continue; // TODO: Also deleted?
+    if (!newVariant) {
+      console.log('uhh deleted maybe', newVariant)
+      continue; // TODO: Also deleted?
+    }
 
     const variantUpdates: Record<string, any> = {};
 
