@@ -79,13 +79,14 @@ export const getPaginatedProducts = async (
   };
 };
 
-//TODO: Isn't updating, still shows all vendors
+
 export const getFilteredVendors = async (
   filters: FilterOption = {}
 ) => {
   try {
     const { parentType, childType } = filters;
     const whereClause: Record<string, any> = {};
+
 
     if (parentType) whereClause.parentType = parentType;
     if (childType) whereClause.childType = childType;

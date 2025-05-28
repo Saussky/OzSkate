@@ -168,7 +168,6 @@ export default function Filter({
   console.log(isMobileUA);
   useEffect(() => {
     const ua = navigator.userAgent;
-    // tweak this regex to match the devices you care about
     const mobileTest = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i;
     setIsMobileUA(mobileTest.test(ua));
   }, []);
@@ -184,6 +183,18 @@ export default function Filter({
             setChildType('');
             setShoeSize(null);
             setDeckSize(null);
+
+            onFilterChange({
+              parentType: val,
+              childType: '',
+              maxPrice,
+              onSale,
+              shoeSize,
+              deckSize,
+              brands,
+              shops,
+              searchTerm,
+            });
           }}
           options={parentTypes}
         />
@@ -194,7 +205,23 @@ export default function Filter({
           // className="w-full"
           label="Sub-Category"
           value={childType}
-          onChange={setChildType}
+          onChange={(val) => {
+            setChildType(val);
+            setShoeSize(null);
+            setDeckSize(null);
+
+            onFilterChange({
+              parentType: parentType,
+              childType: val,
+              maxPrice,
+              onSale,
+              shoeSize,
+              deckSize,
+              brands,
+              shops,
+              searchTerm,
+            });
+          }}
           options={childTypes}
           disabled={!parentType}
         />
