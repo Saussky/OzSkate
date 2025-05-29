@@ -165,7 +165,6 @@ export default function Filter({
   ];
 
   const [isMobileUA, setIsMobileUA] = useState(false);
-  console.log(isMobileUA);
   useEffect(() => {
     const ua = navigator.userAgent;
     const mobileTest = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i;
