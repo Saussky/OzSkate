@@ -46,7 +46,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       });
       setDisplayOptions(sorted);
     }
-  }, [open]);
+  }, [open, options, value]);
 
   const toggleOption = (opt: string) => {
     if (value.includes(opt)) {

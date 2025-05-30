@@ -84,9 +84,11 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   for (const localProduct of localProductsFull) {
     const newProduct = newProductsMap.get(localProduct.id);
     if (!newProduct) {
-      // TODO:  Possibly the product was deleted from Shopify
-      //TODO: This doesn't catch it, need to find a
-      console.log('OI OI \n\n\n OI  OI this item has been deleted... probably  ', localProduct.title, localProduct.shopId)
+      console.log(
+        "Deleting local product",
+        localProduct.title
+      );
+      await prisma.product.delete({ where: { id: localProduct.id } }); 
       continue;
     }
 
@@ -240,11 +242,36 @@ async function updateVariants(product: Partial<product>, localVariants: any[], n
   for (const localVariant of localVariants) {
     const newVariant = newVariantMap.get(localVariant.id);
     if (!newVariant) {
-      console.log('uhh deleted maybe', newVariant)
+      console.log('uhh deleted maybe', newVariant) // TODO: Or is this a new variant?
       continue; // TODO: Also deleted?
     }
 
     const variantUpdates: Record<string, any> = {};
+
+      if (!newVariant || newVariant.available === undefined) {
+        console.log(
+          "Deleting variant that no longer exists or has undefined availability:",
+          product.id,
+          product.title,
+          localVariant.title
+        );
+        await prisma.variant.delete({ where: { id: localVariant.id } });
+        variantsUpdated = true;
+        continue;
+      }
+    if (localVariant.available !== newVariant.available) {
+      console.log(
+        'updating availability for variant',
+        product.id + ' ' + product.title + ' ' + localVariant.title,
+        'from',
+        localVariant.available,
+        'to',
+        newVariant.available
+      );
+      variantUpdates.available = newVariant.available;
+      variantsUpdated = true;
+    }
+
 
     if (localVariant.price !== newVariant.price) {
       console.log(
@@ -272,18 +299,7 @@ async function updateVariants(product: Partial<product>, localVariants: any[], n
       variantsUpdated = true;
     }
 
-    if (localVariant.available !== newVariant.available) {
-      console.log(
-        'updating availability for variant',
-        product.id + ' ' + product.title + ' ' + localVariant.title,
-        'from',
-        localVariant.available,
-        'to',
-        newVariant.available
-      );
-      variantUpdates.available = newVariant.available;
-      variantsUpdated = true;
-    }
+  
 
     if (Object.keys(variantUpdates).length > 0) {
       await prisma.variant.update({
