@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma } from "@prisma/client";
 import { categoriseProduct } from "./categorise";
-import { transformVariants } from "./variants";
+import { processFeaturedImage, transformVariants } from "./variants";
 
 // TODO: Create master category taxonomy, documented
 export const transformProducts = (
@@ -108,7 +108,7 @@ export const transformProductsForUpdate = async (
  */
 export async function transformVariantsForUpdate(
   variants: any[]
-): Promise<Array<{ id: string; price: number; compareAtPrice: number | null }>> {
+): Promise<Array<{ id: string; price: number; compareAtPrice: number | null, available: boolean, featuredImage: any }>> {
   return Promise.all(
     variants.map(async (variant) => ({
       id: variant.id.toString(),
@@ -116,6 +116,8 @@ export async function transformVariantsForUpdate(
       compareAtPrice: variant.compare_at_price
         ? parseFloat(variant.compare_at_price)
         : null,
+      available: variant.available,
+      featuredImage: processFeaturedImage(variant.featuredImage), // TODO: Check if the image changed somehow
     }))
   );
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 //TODO: Jimmy's skate store also has variant colourways and their sizes in it e.g "US 7 / Navy White" & "US 11 / Black/White"
 
-const processFeaturedImage = (image: unknown) => {
+export const processFeaturedImage = (image: unknown) => {
   if (!image || typeof image !== "object") return null;
   const { src, width, height } = image as {
     src?: unknown;

@@ -55,11 +55,6 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   const baseUrl = `${shop.url}/products.json`;
   const freshProductsRaw = await fetchShopifyProducts(baseUrl);
 
-  if (freshProductsRaw.length === 0) {
-    // Optionally handle no products found
-    return { inserted: 0, priceChanged: 0 };
-  }
-
   const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
 
   // Get the list of products needing update and count new inserts.
@@ -72,7 +67,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   }
 
   const transformedProducts = await transformProductsForUpdate(freshProductsToTransform);
-  const newProductsMap = buildProductsMap(transformedProducts);
+  const newProductsMap = buildProductsMap(transformedProducts); // TODO: This removes the avaialble property from variant
 
   const localProductsFull = await prisma.product.findMany({
     where: { shopId: shop.id },
@@ -147,7 +142,6 @@ async function filterUpdatedFreshProducts(
     const localUpdatedAt = localUpdatedAtMap.get(product.id.toString());
 
     if (!localUpdatedAt) {
-      // No product id found, signifies new product
       newProducts.push(product);
       console.log("new product", product.title);
     }
@@ -242,23 +236,32 @@ async function updateVariants(product: Partial<product>, localVariants: any[], n
   for (const localVariant of localVariants) {
     const newVariant = newVariantMap.get(localVariant.id);
     if (!newVariant) {
-      console.log('uhh deleted maybe', newVariant) // TODO: Or is this a new variant?
-      continue; // TODO: Also deleted?
+      console.log(
+        "Deleting local variant (no longer in Shopify):",
+        product.id,
+        product.title,
+        localVariant.title
+      );
+      await prisma.variant.delete({ where: { id: localVariant.id } });
+      variantsUpdated = true;
+      continue;
     }
 
     const variantUpdates: Record<string, any> = {};
 
-      if (!newVariant || newVariant.available === undefined) {
-        console.log(
-          "Deleting variant that no longer exists or has undefined availability:",
-          product.id,
-          product.title,
-          localVariant.title
-        );
-        await prisma.variant.delete({ where: { id: localVariant.id } });
-        variantsUpdated = true;
-        continue;
-      }
+    if (!newVariant || newVariant.available === undefined) {
+      console.log(
+        "Deleting variant that no longer exists or has undefined availability:",
+        product.id,
+        product.title,
+        localVariant.title
+      );
+      console.log('new variant', newVariant)
+       // await prisma.variant.delete({ where: { id: localVariant.id } });
+      variantsUpdated = true;
+      continue;
+    }
+
     if (localVariant.available !== newVariant.available) {
       console.log(
         'updating availability for variant',
