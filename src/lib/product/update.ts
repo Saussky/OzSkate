@@ -92,7 +92,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
       priceChanged++;
     }
 
-    const variantsUpdated = await updateVariants({ title: localProduct.title, id: localProduct.id }, localProduct.variants, newProduct.variants ?? []);
+    const variantsUpdated = await updateVariants(localProduct, localProduct.variants, newProduct.variants ?? []);
     if (variantsUpdated) {
       await markProductOnSale(newProduct);
     }
@@ -224,7 +224,7 @@ async function updateLocalProduct(localProduct: any, newProduct: any): Promise<b
  * Also updates availability if it has changed.
  * @returns `true` if any variant was updated (price, compareAtPrice, or availability)
  */
-async function updateVariants(product: Partial<product>, localVariants: any[], newVariants: any[]): Promise<boolean> {
+async function updateVariants(product: product, localVariants: any[], newVariants: any[]): Promise<boolean> {
   let variantsUpdated = false;
 
   // Build a quick lookup of the new variants by ID
@@ -311,6 +311,24 @@ async function updateVariants(product: Partial<product>, localVariants: any[], n
       });
     }
   }
+
+  for (const newVariant of newVariants) {
+    if (!localVariants.find((v) => v.id === newVariant.id)) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { productId: _omit, ...variantData } = newVariant;
+      console.log("Adding variant", newVariant.title, "To product", product.title)
+
+      await prisma.variant.create({
+        data: {
+          ...variantData,
+          product: { connect: { id: product.id } },
+        },
+      });
+
+      variantsUpdated = true;
+    }
+}
+
 
   return variantsUpdated;
 }

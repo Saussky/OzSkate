@@ -87,10 +87,10 @@ export const transformProductsForUpdate = async (
 }[]> => {
   return Promise.all(
     allPaginatedProducts.map(async (product) => {
-      const variants = product.variants ? await transformVariantsForUpdate(product.variants) : [];
+      const variants = product.variants ? await transformVariants(product, product.parentType, product.childType) : [];
       
       const cheapestPrice = variants.length > 0
-        ? Math.min(...variants.map(variant => variant.price))
+        ? Math.min(...variants.map((variant: { price: any; }) => variant.price))
         : null;
 
       return {
