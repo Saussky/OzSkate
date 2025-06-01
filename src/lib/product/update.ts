@@ -55,6 +55,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   const baseUrl = `${shop.url}/products.json`;
   const freshProductsRaw = await fetchShopifyProducts(baseUrl);
 
+  const allFreshIds = new Set(freshProductsRaw.map((p: any) => p.id.toString()));
   const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
 
   // Get the list of products needing update and count new inserts.
@@ -77,14 +78,15 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   let priceChanged = 0;
 
   for (const localProduct of localProductsFull) {
+    if (!allFreshIds.has(localProduct.id)) {
+      console.log("Deleting local product", localProduct.title);
+      await prisma.product.delete({ where: { id: localProduct.id } });
+      continue; 
+    }
+
     const newProduct = newProductsMap.get(localProduct.id);
     if (!newProduct) {
-      console.log(
-        "Deleting local product",
-        localProduct.title
-      );
-      await prisma.product.delete({ where: { id: localProduct.id } }); 
-      continue;
+      continue; // Unchanged product?
     }
 
     const didPriceChange: boolean = await updateLocalProduct(localProduct, newProduct);
