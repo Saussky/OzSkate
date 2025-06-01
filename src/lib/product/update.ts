@@ -67,7 +67,7 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
   }
 
   const transformedProducts = await transformProductsForUpdate(freshProductsToTransform);
-  const newProductsMap = buildProductsMap(transformedProducts); // TODO: This removes the avaialble property from variant
+  const newProductsMap = buildProductsMap(transformedProducts);
 
   const localProductsFull = await prisma.product.findMany({
     where: { shopId: shop.id },
