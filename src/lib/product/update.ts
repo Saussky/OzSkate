@@ -94,33 +94,10 @@ async function processShopUpdates(shop: any): Promise<{ inserted: number; priceC
       priceChanged++;
     }
 
-    const variantsUpdated = await updateVariants(localProduct, localProduct.variants, newProduct.variants ?? []);
-    if (variantsUpdated) {
-      await markProductOnSale(newProduct);
-    }
+    await updateVariants(localProduct, localProduct.variants, newProduct.variants ?? []);
   }
 
   return { inserted: insertedCount, priceChanged };
-}
-
-// TODO: If multiple variants are on sale? Get the cheapest?
-async function markProductOnSale(product: {
-  id: string;
-  variants: Array<{ id: string; compareAtPrice: number | null }>;
-}): Promise<void> {
-  const onSaleVariant = product.variants.find((variant) => variant.compareAtPrice !== null);
-  const onSale = !!onSaleVariant;
-  const onSaleVariantId = onSaleVariant ? onSaleVariant.id : null;
-
-  console.log('marking on sale product: ', product.id)
-
-  await prisma.product.update({
-    where: { id: product.id },
-    data: {
-      onSale,
-      on_sale_variant_id: onSaleVariantId,
-    },
-  });
 }
 
 async function getLocalProductsBriefMap(shopId: number): Promise<Map<string, Date>> {
@@ -346,6 +323,26 @@ async function updateVariants(product: product, localVariants: any[], newVariant
         data: { cheapestPrice: newCheapest },
       });
     }
+  
+
+    const saleVariant = await prisma.variant.findFirst({
+      where: { productId: product.id, compareAtPrice: { not: null } },
+      orderBy: { price: "asc" },  // pick the cheapest one if many
+    });
+
+    if (!!saleVariant === false) {
+      console.log("product", product.title, "no longer on sale");
+    } else {
+      console.log("product", product.title, "is now on sale");
+    }
+
+    await prisma.product.update({
+      where: { id: product.id },
+      data: {
+        onSale: !!saleVariant,
+        on_sale_variant_id: saleVariant?.id ?? null,
+      },
+    });
   }
 
 
