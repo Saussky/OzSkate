@@ -329,7 +329,24 @@ async function updateVariants(product: product, localVariants: any[], newVariant
 
       variantsUpdated = true;
     }
-}
+  }
+
+  if (variantsUpdated) {
+    const { _min } = await prisma.variant.aggregate({
+      where: { productId: product.id },
+      _min: { price: true },
+    });
+
+    const newCheapest = _min.price ?? null;
+
+    if (product.cheapestPrice !== newCheapest) {
+      console.log('Setting new chepeast price for product', product.title, product.cheapestPrice, 'to', newCheapest)
+      await prisma.product.update({
+        where: { id: product.id },
+        data: { cheapestPrice: newCheapest },
+      });
+    }
+  }
 
 
   return variantsUpdated;
