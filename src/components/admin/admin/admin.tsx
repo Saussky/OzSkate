@@ -2,7 +2,7 @@
 import { useState, useTransition } from 'react';
 import Button from '../../../components/ui/button';
 import { deleteAllProducts, refreshCounts } from './actions';
-import { updateAllProducts } from '@/lib/product/update';
+import { refreshSaleStatuses, updateAllProducts } from '@/lib/product/update';
 import { fetchAllProducts } from '@/lib/product/fetch';
 import Card from '@/components/ui/card';
 
@@ -28,6 +28,7 @@ export default function AdminComponent({
   const [isFetching, startFetch] = useTransition();
   const [isDeleting, startDelete] = useTransition();
   const [isUpdating, startUpdate] = useTransition();
+  const [isCheckingSaleStatus, startCheckingSaleStatus] = useTransition();
 
   const [fetchMessage, setFetchMessage] = useState<string>('');
   const [deleteMessage, setDeleteMessage] = useState<string>('');
@@ -84,6 +85,16 @@ export default function AdminComponent({
     });
   };
 
+  const handleRefreshSaleStatus = () => {
+    startCheckingSaleStatus(async () => {
+      try {
+        await refreshSaleStatuses();
+      } catch (error) {
+        console.error('Error:', error);
+        setUpdateMessage('An error occurred during updating sale statuses.');
+      }
+    });
+  };
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex flex-wrap justify-center gap-8 mb-12">
@@ -132,6 +143,16 @@ export default function AdminComponent({
           variant="smart"
         >
           {isUpdating ? 'Updating Products...' : 'Update Products'}
+        </Button>
+
+        <Button
+          onClick={handleRefreshSaleStatus}
+          disabled={isUpdating}
+          variant="smart"
+        >
+          {isCheckingSaleStatus
+            ? 'Checking sale statuses.'
+            : 'Update Sale Status'}
         </Button>
 
         {updateMessage && (

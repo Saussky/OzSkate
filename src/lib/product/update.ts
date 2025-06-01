@@ -348,3 +348,41 @@ async function updateVariants(product: product, localVariants: any[], newVariant
 
   return variantsUpdated;
 }
+
+/**
+ * Walk every product, look at its current variants,
+ * and set `onSale` / `on_sale_variant_id` accordingly.
+ *
+ * A variant counts as “on sale” when `compareAtPrice` is NOT null.
+ * If no variant qualifies the product is marked as NOT on sale.
+ */
+export async function refreshSaleStatuses(): Promise<void> {
+  // Pull only what we need: product id + variant ids & compareAtPrice
+  const products = await prisma.product.findMany({
+    include: {
+      variants: { select: { id: true, compareAtPrice: true, price: true } },
+    },
+  });
+
+  for (const p of products) {
+    // pick the cheapest variant that still has a compareAtPrice
+    const saleVariant = p.variants
+      .filter((v) => v.compareAtPrice !== null)
+      .sort((a, b) => a.price - b.price)[0]; // cheapest first
+
+    const onSale = !!saleVariant;
+    const onSaleVariantId = saleVariant?.id ?? null;
+
+    // update only when something actually changed
+    if (p.onSale !== onSale || p.on_sale_variant_id !== onSaleVariantId) {
+      console.log('updating sale status of', p.title, 'to', onSale)
+      await prisma.product.update({
+        where: { id: p.id },
+        data: {
+          onSale,
+          on_sale_variant_id: onSaleVariantId,
+        },
+      });
+    }
+  }
+}
