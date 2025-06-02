@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Prisma } from "@prisma/client";
-import { categoriseProduct } from "./categorise";
-import { processFeaturedImage, transformVariants } from "./variants";
+import { Prisma } from '@prisma/client';
+import { categoriseProduct } from './categorise';
+import { processFeaturedImage, transformVariants } from './variants';
 
 // TODO: Create master category taxonomy, documented
 export const transformProducts = (
@@ -19,9 +19,9 @@ export const transformProducts = (
       const firstImageCandidate = product.images[0];
       if (
         firstImageCandidate &&
-        typeof firstImageCandidate.src === "string" &&
-        typeof firstImageCandidate.width === "number" &&
-        typeof firstImageCandidate.height === "number"
+        typeof firstImageCandidate.src === 'string' &&
+        typeof firstImageCandidate.width === 'number' &&
+        typeof firstImageCandidate.height === 'number'
       ) {
         firstImage = {
           src: firstImageCandidate.src,
@@ -43,11 +43,12 @@ export const transformProducts = (
       tags: tagsArray,
     };
 
-    const { parentType, childType } =
-      categoriseProduct(parseProduct);
+    const { parentType, childType } = categoriseProduct(parseProduct);
 
     const cheapestPrice = product.variants
-      ? Math.min(...product.variants.map((variant: any) => variant.price || Infinity))
+      ? Math.min(
+          ...product.variants.map((variant: any) => variant.price || Infinity)
+        )
       : null;
 
     return {
@@ -64,34 +65,49 @@ export const transformProducts = (
       parentType,
       childType,
       cheapestPrice,
-      tags: product.tags ? product.tags.join(",") : "",
+      tags: product.tags ? product.tags.join(',') : '',
       image: firstImage || {},
       onSale: false,
-      variants: product.variants ? transformVariants(product, parentType, childType) : [],
+      variants: product.variants
+        ? transformVariants(product, parentType, childType)
+        : [],
     };
   });
 };
-
-
 
 /**
  * Transforms the raw fresh products into a minimal shape needed for updates.
  * Only extracts the product id, cheapestPrice, and variants (with price and compareAtPrice).
  */
 export const transformProductsForUpdate = async (
-  allPaginatedProducts: any[],
-): Promise<{
-  id: string;
-  cheapestPrice: number | null;
-  variants: Array<{ id: string; price: number; compareAtPrice: number | null }>;
-}[]> => {
+  allPaginatedProducts: any[]
+): Promise<
+  {
+    id: string;
+    cheapestPrice: number | null;
+    variants: Array<{
+      id: string;
+      price: number;
+      compareAtPrice: number | null;
+    }>;
+  }[]
+> => {
   return Promise.all(
     allPaginatedProducts.map(async (product) => {
-      const variants = product.variants ? await transformVariants(product, product.parentType, product.childType) : [];
-      
-      const cheapestPrice = variants.length > 0
-        ? Math.min(...variants.map((variant: { price: any; }) => variant.price))
-        : null;
+      const variants = product.variants
+        ? await transformVariants(
+            product,
+            product.parentType,
+            product.childType
+          )
+        : [];
+
+      const cheapestPrice =
+        variants.length > 0
+          ? Math.min(
+              ...variants.map((variant: { price: any }) => variant.price)
+            )
+          : null;
 
       return {
         id: product.id.toString(),
@@ -108,7 +124,15 @@ export const transformProductsForUpdate = async (
  */
 export async function transformVariantsForUpdate(
   variants: any[]
-): Promise<Array<{ id: string; price: number; compareAtPrice: number | null, available: boolean, featuredImage: any }>> {
+): Promise<
+  Array<{
+    id: string;
+    price: number;
+    compareAtPrice: number | null;
+    available: boolean;
+    featuredImage: any;
+  }>
+> {
   return Promise.all(
     variants.map(async (variant) => ({
       id: variant.id.toString(),
