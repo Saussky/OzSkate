@@ -410,6 +410,7 @@ export async function refreshSaleStatuses(): Promise<void> {
       variants: {
         select: {
           id: true,
+          available: true,
           price: true,
           compareAtPrice: true,
         },
@@ -421,6 +422,7 @@ export async function refreshSaleStatuses(): Promise<void> {
     // only keep variants where compareAtPrice exists AND price < compareAtPrice
     const saleCandidates = product.variants.filter(
       (variant) =>
+        variant.available &&
         variant.compareAtPrice !== null &&
         variant.price < variant.compareAtPrice
     );
