@@ -46,7 +46,9 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       });
       setDisplayOptions(sorted);
     }
-  }, [open, options, value]);
+    // Don't include value so it doesn't update unless the dropdown closes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, options]);
 
   const toggleOption = (opt: string) => {
     if (value.includes(opt)) {

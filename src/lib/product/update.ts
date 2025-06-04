@@ -364,30 +364,6 @@ async function updateVariants(
         data: { cheapestPrice: newCheapest },
       });
     }
-
-    const variants = await prisma.variant.findMany({
-      where: { productId: product.id, compareAtPrice: { not: null } },
-      select: { id: true, price: true, compareAtPrice: true },
-    });
-
-    const saleVariant =
-      variants
-        .filter((v) => v.price < (v.compareAtPrice as number))
-        .sort((a, b) => a.price - b.price)[0] ?? null;
-
-    if (!saleVariant) {
-      console.log('product', product.title, 'no longer on sale');
-    } else {
-      console.log('product', product.title, 'is now on sale');
-    }
-
-    await prisma.product.update({
-      where: { id: product.id },
-      data: {
-        onSale: !!saleVariant,
-        on_sale_variant_id: saleVariant?.id ?? null,
-      },
-    });
   }
 
   return variantsUpdated;
