@@ -1,380 +1,80 @@
-'use server';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+'use server';
 import { prisma } from '@/lib/prisma';
 import { transformProductsForUpdate, transformProducts } from './transform';
 import { fetchShopifyProducts } from './fetch';
-import { product } from '@prisma/client';
+import type {
+  product as ProductModel,
+  variant as VariantModel,
+  shop as ShopModel,
+  VendorRule as VendorRuleModel,
+} from '@prisma/client';
 
+type ProductWithVariants = ProductModel & { variants: VariantModel[] };
+
+type UpdateSummary = {
+  added: number;
+  priceChanged: number;
+};
+
+type ShopBrief = Pick<ShopModel, 'id' | 'name' | 'url'>;
+
+const log = {
+  info: (...messages: unknown[]) => console.log('[ProductSync]', ...messages),
+  error: (...messages: unknown[]) =>
+    console.error('[ProductSync]', ...messages),
+};
+
+/**
+ * Apply vendor‐name normalization rules to all products in the DB.
+ */
 export async function applyVendorRules(): Promise<void> {
-  const rules = await prisma.vendorRule.findMany();
+  const rules: VendorRuleModel[] = await prisma.vendorRule.findMany();
 
   for (const rule of rules) {
     await prisma.product.updateMany({
       where: {
-        vendor: {
-          contains: rule.vendorPattern,
-          mode: 'insensitive',
-        },
+        vendor: { contains: rule.vendorPattern, mode: 'insensitive' },
       },
-      data: {
-        vendor: rule.standardVendor,
-      },
+      data: { vendor: rule.standardVendor },
     });
   }
+
+  log.info('Vendor rules applied');
 }
 
-export async function updateAllProducts(): Promise<{
-  added: number;
-  priceChanged: number;
-}> {
-  let addedCount = 0;
-  let priceChangedCount = 0;
-  const shops = await prisma.shop.findMany();
+/**
+ * Fetch, upsert, and clean products for every shop.
+ *
+ * @returns Counts of newly added products and products whose cheapest price changed.
+ */
+export async function updateAllProducts(): Promise<UpdateSummary> {
+  const shops: ShopBrief[] = await prisma.shop.findMany();
+  let addedTotal = 0;
+  let priceChangedTotal = 0;
 
   for (const shop of shops) {
     try {
-      const result = await processShopUpdates(shop);
-      addedCount += result.inserted;
-      priceChangedCount += result.priceChanged;
-      console.log(`Finished updating products for shop: ${shop.name}`);
+      const { inserted, priceChanged } = await processShopUpdates(shop);
+      addedTotal += inserted;
+      priceChangedTotal += priceChanged;
+      log.info(`Finished processing shop "${shop.name}"`);
     } catch (error) {
-      console.error(`Error updating shop ${shop.name}:`, error);
-      // TODO: Something with this error
+      log.error(`Shop "${shop.name}" failed:`, error);
     }
   }
 
   try {
     await applyVendorRules();
   } catch (error) {
-    console.error('Error applying vendor rules:', error);
-    // TODO: Again
+    log.error('Failed to apply vendor rules:', error);
   }
 
-  console.log('All shops processed in updateProducts.');
-  return { added: addedCount, priceChanged: priceChangedCount };
-}
-
-async function processShopUpdates(
-  shop: any
-): Promise<{ inserted: number; priceChanged: number }> {
-  const baseUrl = `${shop.url}/products.json`;
-  const freshProductsRaw = await fetchShopifyProducts(baseUrl);
-
-  const allFreshIds = new Set(
-    freshProductsRaw.map((p: any) => p.id.toString())
-  );
-  const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
-
-  // Get the list of products needing update and count new inserts.
-  const { updatedProducts: freshProductsToTransform, insertedCount } =
-    await filterUpdatedFreshProducts(
-      freshProductsRaw,
-      localUpdatedAtMap,
-      shop.id
-    );
-
-  if (freshProductsToTransform.length === 0) {
-    console.log('No fresh product updates needed.');
-    return { inserted: insertedCount, priceChanged: 0 };
-  }
-
-  const transformedProducts = await transformProductsForUpdate(
-    freshProductsToTransform
-  );
-  const newProductsMap = buildProductsMap(transformedProducts);
-
-  const localProductsFull = await prisma.product.findMany({
-    where: { shopId: shop.id },
-    include: { variants: true },
-  });
-
-  let priceChanged = 0;
-
-  for (const localProduct of localProductsFull) {
-    if (!allFreshIds.has(localProduct.id)) {
-      console.log('Deleting local product', localProduct.title);
-      await prisma.product.delete({ where: { id: localProduct.id } });
-      continue;
-    }
-
-    const newProduct = newProductsMap.get(localProduct.id);
-    if (!newProduct) {
-      continue; // Unchanged product?
-    }
-
-    const didPriceChange: boolean = await updateLocalProduct(
-      localProduct,
-      newProduct
-    );
-    if (didPriceChange) {
-      priceChanged++;
-    }
-
-    await updateVariants(
-      localProduct,
-      localProduct.variants,
-      newProduct.variants ?? []
-    );
-  }
-
-  return { inserted: insertedCount, priceChanged };
-}
-
-async function getLocalProductsBriefMap(
-  shopId: number
-): Promise<Map<string, Date>> {
-  const localProductsBrief = await prisma.product.findMany({
-    where: { shopId },
-    select: { id: true, updatedAt: true },
-  });
-
-  return new Map(
-    localProductsBrief.map((product) => [product.id, product.updatedAt])
-  );
-}
-
-async function filterUpdatedFreshProducts(
-  freshProductsRaw: any[],
-  localUpdatedAtMap: Map<string, Date>,
-  shopId: number
-): Promise<{ updatedProducts: any[]; insertedCount: number }> {
-  const newProducts: any[] = [];
-
-  // Filter to determine which products have updated_at differences.
-  const updatedProducts = freshProductsRaw.filter((product) => {
-    const localUpdatedAt = localUpdatedAtMap.get(product.id.toString());
-
-    if (!localUpdatedAt) {
-      newProducts.push(product);
-      console.log('new product', product.title);
-    }
-
-    return new Date(product.updated_at).getTime() !== localUpdatedAt?.getTime();
-  });
-
-  const insertedCount = await insertFreshProducts(newProducts, shopId);
-  return { updatedProducts, insertedCount };
-}
-
-async function insertFreshProducts(
-  freshProductsRaw: any[],
-  shopId: number
-): Promise<number> {
-  const transformedProducts = transformProducts(freshProductsRaw, shopId);
-  let count = 0;
-
-  for (const product of transformedProducts) {
-    const { variants, ...productData } = product;
-
-    await prisma.product.upsert({
-      where: { id: productData.id },
-      update: productData,
-      create: productData,
-    });
-    count++;
-
-    if (Array.isArray(variants)) {
-      for (const variant of variants) {
-        await prisma.variant.upsert({
-          where: { id: variant.id },
-          update: variant,
-          create: {
-            ...variant,
-            shoeSize: variant.shoeSize || null,
-            deckSize: variant.deckSize || null,
-          },
-        });
-      }
-    }
-  }
-  return count;
-}
-
-function buildProductsMap(products: any[]): Map<string, any> {
-  const map = new Map<string, any>();
-  for (const p of products) {
-    map.set(p.id, p);
-  }
-  return map;
-}
-
-async function updateLocalProduct(
-  localProduct: any,
-  newProduct: any
-): Promise<boolean> {
-  const productUpdates: Record<string, any> = {};
-  let priceChanged = false;
-
-  if (localProduct.cheapestPrice !== newProduct.cheapestPrice) {
-    console.log(
-      'updating product price of ',
-      localProduct.title,
-      'from',
-      localProduct.cheapestPrice,
-      'to',
-      newProduct.cheapestPrice
-    );
-    productUpdates.cheapestPrice = newProduct.cheapestPrice;
-    priceChanged = true;
-  }
-
-  if (Object.keys(productUpdates).length > 0) {
-    await prisma.product.update({
-      where: { id: localProduct.id },
-      data: productUpdates,
-    });
-  }
-  return priceChanged;
+  return { added: addedTotal, priceChanged: priceChangedTotal };
 }
 
 /**
- * Update local variants based on the freshly fetched ones.
- * Also updates availability if it has changed.
- * @returns `true` if any variant was updated (price, compareAtPrice, or availability)
- */
-async function updateVariants(
-  product: product,
-  localVariants: any[],
-  newVariants: any[]
-): Promise<boolean> {
-  let variantsUpdated = false;
-
-  // Build a quick lookup of the new variants by ID
-  const newVariantMap = new Map<string, (typeof newVariants)[0]>();
-  for (const v of newVariants) {
-    newVariantMap.set(v.id, v);
-  }
-
-  for (const localVariant of localVariants) {
-    const newVariant = newVariantMap.get(localVariant.id);
-    if (!newVariant) {
-      console.log(
-        'Deleting local variant (no longer in Shopify):',
-        product.id,
-        product.title,
-        localVariant.title
-      );
-      await prisma.variant.delete({ where: { id: localVariant.id } });
-      variantsUpdated = true;
-      continue;
-    }
-
-    const variantUpdates: Record<string, any> = {};
-
-    if (!newVariant || newVariant.available === undefined) {
-      console.log(
-        'Deleting variant that no longer exists or has undefined availability:',
-        product.id,
-        product.title,
-        localVariant.title
-      );
-      console.log('new variant', newVariant);
-      // await prisma.variant.delete({ where: { id: localVariant.id } });
-      variantsUpdated = true;
-      continue;
-    }
-
-    if (localVariant.available !== newVariant.available) {
-      console.log(
-        'updating availability for variant',
-        product.id + ' ' + product.title + ' ' + localVariant.title,
-        'from',
-        localVariant.available,
-        'to',
-        newVariant.available
-      );
-      variantUpdates.available = newVariant.available;
-      variantsUpdated = true;
-    }
-
-    if (localVariant.price !== newVariant.price) {
-      console.log(
-        'updating variant price for',
-        product.id + ' ' + product.title + ' ' + localVariant.title,
-        'from',
-        localVariant.price,
-        'to',
-        newVariant.price
-      );
-      variantUpdates.price = newVariant.price;
-      variantsUpdated = true;
-    }
-
-    if (localVariant.compareAtPrice !== newVariant.compareAtPrice) {
-      console.log(
-        'updating compareAtPrice for variant',
-        product.id + ' ' + product.title + ' ' + localVariant.title,
-        'from',
-        localVariant.compareAtPrice,
-        'to',
-        newVariant.compareAtPrice
-      );
-      variantUpdates.compareAtPrice = newVariant.compareAtPrice;
-      variantsUpdated = true;
-    }
-
-    if (Object.keys(variantUpdates).length > 0) {
-      await prisma.variant.update({
-        where: { id: localVariant.id },
-        data: variantUpdates,
-      });
-    }
-  }
-
-  for (const newVariant of newVariants) {
-    if (!localVariants.find((v) => v.id === newVariant.id)) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { productId: _omit, ...variantData } = newVariant;
-      console.log(
-        'Adding variant',
-        newVariant.title,
-        'To product',
-        product.title
-      );
-
-      await prisma.variant.create({
-        data: {
-          ...variantData,
-          product: { connect: { id: product.id } },
-        },
-      });
-
-      variantsUpdated = true;
-    }
-  }
-
-  if (variantsUpdated) {
-    const { _min } = await prisma.variant.aggregate({
-      where: { productId: product.id },
-      _min: { price: true },
-    });
-
-    const newCheapest = _min.price ?? null;
-
-    if (product.cheapestPrice !== newCheapest) {
-      console.log(
-        'Setting new chepeast price for product',
-        product.title,
-        product.cheapestPrice,
-        'to',
-        newCheapest
-      );
-      await prisma.product.update({
-        where: { id: product.id },
-        data: { cheapestPrice: newCheapest },
-      });
-    }
-  }
-
-  return variantsUpdated;
-}
-
-/**
- * Walk every product, look at its current variants,
- * and set `onSale` / `on_sale_variant_id` accordingly.
- *
- * A variant counts as “on sale” when `compareAtPrice` is NOT null.
- * If no variant qualifies the product is marked as NOT on sale.
+ * Recalculate on-sale flags for every product.
  */
 export async function refreshSaleStatuses(): Promise<void> {
   const products = await prisma.product.findMany({
@@ -394,42 +94,316 @@ export async function refreshSaleStatuses(): Promise<void> {
     },
   });
 
-  for (const product of products) {
-    // only keep variants where compareAtPrice exists AND price < compareAtPrice
-    const saleCandidates = product.variants.filter(
+  for (const productRecord of products) {
+    const eligibleVariants = productRecord.variants.filter(
       (variant) =>
         variant.available &&
         variant.compareAtPrice !== null &&
         variant.price < variant.compareAtPrice
     );
 
-    // pick the cheapest one among those
-    const cheapestSaleVariant = saleCandidates.sort(
-      (left, right) => left.price - right.price
+    const cheapestSaleVariant = eligibleVariants.sort(
+      (a, b) => a.price - b.price
     )[0];
 
-    const shouldBeOnSale = Boolean(cheapestSaleVariant);
+    const isOnSale = Boolean(cheapestSaleVariant);
     const saleVariantId = cheapestSaleVariant?.id ?? null;
 
     if (
-      product.onSale !== shouldBeOnSale ||
-      product.on_sale_variant_id !== saleVariantId
+      productRecord.onSale !== isOnSale ||
+      productRecord.on_sale_variant_id !== saleVariantId
     ) {
-      console.log(
-        'updating sale status of',
-        product.title,
-        '→ onSale:',
-        shouldBeOnSale
-      );
       await prisma.product.update({
-        where: { id: product.id },
+        where: { id: productRecord.id },
         data: {
-          onSale: shouldBeOnSale,
+          onSale: isOnSale,
           on_sale_variant_id: saleVariantId,
         },
       });
+
+      log.info(
+        `Sale status updated for "${productRecord.title}" → ${isOnSale}`
+      );
     }
   }
 
-  console.log('finished updating sale statuses');
+  log.info('Sale status refresh complete');
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               INTERNAL HELPERS                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Process one shop: fetch products from Shopify, insert new ones,
+ * update changed ones, remove deleted ones, and sync variants.
+ */
+async function processShopUpdates(
+  shop: ShopBrief
+): Promise<{ inserted: number; priceChanged: number }> {
+  const shopUrl = `${shop.url}/products.json`;
+  const freshRawProducts: any[] = await fetchShopifyProducts(shopUrl);
+
+  const allFreshIds = new Set(freshRawProducts.map((raw) => raw.id.toString()));
+
+  const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
+
+  const { updatedProducts: freshToTransform, insertedCount } =
+    await filterUpdatedFreshProducts(
+      freshRawProducts,
+      localUpdatedAtMap,
+      shop.id
+    );
+
+  if (freshToTransform.length === 0) {
+    log.info(`No updates required for shop "${shop.name}"`);
+    return { inserted: insertedCount, priceChanged: 0 };
+  }
+
+  const transformedProducts = await transformProductsForUpdate(
+    freshToTransform
+  );
+  const freshProductMap = buildProductsMap(transformedProducts);
+
+  const localProducts: ProductWithVariants[] = await prisma.product.findMany({
+    where: { shopId: shop.id },
+    include: { variants: true },
+  });
+
+  let priceChanged = 0;
+
+  for (const localProduct of localProducts) {
+    if (!allFreshIds.has(localProduct.id)) {
+      await prisma.product.delete({ where: { id: localProduct.id } });
+      log.info(`Deleted product "${localProduct.title}" (no longer in feed)`);
+      continue;
+    }
+
+    const freshProduct = freshProductMap.get(localProduct.id);
+    if (!freshProduct) continue;
+
+    if (await updateLocalProduct(localProduct, freshProduct)) {
+      priceChanged += 1;
+    }
+
+    await updateVariants(
+      localProduct,
+      localProduct.variants,
+      freshProduct.variants ?? []
+    );
+  }
+
+  return { inserted: insertedCount, priceChanged };
+}
+
+/**
+ * Return a map of product ID → updatedAt for quick comparison.
+ */
+async function getLocalProductsBriefMap(
+  shopId: number
+): Promise<Map<string, Date>> {
+  const brief = await prisma.product.findMany({
+    where: { shopId },
+    select: { id: true, updatedAt: true },
+  });
+
+  return new Map(brief.map((p) => [p.id, p.updatedAt]));
+}
+
+/**
+ * Split fresh products into those that are new and those
+ * that need updating.
+ */
+async function filterUpdatedFreshProducts(
+  freshRawProducts: any[],
+  localUpdatedAtMap: Map<string, Date>,
+  shopId: number
+): Promise<{ updatedProducts: any[]; insertedCount: number }> {
+  const newProducts: any[] = [];
+
+  const updatedProducts = freshRawProducts.filter((raw) => {
+    const localUpdatedAt = localUpdatedAtMap.get(raw.id.toString());
+
+    if (!localUpdatedAt) {
+      newProducts.push(raw);
+      return true;
+    }
+
+    return new Date(raw.updated_at).getTime() !== localUpdatedAt.getTime();
+  });
+
+  const insertedCount = await insertFreshProducts(newProducts, shopId);
+  return { updatedProducts, insertedCount };
+}
+
+/**
+ * Insert all products that are entirely new for this shop.
+ */
+async function insertFreshProducts(
+  newRawProducts: any[],
+  shopId: number
+): Promise<number> {
+  const transformed = transformProducts(newRawProducts, shopId);
+  let inserted = 0;
+
+  for (const productData of transformed) {
+    const { variants, ...coreData } = productData;
+
+    await prisma.product.upsert({
+      where: { id: coreData.id },
+      update: coreData,
+      create: coreData,
+    });
+    inserted += 1;
+
+    if (Array.isArray(variants)) {
+      for (const variantData of variants) {
+        await prisma.variant.upsert({
+          where: { id: variantData.id },
+          update: variantData,
+          create: {
+            ...variantData,
+            shoeSize: variantData.shoeSize ?? null,
+            deckSize: variantData.deckSize ?? null,
+          },
+        });
+      }
+    }
+  }
+
+  if (inserted > 0) {
+    log.info(`Inserted ${inserted} new products`);
+  }
+
+  return inserted;
+}
+
+/**
+ * Build a quick lookup of products by ID.
+ */
+function buildProductsMap(products: any[]): Map<string, any> {
+  const map = new Map<string, any>();
+  for (const productData of products) {
+    map.set(productData.id, productData);
+  }
+  return map;
+}
+
+/**
+ * Update a single product's cheapest price if necessary.
+ *
+ * @returns `true` if the cheapest price changed.
+ */
+async function updateLocalProduct(
+  localProduct: ProductModel,
+  freshProduct: any
+): Promise<boolean> {
+  if (localProduct.cheapestPrice === freshProduct.cheapestPrice) {
+    return false;
+  }
+
+  await prisma.product.update({
+    where: { id: localProduct.id },
+    data: { cheapestPrice: freshProduct.cheapestPrice },
+  });
+
+  log.info(
+    `Price updated for "${localProduct.title}" → ${freshProduct.cheapestPrice}`
+  );
+
+  return true;
+}
+
+/**
+ * Sync variants: delete missing, update changed, insert new,
+ * then recalculate the product's cheapest price.
+ */
+async function updateVariants(
+  productRecord: ProductModel,
+  localVariants: VariantModel[],
+  freshVariants: any[]
+): Promise<boolean> {
+  let variantsMutated = false;
+
+  const freshMap = new Map<string, (typeof freshVariants)[0]>(
+    freshVariants.map((v) => [v.id, v])
+  );
+
+  for (const localVariant of localVariants) {
+    const freshVariant = freshMap.get(localVariant.id);
+
+    if (!freshVariant) {
+      await prisma.variant.delete({ where: { id: localVariant.id } });
+      log.info(
+        `Deleted variant "${localVariant.title}" (product "${productRecord.title}")`
+      );
+      variantsMutated = true;
+      continue;
+    }
+
+    const updates: Partial<VariantModel> = {};
+
+    if (localVariant.available !== freshVariant.available) {
+      updates.available = freshVariant.available;
+    }
+    if (localVariant.price !== freshVariant.price) {
+      updates.price = freshVariant.price;
+    }
+    if (localVariant.compareAtPrice !== freshVariant.compareAtPrice) {
+      updates.compareAtPrice = freshVariant.compareAtPrice;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await prisma.variant.update({
+        where: { id: localVariant.id },
+        data: updates,
+      });
+      variantsMutated = true;
+      log.info(
+        `Updated variant "${localVariant.title}" (product "${productRecord.title}")`
+      );
+    }
+  }
+
+  // Add any new variants
+  for (const freshVariant of freshVariants) {
+    if (!localVariants.find((v) => v.id === freshVariant.id)) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { productId: _omit, ...data } = freshVariant;
+
+      await prisma.variant.create({
+        data: {
+          ...data,
+          product: { connect: { id: productRecord.id } },
+        },
+      });
+      variantsMutated = true;
+      log.info(
+        `Added variant "${freshVariant.title}" to product "${productRecord.title}"`
+      );
+    }
+  }
+
+  // Recalculate cheapest price if variants changed
+  if (variantsMutated) {
+    const { _min } = await prisma.variant.aggregate({
+      where: { productId: productRecord.id },
+      _min: { price: true },
+    });
+
+    const newCheapest = _min.price ?? null;
+
+    if (productRecord.cheapestPrice !== newCheapest) {
+      await prisma.product.update({
+        where: { id: productRecord.id },
+        data: { cheapestPrice: newCheapest },
+      });
+
+      log.info(
+        `Cheapest price recalculated for "${productRecord.title}" → ${newCheapest}`
+      );
+    }
+  }
+
+  return variantsMutated;
 }
