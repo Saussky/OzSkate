@@ -83,7 +83,7 @@ export default function Storefront({ user }: StorefrontProps) {
     const loadVendors = async () => {
       const filteredVendors = await getFilteredVendors(filters);
       setAllBrands(
-        filteredVendors.filter((vendor): vendor is string => vendor !== null)
+        filteredVendors.map(({ vendor, count }) => `${vendor} (${count})`)
       );
     };
     loadVendors();

@@ -82,23 +82,30 @@ export const getPaginatedProducts = async (
   };
 };
 
-export const getFilteredVendors = async (filters: FilterOption = {}) => {
+export const getFilteredVendors = async (
+  filters: FilterOption = {}
+): Promise<{ vendor: string; count: number }[]> => {
   try {
     const { parentType, childType, onSale } = filters;
-    const whereClause: Record<string, any> = {};
 
+    const whereClause: Record<string, any> = {};
     if (parentType) whereClause.parentType = parentType;
     if (childType) whereClause.childType = childType;
-    if (onSale === true) whereClause.onSale = true; // ← only show vendors with sale items
+    if (onSale === true) whereClause.onSale = true;
 
-    const vendors = await prisma.product.findMany({
+    const grouped = await prisma.product.groupBy({
+      by: ['vendor'],
       where: whereClause,
-      select: { vendor: true },
-      distinct: ['vendor'],
+      _count: { _all: true },
       orderBy: { vendor: 'asc' },
     });
 
-    return vendors.map((prod) => prod.vendor).filter((vendor) => vendor);
+    return grouped
+      .filter(
+        (g): g is { vendor: string; _count: { _all: number } } =>
+          g.vendor !== null
+      )
+      .map(({ vendor, _count }) => ({ vendor, count: _count._all }));
   } catch (error) {
     console.error('Error fetching vendors:', error);
     return [];
