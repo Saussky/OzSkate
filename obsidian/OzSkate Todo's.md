@@ -147,3 +147,4 @@ TODO 17/5/2025
 - Logging
 - On sale needs to be updated properly on updating products
 	- DONE, file needs a cleanup
+		- Cleaned up but logic needs to be understood better

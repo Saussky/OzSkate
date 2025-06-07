@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
-import { prisma } from "@/lib/prisma";
-import { buildOrderByClause, buildWhereClause } from "@/lib/product/filter/buildClause";
-import { FilterOption } from "@/lib/types";
+import { prisma } from '@/lib/prisma';
+import {
+  buildOrderByClause,
+  buildWhereClause,
+} from '@/lib/product/filter/buildClause';
+import { FilterOption } from '@/lib/types';
 
 export const getPaginatedProducts = async (
   page: number,
@@ -30,15 +33,15 @@ export const getPaginatedProducts = async (
             duplicateProduct: {
               include: {
                 shop: true,
-                variants: true
-              }
-            }
-          }
-        }
-      }
+                variants: true,
+              },
+            },
+          },
+        },
+      },
     }),
 
-    prisma.product.count({ where: whereClause })
+    prisma.product.count({ where: whereClause }),
   ]);
 
   const mergedProducts = products.map((primary) => {
@@ -48,8 +51,8 @@ export const getPaginatedProducts = async (
         shopName: primary.shop.name,
         state: primary.shop.state,
         variants: primary.variants,
-        cheapestPrice: primary.cheapestPrice
-      }
+        cheapestPrice: primary.cheapestPrice,
+      },
     ];
 
     for (const { duplicateProduct } of primary.duplicatesAsMaster) {
@@ -60,14 +63,14 @@ export const getPaginatedProducts = async (
         shopName: duplicateProduct.shop.name,
         state: duplicateProduct.shop.state,
         variants: duplicateProduct.variants,
-        cheapestPrice: duplicateProduct.cheapestPrice
+        cheapestPrice: duplicateProduct.cheapestPrice,
       });
     }
 
     return {
       ...primary,
       // duplicatesAsMaster: undefined, // omit raw duplicates from response
-      allStorePrices: storeAndPrices
+      allStorePrices: storeAndPrices,
     };
   });
 
@@ -79,28 +82,25 @@ export const getPaginatedProducts = async (
   };
 };
 
-
-export const getFilteredVendors = async (
-  filters: FilterOption = {}
-) => {
+export const getFilteredVendors = async (filters: FilterOption = {}) => {
   try {
-    const { parentType, childType } = filters;
+    const { parentType, childType, onSale } = filters;
     const whereClause: Record<string, any> = {};
-
 
     if (parentType) whereClause.parentType = parentType;
     if (childType) whereClause.childType = childType;
+    if (onSale === true) whereClause.onSale = true; // ← only show vendors with sale items
 
     const vendors = await prisma.product.findMany({
       where: whereClause,
       select: { vendor: true },
       distinct: ['vendor'],
-      orderBy: { vendor: 'asc' }
+      orderBy: { vendor: 'asc' },
     });
 
     return vendors.map((prod) => prod.vendor).filter((vendor) => vendor);
   } catch (error) {
-    console.error("Error fetching vendors:", error);
+    console.error('Error fetching vendors:', error);
     return [];
   }
 };
