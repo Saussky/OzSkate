@@ -148,3 +148,7 @@ TODO 17/5/2025
 - On sale needs to be updated properly on updating products
 	- DONE, file needs a cleanup
 		- Cleaned up but logic needs to be understood better
+
+TODO 7/6/25
+- Logs in update products, need to see that info, store in db somewhere?
+- Filter by how recent the product went on sale

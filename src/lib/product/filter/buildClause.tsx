@@ -3,6 +3,9 @@
 import { FilterOption } from '@/lib/types';
 import { Prisma } from '@prisma/client';
 
+const stripCount = (label: string): string =>
+  label.replace(/\s*\(\d+\)\s*$/, '');
+
 export const buildWhereClause = async (filters: FilterOption = {}) => {
   const whereClause: Record<string, any> = {};
 
@@ -19,7 +22,9 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
   }
 
   if (filters.brands && (filters.brands as string[]).length > 0) {
-    whereClause.vendor = { in: filters.brands as string[] };
+    whereClause.vendor = {
+      in: (filters.brands as string[]).map(stripCount),
+    };
   }
 
   if (filters.shops && (filters.shops as string[]).length > 0) {
