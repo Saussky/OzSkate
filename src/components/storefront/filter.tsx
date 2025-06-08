@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { FilterOption, ParentType } from '@/lib/types';
 import DropdownSelector from '../ui/dropdown';
-import SortDropdown from '../ui/sortDropdown';
+import SortDropdown, { SortOptionObject } from '../ui/sortDropdown';
 import Button from '../ui/button';
 import MultiSelectDropdown from '../ui/multiSelect';
+import { SortOption } from '@/lib/product/filter/buildClause';
 
 export const childTypePerParent: Record<ParentType, string[]> = {
   Clothing: [
@@ -49,7 +50,7 @@ interface FilterProps {
   allShops: string[]; // Available shop options (e.g. ["Shop1", "Shop2", ...])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialFilters: any;
-  onSortChange: (sortOption: string) => void;
+  onSortChange: (sortOption: SortOption) => void;
   sortOption: string;
 }
 
@@ -158,10 +159,11 @@ export default function Filter({
   const availableDeckSizes = [7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0];
 
   // TODO: Change icon in button depending on selection
-  const sortOptions = [
+  const sortOptions: SortOptionObject[] = [
     { value: 'price-asc', label: 'Price: low to high' },
     { value: 'price-desc', label: 'Price: high to low' },
     { value: 'latest', label: 'Newly Listed' },
+    { value: 'last-updated', label: 'Recently updated' },
   ];
 
   const [isMobileUA, setIsMobileUA] = useState(false);
@@ -300,6 +302,12 @@ export default function Filter({
           placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLInputElement>) => {
+            if (keyboardEvent.key === 'Enter') {
+              keyboardEvent.preventDefault();
+              handleApplyFilters();
+            }
+          }}
           className="
             w-full
             border border-gray-400 text-black bg-white

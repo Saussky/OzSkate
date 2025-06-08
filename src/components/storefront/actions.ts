@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import {
   buildOrderByClause,
   buildWhereClause,
+  SortOption,
 } from '@/lib/product/filter/buildClause';
 import { FilterOption } from '@/lib/types';
 
@@ -11,7 +12,7 @@ export const getPaginatedProducts = async (
   page: number,
   limit: number,
   filters: FilterOption = {},
-  sortOptions?: string
+  sortOptions?: SortOption
 ) => {
   const offset = (page - 1) * limit;
   const whereClause = await buildWhereClause(filters);

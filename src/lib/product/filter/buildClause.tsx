@@ -73,15 +73,30 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
   return whereClause;
 };
 
-export const buildOrderByClause = async (sortOptions?: string) => {
+export type SortOption = 'price-asc' | 'price-desc' | 'latest' | 'last-updated';
+
+export const buildOrderByClause = async (
+  selectedSortOption?: SortOption
+): Promise<Prisma.productOrderByWithRelationInput[]> => {
   const orderBy: Prisma.productOrderByWithRelationInput[] = [];
 
-  if (sortOptions === 'price-asc') {
-    orderBy.push({ cheapestPrice: 'asc' });
-  } else if (sortOptions === 'price-desc') {
-    orderBy.push({ cheapestPrice: 'desc' });
-  } else {
-    orderBy.push({ createdAt: 'desc' });
+  switch (selectedSortOption) {
+    case 'price-asc':
+      orderBy.push({ cheapestPrice: 'asc' });
+      break;
+
+    case 'price-desc':
+      orderBy.push({ cheapestPrice: 'desc' });
+      break;
+
+    case 'last-updated':
+      orderBy.push({ updatedAt: 'desc' });
+      break;
+
+    case 'latest':
+    default:
+      orderBy.push({ createdAt: 'desc' });
+      break;
   }
 
   return orderBy;

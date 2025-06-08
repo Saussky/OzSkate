@@ -9,6 +9,7 @@ import ProductCard from '../shared/product-card/productCard';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
 import { getShopNames } from '../admin/admin/actions';
 import useStoreFrontQueryParams from '@/lib/hooks';
+import { SortOption } from '@/lib/product/filter/buildClause';
 // import MobileProductCard from '../shared/product-card/mobileProductCard';
 
 type ImageJson = {
@@ -40,7 +41,9 @@ interface StorefrontProps {
 export default function Storefront({ user }: StorefrontProps) {
   const { queryParams, setQueryParams } = useStoreFrontQueryParams();
   const [filters, setFilters] = useState<FilterOption>(queryParams.filters);
-  const [sortOption, setSortOption] = useState<string>(queryParams.sortOption);
+  const [sortOption, setSortOption] = useState<SortOption>(
+    queryParams.sortOption as SortOption
+  );
   const [currentPage, setCurrentPage] = useState<number>(queryParams.page);
 
   const [products, setProducts] = useState<ExtendedProduct[]>([]);
@@ -106,7 +109,7 @@ export default function Storefront({ user }: StorefrontProps) {
     setCurrentPage(1);
   };
 
-  const handleSortChange = (option: string) => {
+  const handleSortChange = (option: SortOption) => {
     setSortOption(option);
     setCurrentPage(1);
   };

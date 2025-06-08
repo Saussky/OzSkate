@@ -1,15 +1,16 @@
 'use client';
+import { SortOption } from '@/lib/product/filter/buildClause';
 import React, { useState, useRef, useEffect } from 'react';
 
-interface SortOption {
-  value: string;
+export interface SortOptionObject {
+  value: SortOption;
   label: string;
 }
 
 interface SortDropdownProps {
-  options: SortOption[];
+  options: SortOptionObject[];
   selectedOption: string;
-  onChange: (value: string) => void;
+  onChange: (value: SortOption) => void;
 }
 
 export default function SortDropdown({
@@ -34,7 +35,7 @@ export default function SortDropdown({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleOptionClick = (value: string) => {
+  const handleOptionClick = (value: SortOption) => {
     onChange(value);
     setIsOpen(false);
   };
