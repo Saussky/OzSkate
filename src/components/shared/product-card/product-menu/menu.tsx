@@ -1,11 +1,12 @@
-'use client';
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { ParentType } from '@/lib/types';
 import ProductInfoView from './productInfo';
 import ProductTypeEditor from './productType';
 import SuspectedDuplicate from './suspectDuplicate';
+import Button from '@/components/ui/button';
+import { deleteProduct } from '../actions';
 
-type View = 'main' | 'info' | 'types' | 'duplicate';
+type View = 'main' | 'info' | 'types' | 'duplicate' | 'confirmDelete';
 
 export interface ProductMeta {
   id: string;
@@ -17,11 +18,9 @@ export interface ProductMeta {
   variantsCount: number;
 }
 
-interface Props extends ProductMeta {
+interface ProductEditMenuProps extends ProductMeta {
   menuOpen: boolean;
   onClose: () => void;
-
-  /* props for the “types” editor */
   selectedParent: ParentType;
   setSelectedParent: React.Dispatch<React.SetStateAction<ParentType>>;
   selectedChild: string;
@@ -29,36 +28,43 @@ interface Props extends ProductMeta {
   handleUpdateTypes: () => Promise<void>;
 }
 
-const ProductEditMenu: React.FC<Props> = ({
-  /* meta */
+export default function ProductEditMenu({
+  id,
   title,
   handle,
   tags,
   createdAt,
   updatedAt,
   variantsCount,
-
-  /* plumbing */
   menuOpen,
   onClose,
-
-  /* type‑editor */
   selectedParent,
   setSelectedParent,
   selectedChild,
   setSelectedChild,
   handleUpdateTypes,
-}) => {
+}: ProductEditMenuProps) {
   const [view, setView] = useState<View>('main');
-  if (!menuOpen) return null;
+  const [isDeletingProduct, startDeletingProduct] = useTransition();
 
-  const common = {
-    onBack: () => setView('main' as View),
+  if (!menuOpen) {
+    return null;
+  }
+
+  const commonProps = {
+    onBack: () => setView('main'),
     onClose,
   };
 
   const menuButtonStyling =
     'block w-full text-left px-3 py-2 hover:bg-gray-100 rounded';
+
+  const handleDeleteConfirm = () => {
+    startDeletingProduct(async () => {
+      await deleteProduct(id);
+      onClose();
+    });
+  };
 
   return (
     <div
@@ -84,25 +90,48 @@ const ProductEditMenu: React.FC<Props> = ({
           >
             Mark as suspected duplicate
           </button>
+
+          <button
+            className={menuButtonStyling}
+            onClick={() => setView('confirmDelete')}
+          >
+            Delete product
+          </button>
+        </div>
+      )}
+
+      {view === 'confirmDelete' && (
+        <div className="flex flex-row p-2 text-sm">
+          <Button
+            onClick={handleDeleteConfirm}
+            disabled={isDeletingProduct}
+            className="w-full"
+          >
+            {isDeletingProduct ? 'Deleting...' : 'Delete'}
+          </Button>
+
+          <Button onClick={commonProps.onBack} className="w-full">
+            Cancel
+          </Button>
         </div>
       )}
 
       {view === 'info' && (
         <ProductInfoView
-          {...common}
+          {...commonProps}
           title={title}
           handle={handle}
           tags={tags}
           createdAt={createdAt}
           updatedAt={updatedAt}
           variantsCount={variantsCount}
-          id={''} /* not needed here but satisfies ProductMeta */
+          id={id}
         />
       )}
 
       {view === 'types' && (
         <ProductTypeEditor
-          {...common}
+          {...commonProps}
           selectedParent={selectedParent}
           setSelectedParent={setSelectedParent}
           selectedChild={selectedChild}
@@ -111,9 +140,7 @@ const ProductEditMenu: React.FC<Props> = ({
         />
       )}
 
-      {view === 'duplicate' && <SuspectedDuplicate {...common} />}
+      {view === 'duplicate' && <SuspectedDuplicate {...commonProps} />}
     </div>
   );
-};
-
-export default ProductEditMenu;
+}

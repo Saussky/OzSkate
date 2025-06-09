@@ -1,7 +1,7 @@
-"use server";
-import { validateRequest } from "@/lib/cookies";
-import { prisma } from "@/lib/prisma";
-import { ChildType, ParentType } from "@/lib/types";
+'use server';
+import { validateRequest } from '@/lib/cookies';
+import { prisma } from '@/lib/prisma';
+import { ChildType, ParentType } from '@/lib/types';
 
 export async function setProductTypes(
   productId: string,
@@ -20,7 +20,19 @@ export async function setProductTypes(
       },
     });
   } catch (error) {
-    console.error("Error updating product types:", error);
+    console.error('Error updating product types:', error);
     throw error;
   }
+}
+
+export async function deleteProduct(productId: string): Promise<void> {
+  const { user } = await validateRequest();
+  if (!user?.admin) {
+    throw new Error('Not authorized');
+  }
+
+  await prisma.product.update({
+    where: { id: productId },
+    data: { deleted: true },
+  });
 }
