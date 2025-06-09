@@ -1,5 +1,6 @@
 'use server';
 import {
+  getOnSaleCount,
   getProductCount,
   getShopCount,
 } from '@/components/admin/admin/actions';
@@ -15,10 +16,15 @@ export default async function Admin() {
 
   const productCount = await getProductCount();
   const shopCount = await getShopCount();
+  const onSaleCount = await getOnSaleCount();
 
   return (
     <div>
-      <AdminComponent shopCount={shopCount} productCount={productCount} />
+      <AdminComponent
+        shopCount={shopCount}
+        productCount={productCount}
+        onSaleCount={onSaleCount}
+      />
     </div>
   );
 }

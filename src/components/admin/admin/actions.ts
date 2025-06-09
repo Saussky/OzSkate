@@ -1,12 +1,12 @@
-"use server";
-import { prisma } from "@/lib/prisma";
+'use server';
+import { prisma } from '@/lib/prisma';
 
 export async function getProductCount() {
   try {
     const count = await prisma.product.count();
     return count;
   } catch (error) {
-    console.error("Error getting product count:", error);
+    console.error('Error getting product count:', error);
     return 0;
   }
 }
@@ -16,7 +16,18 @@ export async function getShopCount() {
     const count = await prisma.shop.count();
     return count;
   } catch (error) {
-    console.error("Error getting shop count:", error);
+    console.error('Error getting shop count:', error);
+    return 0;
+  }
+}
+
+export async function getOnSaleCount(): Promise<number> {
+  try {
+    return await prisma.product.count({
+      where: { onSale: true },
+    });
+  } catch (error) {
+    console.error('Error getting on-sale product count:', error);
     return 0;
   }
 }
@@ -37,7 +48,8 @@ export const getShopNames = async () => {
 export async function refreshCounts() {
   const productCount = await getProductCount();
   const shopCount = await getShopCount();
-  return { shopCount, productCount };
+  const onSaleCount = await getOnSaleCount();
+  return { shopCount, productCount, onSaleCount };
 }
 
 export async function deleteAllProducts() {
@@ -47,8 +59,8 @@ export async function deleteAllProducts() {
     await prisma.variant.deleteMany();
     await prisma.product.deleteMany();
 
-    console.log("All products, variants, and options have been deleted.");
+    console.log('All products, variants, and options have been deleted.');
   } catch (error) {
-    console.error("Error deleting all products:", error);
+    console.error('Error deleting all products:', error);
   }
 }

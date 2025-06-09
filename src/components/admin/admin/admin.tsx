@@ -9,6 +9,7 @@ import Card from '@/components/ui/card';
 interface AdminComponentProps {
   shopCount: number;
   productCount: number;
+  onSaleCount: number;
 }
 
 interface UpdateResult {
@@ -19,10 +20,13 @@ interface UpdateResult {
 export default function AdminComponent({
   shopCount,
   productCount,
+  onSaleCount,
 }: AdminComponentProps): JSX.Element {
   const [currentShopCount, setCurrentShopCount] = useState<number>(shopCount);
   const [currentProductCount, setCurrentProductCount] =
     useState<number>(productCount);
+  const [currentOnSaleCount, setCurrentOnSaleCount] =
+    useState<number>(onSaleCount);
 
   const [isRefreshing, startRefresh] = useTransition();
   const [isFetching, startFetch] = useTransition();
@@ -37,9 +41,10 @@ export default function AdminComponent({
 
   const handleRefreshCounts = () => {
     startRefresh(async () => {
-      const { shopCount, productCount } = await refreshCounts();
+      const { shopCount, productCount, onSaleCount } = await refreshCounts();
       setCurrentShopCount(shopCount);
       setCurrentProductCount(productCount);
+      setCurrentOnSaleCount(onSaleCount);
     });
   };
 
@@ -98,8 +103,9 @@ export default function AdminComponent({
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex flex-wrap justify-center gap-8 mb-12">
-        <Card title="Number of Shops">{currentShopCount}</Card>
-        <Card title="Number of Products">{currentProductCount}</Card>
+        <Card title="Shop Count">{currentShopCount}</Card>
+        <Card title="Product Count">{currentProductCount}</Card>
+        <Card title="On Sale Count">{currentOnSaleCount}</Card>
       </div>
 
       <div className="flex flex-col items-center space-y-2">
