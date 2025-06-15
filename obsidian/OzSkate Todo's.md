@@ -153,4 +153,13 @@ TODO 17/5/2025
 TODO 7/6/25
 - Logs in update products, need to see that info, store in db somewhere?
 - ~~Filter by how recent the product went on sale~~
-- Delete products and make sure they don't get re-added
+- ~~Delete products and make sure they don't get re-added~~
+- - Analytics
+- Chron jobs
+- Logging
+- Duplicates, make decision
+-  Get proper image for non-photos, check these specific products for photo update
+- Cookies investigation
+- Professional sign up UX
+	- Store user data here instead of cookies
+- Show sort option

@@ -17,9 +17,22 @@ function sanitiseVendorName(vendor: string): string {
 function titleSimilarity(title1: string, title2: string): number {
   const sanitisedTitle1 = sanitiseVendorName(title1);
   const sanitisedTitle2 = sanitiseVendorName(title2);
-  const distance = levenshtein.get(sanitisedTitle1.toLowerCase(), sanitisedTitle2.toLowerCase());
+  const distance = levenshtein.get(
+    sanitisedTitle1.toLowerCase(),
+    sanitisedTitle2.toLowerCase()
+  );
   const maxLength = Math.max(sanitisedTitle1.length, sanitisedTitle2.length);
   return maxLength === 0 ? 1 : 1 - distance / maxLength;
+}
+
+export async function getAllVendors(): Promise<string[]> {
+  const products = await prisma.product.findMany({
+    select: { vendor: true },
+    where: { vendor: { not: null } },
+  });
+
+  const vendorSet = new Set(products.map((p) => p.vendor as string));
+  return Array.from(vendorSet).sort((a, b) => a.localeCompare(b));
 }
 
 /**
@@ -28,17 +41,8 @@ function titleSimilarity(title1: string, title2: string): number {
  * using a similarity threshold of 80%, and returns only groups with duplicates.
  */
 export async function getVendorGroups(): Promise<{ group: string[] }[]> {
-  // Retrieve all products with a vendor
-  const products = await prisma.product.findMany({
-    select: { vendor: true },
-    where: { vendor: { not: null } },
-  });
-
   // Create a set of unique vendor names
-  const vendorSet = new Set<string>();
-  for (const prod of products) {
-    if (prod.vendor) vendorSet.add(prod.vendor);
-  }
+  const vendorSet = await getAllVendors();
   const vendors = Array.from(vendorSet);
 
   // Group vendors using a simple clustering algorithm:
@@ -62,14 +66,17 @@ export async function getVendorGroups(): Promise<{ group: string[] }[]> {
   }
 
   // Only return groups with more than one vendor (i.e. duplicates)
-  return groups.filter(group => group.length > 1).map(group => ({ group }));
+  return groups.filter((group) => group.length > 1).map((group) => ({ group }));
 }
 
 /**
  * Updates all products whose vendor is in the provided vendorGroup (except those already matching selectedVendor)
  * so that their vendor is updated to selectedVendor.
  */
-export async function updateVendorGroup(vendorGroup: string[], selectedVendor: string): Promise<void> {
+export async function updateVendorGroup(
+  vendorGroup: string[],
+  selectedVendor: string
+): Promise<void> {
   await prisma.product.updateMany({
     where: {
       vendor: {
@@ -85,7 +92,10 @@ export async function updateVendorGroup(vendorGroup: string[], selectedVendor: s
  * Creates a vendor rule so that whenever a vendor name contains vendorPattern,
  * it should be updated to standardVendor in future product updates.
  */
-export async function addVendorRule(vendorPattern: string, standardVendor: string): Promise<void> {
+export async function addVendorRule(
+  vendorPattern: string,
+  standardVendor: string
+): Promise<void> {
   await prisma.vendorRule.create({
     data: {
       vendorPattern,
