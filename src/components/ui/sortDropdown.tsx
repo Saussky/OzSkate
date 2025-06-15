@@ -9,7 +9,7 @@ export interface SortOptionObject {
 
 interface SortDropdownProps {
   options: SortOptionObject[];
-  selectedOption: string;
+  selectedOption: string; // value of the currently-chosen option
   onChange: (value: SortOption) => void;
 }
 
@@ -21,7 +21,7 @@ export default function SortDropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // close on outside click
+  /* ----- close on outside click ----- */
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -40,14 +40,14 @@ export default function SortDropdown({
     setIsOpen(false);
   };
 
+  /* ----- figure out the label to show on the button ----- */
+  const selectedLabel =
+    options.find((opt) => opt.value === selectedOption)?.label ?? 'Sort';
+
   return (
     <div
       ref={dropdownRef}
-      className="
-        relative inline-block
-        text-center md:text-left
-        w-full md:w-auto
-      "
+      className="relative inline-block text-center md:text-left w-full md:w-auto"
     >
       <button
         type="button"
@@ -61,7 +61,7 @@ export default function SortDropdown({
         "
       >
         <span className="mr-1">⇅</span>
-        <span>Sort</span>
+        <span>{selectedLabel}</span>
       </button>
 
       {isOpen && (

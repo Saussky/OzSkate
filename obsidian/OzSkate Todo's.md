@@ -162,4 +162,6 @@ TODO 7/6/25
 - Cookies investigation
 - Professional sign up UX
 	- Store user data here instead of cookies
-- Show sort option
+- ~~Show sort option~~
+- ~~Manually merge brands~~
+- 
