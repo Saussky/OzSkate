@@ -164,4 +164,6 @@ TODO 7/6/25
 	- Store user data here instead of cookies
 - ~~Show sort option~~
 - ~~Manually merge brands~~
-- 
+
+- Figure out if recently updated is showing the items most recently put on sale
+- Email verification
