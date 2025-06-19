@@ -166,13 +166,6 @@ export default function Filter({
     { value: 'last-updated', label: 'Recently updated' },
   ];
 
-  const [isMobileUA, setIsMobileUA] = useState(false);
-  useEffect(() => {
-    const ua = navigator.userAgent;
-    const mobileTest = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i;
-    setIsMobileUA(mobileTest.test(ua));
-  }, []);
-
   return (
     <div className="flex flex-col space-y-2 md:flex-row md:flex-wrap md:space-y-0 md:space-x-2 mb-4">
       <div className="w-full md:w-auto">
@@ -253,47 +246,21 @@ export default function Filter({
       )}
 
       <div className="w-full md:w-auto">
-        {!isMobileUA ? (
-          <MultiSelectDropdown
-            value={brands}
-            onChange={setBrands}
-            options={allBrands}
-            label="Brands"
-          />
-        ) : (
-          <DropdownSelector
-            multiple
-            value={
-              brands.length === 1
-                ? brands[0]
-                : `${brands.length} brands selected`
-            }
-            onChange={(val) => setBrands(val ? val.split(',') : [])}
-            options={allBrands}
-            label="Brands"
-          />
-        )}
+        <MultiSelectDropdown
+          value={brands}
+          onChange={setBrands}
+          options={allBrands}
+          label="Brands"
+        />
       </div>
 
       <div className="w-full md:w-auto">
-        {!isMobileUA ? (
-          <MultiSelectDropdown
-            value={shops}
-            onChange={setShops}
-            options={allShops}
-            label="Shops"
-          />
-        ) : (
-          <DropdownSelector
-            multiple
-            value={
-              shops.length === 1 ? shops[0] : `${shops.length} shops selected`
-            }
-            onChange={(val) => setShops(val ? val.split(',') : [])}
-            options={allShops}
-            label="Shops"
-          />
-        )}
+        <MultiSelectDropdown
+          value={shops}
+          onChange={setShops}
+          options={allShops}
+          label="Shops"
+        />
       </div>
 
       <div className="w-full md:w-auto">

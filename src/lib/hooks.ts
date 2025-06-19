@@ -73,19 +73,19 @@ export default function useStoreFrontQueryParams() {
       Object.entries(filters).forEach(([key, value]) => {
         const defaultValue = defaultFilters[key as keyof FilterOption];
 
-      if (
-        value !== defaultValue &&
-        value !== null &&
-        !(Array.isArray(value) ? value.length === 0 : value === '')
-      ) {
-       if (Array.isArray(value)) {
-         value.forEach((v) => query.append(key, String(v)));
-       } else {
-         query.set(key, String(value));
+        if (
+          value !== defaultValue &&
+          value !== null &&
+          !(Array.isArray(value) ? value.length === 0 : value === '')
+        ) {
+          if (Array.isArray(value)) {
+            value.forEach((v) => query.append(key, String(v)));
+          } else {
+            query.set(key, String(value));
+          }
         }
-      }
-    });
-        // TODO: if (key === 'onSale' && value === true) query.set('onSale', 'true');
+      });
+      // TODO: if (key === 'onSale' && value === true) query.set('onSale', 'true');
 
       if (sortOption !== defaultSortOption) {
         query.set('sortOption', sortOption);
@@ -103,24 +103,4 @@ export default function useStoreFrontQueryParams() {
     queryParams,
     setQueryParams,
   };
-}
-
-
-export function useIsMobile(breakpoint = 640) { //TODO: More specific breakpoint, investigate sizes.
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < breakpoint);
-    };
-
-    // Check immediately on mount
-    handleResize();
-
-    // Listen for window resize
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [breakpoint]);
-
-  return isMobile;
 }

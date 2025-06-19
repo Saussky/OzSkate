@@ -65,6 +65,11 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   const lastMatchIndexRef = useRef<number>(-1);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      setOpen(false);
+      return;
+    }
+
     if (!open) return;
 
     const key = e.key.length === 1 ? e.key.toLowerCase() : '';
@@ -135,7 +140,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       </button>
 
       {open && (
-        <div className="absolute left-0 mt-1 w-64 max-h-60 overflow-auto rounded border border-gray-400 bg-white shadow-lg z-10">
+        <div className="absolute left-0 mt-1 w-full md:w-64 max-h-60 overflow-auto rounded border border-gray-400 bg-white shadow-lg z-10">
           {displayOptions.map((opt, idx) => (
             <label
               key={opt}

@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import Filter from '@/components/storefront/filter';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
-// import useStoreFrontQueryParams, { useIsMobile } from '@/lib/hooks';
 import Pagination from '../shared/pagination';
 import ProductCard from '../shared/product-card/productCard';
 import { getFilteredVendors, getPaginatedProducts } from './actions';
@@ -50,8 +49,6 @@ export default function Storefront({ user }: StorefrontProps) {
   const [totalPages, setTotalPages] = useState(1);
   const [allBrands, setAllBrands] = useState<string[]>([]);
   const [allShops, setAllShops] = useState<string[]>([]);
-
-  // const isMobile = useIsMobile(); // defaults to 640px; can customize
 
   // TODO: Use
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
