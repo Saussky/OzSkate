@@ -6,6 +6,7 @@ import { childTypePerParent } from '../../storefront/filter';
 import { setProductTypes } from './actions';
 import ProductEditMenu from './product-menu/menu';
 import { ExtendedProduct } from '@/components/storefront/storefront';
+import Link from 'next/link';
 
 interface ProductCardProps {
   product: ExtendedProduct;
@@ -58,10 +59,6 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     setMenuOpen(false);
   }
 
-  const handleNavigate = () => {
-    window.open(productUrl, '_blank', 'noopener');
-  };
-
   return (
     <div className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group">
       <p>{shop.name}</p>
@@ -102,9 +99,11 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
         </div>
       )}
 
-      <div
-        className="relative aspect-[1/1] bg-white cursor-pointer"
-        onClick={handleNavigate}
+      <Link
+        href={productUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="relative aspect-[1/1] bg-white cursor-pointer block"
       >
         <Image
           src={displaySrc}
@@ -113,7 +112,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
           objectFit="cover"
           className="rounded"
         />
-      </div>
+      </Link>
 
       <h2 className="mt-2 text-xl font-bold text-gray-800">{title}</h2>
 
