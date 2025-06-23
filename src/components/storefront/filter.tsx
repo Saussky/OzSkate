@@ -288,7 +288,7 @@ export default function Filter({
       <div className="w-full md:w-auto">
         <label
           className="
-            flex items-center w-full md:w-auto
+            flex items-center justify-center w-full md:w-auto
             px-3 py-1 border border-gray-400 bg-white rounded
             hover:cursor-pointer text-sm
           "
@@ -303,7 +303,7 @@ export default function Filter({
         </label>
       </div>
 
-      <div className="flex flex-col sm:flex-row w-full md:w-auto space-y-2 sm:space-y-0 sm:space-x-2">
+      <div className="flex flex-col md:flex-row w-full md:w-auto space-y-2 md:space-y-0 md:space-x-2">
         <Button onClick={handleApplyFilters} variant="smart">
           Apply
         </Button>
