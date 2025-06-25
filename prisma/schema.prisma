@@ -39,6 +39,8 @@ model shop {
   state    String
   since_id String?
   products product[]
+
+  updateLogs ProductUpdateLog[] @relation("Shop_UpdateLogs")
 }
 
 model product {
@@ -66,6 +68,8 @@ model product {
 
   duplicatesAsMaster    ProductDuplicate[] @relation("MasterProductDuplicates")
   duplicatesAsDuplicate ProductDuplicate[] @relation("DuplicateProductDuplicates")
+
+  updateLogs ProductUpdateLog[] @relation("Product_UpdateLogs")
 
   @@index([shopId])
   @@index([title])
@@ -118,6 +122,8 @@ model variant {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  updateLogs ProductUpdateLog[] @relation("Variant_UpdateLogs")
+
   @@index([productId])
   @@index([price])
   @@index([productId, price])
@@ -133,3 +139,34 @@ model VendorRule {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+model ProductUpdateLog {
+  id           Int          @id @default(autoincrement())
+  shopId       Int?         // Shop ID (optional in case shop is removed)
+  shopName     String?      // Name of the shop at time of update
+  productId    String?      // Product ID (cuid from Shopify, optional in case product is removed)
+  productTitle String?      // Product title at time of update
+  variantId    String?      // Variant ID (if a specific variant was affected)
+  variantTitle String?      // Variant title at time of update
+  changeType   UpdateType   // Type of change (enum defined below)
+  description  String       // Description of what changed
+  createdAt    DateTime     @default(now())
+
+  // Establish relations (optional to allow logs to remain even if product/variant is deleted)
+  product product? @relation("Product_UpdateLogs", fields: [productId],   references: [id], onDelete: SetNull)
+  shop    shop?    @relation("Shop_UpdateLogs",    fields: [shopId],     references: [id], onDelete: SetNull)
+  variant variant? @relation("Variant_UpdateLogs", fields: [variantId],  references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+enum UpdateType {
+  PRODUCT_ADDED
+  PRODUCT_DELETED
+  PRICE_CHANGED
+  VARIANT_ADDED
+  VARIANT_DELETED
+  VARIANT_UPDATED
+  SALE_STATUS_CHANGED
+}
+

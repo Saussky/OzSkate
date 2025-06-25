@@ -33,6 +33,10 @@ export default function Layout({
             Users
           </Link>
 
+          <Link href="/admin/logs" className={`${linkStyle}`}>
+            Logs
+          </Link>
+
           <Link href="/" className={`${linkStyle}`}>
             Storefront
           </Link>
