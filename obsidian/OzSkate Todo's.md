@@ -151,7 +151,7 @@ TODO 17/5/2025
 		- Cleaned up but logic needs to be understood better
 
 TODO 7/6/25
-- Logs in update products, need to see that info, store in db somewhere?
+- ~~Logs in update products, need to see that info, store in db somewhere?~~
 - ~~Filter by how recent the product went on sale~~
 - ~~Delete products and make sure they don't get re-added~~
 - - Analytics
@@ -167,3 +167,9 @@ TODO 7/6/25
 
 - Figure out if recently updated is showing the items most recently put on sale
 - Email verification
+- User data privacy?
+- Back up storage for user data?
+	- All data?
+		- Some data?
+- Storing users searches for statistics
+	- Storing every db query? Research into this

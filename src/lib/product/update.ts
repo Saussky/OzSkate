@@ -66,6 +66,7 @@ export async function updateAllProducts(): Promise<UpdateSummary> {
 
   try {
     await applyVendorRules();
+    await refreshSaleStatuses();
   } catch (error) {
     log.error('Failed to apply vendor rules:', error);
   }
