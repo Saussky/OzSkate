@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import Card from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import { deleteLogEntry, deleteAllLogs, fetchLogs } from './actions';
@@ -15,9 +16,8 @@ interface LogEntry {
   description: string;
 }
 
-// Props passed from server (initial log entries)
 interface AdminLogsProps {
-  initialLogs: any[];
+  initialLogs: LogEntry[];
 }
 
 export default function AdminLogsComponent({ initialLogs }: AdminLogsProps) {
@@ -41,8 +41,7 @@ export default function AdminLogsComponent({ initialLogs }: AdminLogsProps) {
     setDeletingId(logId);
     try {
       await deleteLogEntry(logId);
-      // Optimistically update UI by removing the log from state
-      setLogs((prev) => prev.filter((log) => log.id !== logId));
+      setLogs((previousLogs) => previousLogs.filter((log) => log.id !== logId));
     } catch (error) {
       console.error('Failed to delete log entry:', error);
     } finally {
@@ -54,7 +53,7 @@ export default function AdminLogsComponent({ initialLogs }: AdminLogsProps) {
     startClearing(async () => {
       try {
         await deleteAllLogs();
-        setLogs([]); // clear all logs from state
+        setLogs([]);
       } catch (error) {
         console.error('Failed to clear logs:', error);
       }
@@ -96,32 +95,46 @@ export default function AdminLogsComponent({ initialLogs }: AdminLogsProps) {
               </tr>
             </thead>
             <tbody>
-              {logs.map((log) => (
-                <tr key={log.id} className="border-b last:border-b-0">
-                  <td className="px-3 py-1">
-                    {new Date(log.createdAt).toLocaleString()}
-                  </td>
-                  <td className="px-3 py-1">{log.shopName || '-'}</td>
-                  <td className="px-3 py-1">
-                    {log.productTitle || 'Unknown Product'}
-                    {log.variantTitle ? (
-                      <div className="text-xs text-gray-600">
-                        Variant: {log.variantTitle}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td className="px-3 py-1">{log.description}</td>
-                  <td className="px-3 py-1">
-                    <Button
-                      onClick={() => handleDeleteLog(log.id)}
-                      disabled={deletingId === log.id || isClearing}
-                      variant="smart"
-                    >
-                      {deletingId === log.id ? 'Deleting...' : 'Delete'}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {logs.map((logEntry) => {
+                const productName = logEntry.productTitle ?? 'Unknown Product';
+                return (
+                  <tr key={logEntry.id} className="border-b last:border-b-0">
+                    <td className="px-3 py-1">
+                      {new Date(logEntry.createdAt).toLocaleString()}
+                    </td>
+                    <td className="px-3 py-1">{logEntry.shopName || '-'}</td>
+                    <td className="px-3 py-1">
+                      {logEntry.productTitle ? (
+                        <Link
+                          href={`/?searchTerm=${encodeURIComponent(
+                            productName
+                          )}`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          {productName}
+                        </Link>
+                      ) : (
+                        productName
+                      )}
+                      {logEntry.variantTitle && (
+                        <div className="text-xs text-gray-600">
+                          Variant: {logEntry.variantTitle}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-3 py-1">{logEntry.description}</td>
+                    <td className="px-3 py-1">
+                      <Button
+                        onClick={() => handleDeleteLog(logEntry.id)}
+                        disabled={deletingId === logEntry.id || isClearing}
+                        variant="smart"
+                      >
+                        {deletingId === logEntry.id ? 'Deleting...' : 'Delete'}
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
               {logs.length === 0 && (
                 <tr>
                   <td
