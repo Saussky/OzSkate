@@ -155,7 +155,7 @@ TODO 7/6/25
 - ~~Filter by how recent the product went on sale~~
 - ~~Delete products and make sure they don't get re-added~~
 - - Analytics
-- Chron jobs
+- ~~Chron jobs
 - Logging
 - Duplicates, make decision
 -  Get proper image for non-photos, check these specific products for photo update

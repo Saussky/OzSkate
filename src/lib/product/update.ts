@@ -428,10 +428,12 @@ async function updateVariants(
         `available: ${localVariant.available}→${freshVariant.available}`
       );
     }
+
     if (localVariant.price !== freshVariant.price) {
       updates.price = freshVariant.price;
       changedFields.push(`price: ${localVariant.price}→${freshVariant.price}`);
     }
+
     if (localVariant.compareAtPrice !== freshVariant.compareAtPrice) {
       updates.compareAtPrice = freshVariant.compareAtPrice;
       const oldCompare = localVariant.compareAtPrice ?? 'NULL';
