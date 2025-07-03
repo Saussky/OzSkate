@@ -173,3 +173,8 @@ TODO 7/6/25
 		- Some data?
 - Storing users searches for statistics
 	- Storing every db query? Research into this
+- Show vendor name in product card?
+	- Remove vendor name from product title?
+		- And all things after it e.g '-' and whitespace?
+- Take a look at product categories
+	- Think shoes need fixing for youth and womens
