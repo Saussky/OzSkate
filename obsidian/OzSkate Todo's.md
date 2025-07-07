@@ -178,3 +178,4 @@ TODO 7/6/25
 		- And all things after it e.g '-' and whitespace?
 - Take a look at product categories
 	- Think shoes need fixing for youth and womens
+- Product images not loading properly on main

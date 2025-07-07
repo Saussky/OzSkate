@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  ParentType,
-  ChildType,
-  ChildTypePerParent,
-} from "../types";
+import { ParentType, ChildType, ChildTypePerParent } from '../types';
 
 type Product = {
   title: string;
@@ -13,26 +9,45 @@ type Product = {
   handle: string;
 };
 
-type CategorisedProduct<
-  P extends ParentType | null = ParentType | null
-> = {
+type CategorisedProduct<P extends ParentType | null = ParentType | null> = {
   parentType: P;
-  childType: P extends ParentType
-    ? ChildTypePerParent[P] | null
-    : null;
+  childType: P extends ParentType ? ChildTypePerParent[P] | null : null;
 };
-
 
 // Mapping of child type keywords under each parent product type
 const childTypeKeywordsPerParent: {
   [P in ParentType]: Record<ChildTypePerParent[P], string[]>;
 } = {
   Clothing: {
-    Jumpers: ["jumper", "hoodie", "sweater", "pullover", "jumpers", "hoodies", "sweaters", "pullovers"],
-    Shirts: ["shirt", "button up", "long sleeve", "shirts", "ss shirt", "jersey", "jerseys"],
-    "T-Shirts": ["t-shirt", "tee", "t shirt", "t-shirts", "t shirts", "tees", "tank", "tank-top", "s/s shirt", "s/s shirts", "polo", "polos"],
-    Pants: ["pants", "jeans", "trousers"],
-    Shorts: ["shorts", "short"],
+    Jumpers: [
+      'jumper',
+      'hoodie',
+      'sweater',
+      'pullover',
+      'jumpers',
+      'hoodies',
+      'sweaters',
+      'pullovers',
+    ],
+    Shirts: ['shirt', 'button up', 'long sleeve', 'shirts', 'ss shirt'],
+    'T-Shirts': [
+      't-shirt',
+      'tee',
+      't shirt',
+      't-shirts',
+      't shirts',
+      'tees',
+      'tank',
+      'tank-top',
+      's/s shirt',
+      's/s shirts',
+      'polo',
+      'polos',
+      'jersey',
+      'jerseys',
+    ],
+    Pants: ['pants', 'jeans', 'trousers'],
+    Shorts: ['shorts', 'short'],
     "Women's Tops": [
       "women's top",
       "women's shirt",
@@ -45,76 +60,90 @@ const childTypeKeywordsPerParent: {
       "women's skirt",
       "women's leggings",
     ],
-    Hats: ["hat", "cap", "bucket hat", "balaclava", "ski mask", "hats", "snapback", "5 panel", "6 panel", "5-panel", "6-panel", "headwear"],
-    Beanies: ["beanie", "beanies", "warf"],
-    Socks: ["sock", "socks"],
+    Hats: [
+      'hat',
+      'cap',
+      'bucket hat',
+      'balaclava',
+      'ski mask',
+      'hats',
+      'snapback',
+      '5 panel',
+      '6 panel',
+      '5-panel',
+      '6-panel',
+      'headwear',
+    ],
+    Beanies: ['beanie', 'beanies', 'warf'],
+    Socks: ['sock', 'socks'],
   },
   Skateboards: {
-    Decks: ["deck", "decks"],
-    Completes: ["complete", "longboard", "cruiser", "surf skate"],
-    Trucks: ["truck", "trucks"],
-    Wheels: ["wheel", "wheels"],
-    Bearings: ["bearing", "bearings"],
-    Tools: ["tool", "tools"],
-    Hardware: ["hardware", "bolts", "deck bolts", "riser", "risers"],
-    Griptape: ["griptape", "griptapes", "grip tape"]
+    Decks: ['deck', 'decks'],
+    Completes: ['complete', 'longboard', 'cruiser', 'surf skate'],
+    Trucks: ['truck', 'trucks'],
+    Wheels: ['wheel', 'wheels'],
+    Bearings: ['bearing', 'bearings'],
+    Tools: ['tool', 'tools'],
+    Hardware: ['hardware', 'bolts', 'deck bolts', 'riser', 'risers'],
+    Griptape: ['griptape', 'griptapes', 'grip tape'],
   },
-  "Protective Gear": {
-    Pads: ["pad", "pads", "guard", "protective", "safety", "saftey"],
-    Helmets: ["helmet", "helmets"],
-    Other: ["other"],
+  'Protective Gear': {
+    Pads: ['pad', 'pads', 'guard', 'protective', 'safety', 'saftey'],
+    Helmets: ['helmet', 'helmets'],
+    Other: ['other'],
   },
   Shoes: {
-    Mens: [
-      "shoe",
-      "shoes",
-      "sneaker",
-      "sneakers",
-      "footwear",
-      "boot",
-      "boots",
-    ],
+    Mens: ['shoe', 'shoes', 'sneaker', 'sneakers', 'footwear', 'boot', 'boots'],
     Youth: [],
     Womens: [],
-    Slides: ['slide', 'slides']
+    Slides: ['slide', 'slides'],
   },
   Bags: {
-    Backpacks: ["backpack", "backpacks", "bag", "bags"],
-    "Tote Bags": ["tote bag", "tote bags", "tote"],
+    Backpacks: ['backpack', 'backpacks', 'bag', 'bags'],
+    'Tote Bags': ['tote bag', 'tote bags', 'tote'],
   },
   Accessories: {
-    Belts: ["belt", "belts"],
-    Watches: ["watch", "watches"],
-    Sunglasses: ["sunglass", "sunglasses", "sunnies"],
-    Literature: ["literature", "book", "books", "magazine", "poster", "dvd", "vinyl"],
-    Wax: ["wax"],
-    Keychains: ["keychain", "key chain", "keychains"],
-    Wallets: ["wallet", "wallets"],
-    Stickers: ["sticker", "stickers"],
-    Jewellery: [
-      "jewellery",
-      "jewelry",
-      "ring",
-      "necklace",
-      "bracelet",
-      "earring",
-      "patch",
-      "pin",
+    Belts: ['belt', 'belts'],
+    Watches: ['watch', 'watches'],
+    Sunglasses: ['sunglass', 'sunglasses', 'sunnies'],
+    Literature: [
+      'literature',
+      'book',
+      'books',
+      'magazine',
+      'poster',
+      'dvd',
+      'vinyl',
     ],
-    Other: ["other", "mug", "mugs", "doormat", "doormats", ],
+    Wax: ['wax'],
+    Keychains: ['keychain', 'key chain', 'keychains'],
+    Wallets: ['wallet', 'wallets'],
+    Stickers: ['sticker', 'stickers'],
+    Jewellery: [
+      'jewellery',
+      'jewelry',
+      'ring',
+      'necklace',
+      'bracelet',
+      'earring',
+      'patch',
+      'pin',
+    ],
+    Other: ['other', 'mug', 'mugs', 'doormat', 'doormats'],
   },
 };
 
 function safeString(value: unknown): string {
-  return typeof value === "string" ? value.toLowerCase() : "";
+  return typeof value === 'string' ? value.toLowerCase() : '';
 }
 
 function keywordMatchesField(field: string, keyword: string): boolean {
   const fieldWords = field.split(/[\s/]+/);
-  const keywordParts = keyword.toLowerCase().split(" ");
+  const keywordParts = keyword.toLowerCase().split(' ');
   if (keywordParts.length === 1) return fieldWords.includes(keywordParts[0]);
   for (let i = 0; i <= fieldWords.length - keywordParts.length; i++) {
-    if (keywordParts.every((kp, idx) => fieldWords[i + idx] === kp)) return true;
+    if (keywordParts.every((kp, idx) => fieldWords[i + idx] === kp))
+      return true;
   }
   return false;
 }
@@ -154,20 +183,20 @@ function findChildType(
     let matchedChildType = findChildTypeForParent(searchFields, childKeywords);
 
     // TODO: Logic isn't picking up kids shoes properly
-    if (matchedChildType === "Mens") {
+    if (matchedChildType === 'Mens') {
       const isYouth = searchFields.some((field) =>
-        childTypeMatchesField(field, ["youth", "kid", "kids", "toddler"])
+        childTypeMatchesField(field, ['youth', 'kid', 'kids', 'toddler'])
       );
       const isWomens = searchFields.some((field) =>
-        childTypeMatchesField(field, ["women", "womens", "girl", "girls"])
+        childTypeMatchesField(field, ['women', 'womens', 'girl', 'girls'])
       );
 
       if (isYouth) {
-        matchedChildType = "Youth";
+        matchedChildType = 'Youth';
       } else if (isWomens) {
-        matchedChildType = "Womens"
+        matchedChildType = 'Womens';
       } else {
-        matchedChildType = "Mens"
+        matchedChildType = 'Mens';
       }
     }
 
@@ -176,13 +205,12 @@ function findChildType(
   return null;
 }
 
-
 export function categoriseProduct(product: Product): CategorisedProduct {
   const { title, description, ogProductType, tags, handle } = product;
 
   const searchFields = [
     safeString(title),
-    tags.map(safeString).join(" "),
+    tags.map(safeString).join(' '),
     safeString(ogProductType),
     safeString(handle.replaceAll('-', ' ')),
     safeString(description),

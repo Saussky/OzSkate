@@ -1,6 +1,6 @@
 'use client';
 import { ChildType, ParentType } from '@/lib/types';
-import Image from 'next/image';
+import Image, { ImageLoader } from 'next/image';
 import { useState } from 'react';
 import { childTypePerParent } from '../../storefront/filter';
 import { setProductTypes } from './actions';
@@ -12,6 +12,9 @@ interface ProductCardProps {
   product: ExtendedProduct;
   admin: boolean;
 }
+
+const cdnLoader: ImageLoader = ({ src, width, quality }) =>
+  `${src}?w=${width}&q=${quality ?? 70}`;
 
 // TODO: Implement string parent product type types
 export default function ProductCard({ admin, product }: ProductCardProps) {
@@ -60,7 +63,10 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
   }
 
   return (
-    <div className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group">
+    <div
+      className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '700px' }}
+    >
       <p>{shop.name}</p>
 
       {allStorePrices && allStorePrices.length > 1 && (
@@ -106,11 +112,13 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
         className="relative aspect-[1/1] bg-white cursor-pointer block"
       >
         <Image
+          loader={cdnLoader}
           src={displaySrc}
           alt={title}
-          layout="fill"
+          fill
           objectFit="cover"
           className="rounded"
+          sizes="(max-width:768px) 50vw, 200px"
         />
       </Link>
 
