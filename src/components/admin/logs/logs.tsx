@@ -8,7 +8,7 @@ import { deleteLogEntry, deleteAllLogs, fetchLogs } from './actions';
 
 interface LogEntry {
   id: number;
-  createdAt: string;
+  createdAt: string | Date;
   shopName: string | null;
   productTitle: string | null;
   variantTitle: string | null;
