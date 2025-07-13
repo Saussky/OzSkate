@@ -128,32 +128,34 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
         <p className="text-gray-600 mt-1">${cheapestPrice}</p>
 
         <div className="relative inline-block mt-2">
-          <button
-            onClick={handleMenuToggle}
-            className="border border-gray-300 px-2 py-1 rounded cursor-pointer"
-          >
-            :
-          </button>
-
           {admin && (
-            <div className="product-edit-menu-container">
-              <ProductEditMenu
-                menuOpen={menuOpen}
-                onClose={() => setMenuOpen(false)}
-                id={id}
-                title={title}
-                handle={handle}
-                tags={normalisedTags}
-                createdAt={createdAt}
-                updatedAt={updatedAt}
-                variantsCount={variants?.length || 0}
-                selectedParent={selectedParent}
-                setSelectedParent={setSelectedParent}
-                selectedChild={selectedChild}
-                setSelectedChild={setSelectedChild}
-                handleUpdateTypes={handleUpdateTypes}
-              />
-            </div>
+            <>
+              <button
+                onClick={handleMenuToggle}
+                className="border border-gray-300 px-2 py-1 rounded cursor-pointer"
+              >
+                :
+              </button>
+
+              <div className="product-edit-menu-container">
+                <ProductEditMenu
+                  menuOpen={menuOpen}
+                  onClose={() => setMenuOpen(false)}
+                  id={id}
+                  title={title}
+                  handle={handle}
+                  tags={normalisedTags}
+                  createdAt={createdAt}
+                  updatedAt={updatedAt}
+                  variantsCount={variants?.length || 0}
+                  selectedParent={selectedParent}
+                  setSelectedParent={setSelectedParent}
+                  selectedChild={selectedChild}
+                  setSelectedChild={setSelectedChild}
+                  handleUpdateTypes={handleUpdateTypes}
+                />
+              </div>
+            </>
           )}
         </div>
       </div>

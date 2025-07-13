@@ -180,3 +180,5 @@ TODO 7/6/25
 	- Think shoes need fixing for youth and womens
 - Product images not loading properly on main
 	- - DONE
+
+Looks like some of lofi stuff isn't actually on sale
