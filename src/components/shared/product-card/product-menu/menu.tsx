@@ -12,6 +12,8 @@ export interface ProductMeta {
   id: string;
   title: string;
   handle: string;
+  parentType: string | null;
+  childType: string | null;
   tags: string[];
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -33,6 +35,8 @@ export default function ProductEditMenu({
   title,
   handle,
   tags,
+  parentType,
+  childType,
   createdAt,
   updatedAt,
   variantsCount,
@@ -121,6 +125,8 @@ export default function ProductEditMenu({
           {...commonProps}
           title={title}
           handle={handle}
+          parentType={parentType}
+          childType={childType}
           tags={tags}
           createdAt={createdAt}
           updatedAt={updatedAt}

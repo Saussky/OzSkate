@@ -3,15 +3,17 @@ import React from 'react';
 import { ProductMenuHeader } from './menuHeader';
 import { ProductMeta } from './menu';
 
-interface Props extends ProductMeta {
+interface ProductInfoViewProps extends ProductMeta {
   onBack: () => void;
   onClose: () => void;
 }
 
-const ProductInfoView: React.FC<Props> = ({
+const ProductInfoView: React.FC<ProductInfoViewProps> = ({
   title,
   handle,
   tags,
+  parentType,
+  childType,
   createdAt,
   updatedAt,
   variantsCount,
@@ -29,6 +31,12 @@ const ProductInfoView: React.FC<Props> = ({
       </li>
       <li>
         <strong>Tags:</strong> {tags.join(', ') || '—'}
+      </li>
+      <li>
+        <strong>Parent Type:</strong> {parentType}
+      </li>
+      <li>
+        <strong>Child Type:</strong> {childType}
       </li>
       <li>
         <strong>Created:</strong> {new Date(createdAt).toLocaleString()}

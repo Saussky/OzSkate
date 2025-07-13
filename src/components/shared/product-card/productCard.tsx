@@ -144,6 +144,8 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
                   id={id}
                   title={title}
                   handle={handle}
+                  parentType={parentType}
+                  childType={childType}
                   tags={normalisedTags}
                   createdAt={createdAt}
                   updatedAt={updatedAt}
