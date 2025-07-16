@@ -182,3 +182,12 @@ TODO 7/6/25
 	- - DONE
 
 Looks like some of lofi stuff isn't actually on sale
+
+
+TODO 15/7
+- Add contact part with newly created email
+- Analytics
+- Look into twilio or some email verification service
+- Changing sort order will remove the sale checkbox if apply hasn't been clicked
+- No img image
+- 
