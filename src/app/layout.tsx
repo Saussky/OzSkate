@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/ui/header/header';
 import { validateRequest } from '@/lib/cookies';
 import Script from 'next/script';
+import Footer from '@/components/ui/footer';
 
 export const metadata: Metadata = {
   title: 'OzSkate',
@@ -32,9 +33,8 @@ export default async function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_TRACKING_ID}', {
-                page_path: window.location.pathname,
-              });
+              
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_TRACKING_ID}')
             `,
           }}
         />
@@ -42,6 +42,7 @@ export default async function RootLayout({
       <body>
         <Header user={user} />
         {children}
+        <Footer />
       </body>
     </html>
   );
