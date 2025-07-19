@@ -113,7 +113,7 @@ export default function Storefront({ user }: StorefrontProps) {
 
   return (
     <div className="p-6 mt-1 bg-gray-100">
-      <div className="flex flex-col space-y-1 mb-2">
+      <div className="flex flex-col space-y-1 mb-3">
         <Filter
           onFilterChange={handleFilterChange}
           allBrands={allBrands}
@@ -142,7 +142,7 @@ export default function Storefront({ user }: StorefrontProps) {
         ))}
       </div>
 
-      <div className="flex mt-2 justify-between">
+      <div className="flex mt-3 w-full justify-end">
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
