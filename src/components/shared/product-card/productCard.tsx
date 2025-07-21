@@ -39,7 +39,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     : typeof tags === 'string' && tags.length > 0
     ? tags.split(',').map((t) => t.trim())
     : [];
-  const displaySrc: string = image?.src ?? '/placeholder.jpg';
+  const displaySrc: string = image?.src ?? '/noimg.png';
   const productUrl = shop.url + '/products/' + handle;
 
   const [menuOpen, setMenuOpen] = useState(false);
