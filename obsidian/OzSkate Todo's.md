@@ -188,6 +188,6 @@ TODO 15/7
 - Add contact part with newly created email
 - Analytics
 - Look into twilio or some email verification service
-- Changing sort order will remove the sale checkbox if apply hasn't been clicked
-- No img image
+- ~~Changing sort order will remove the sale checkbox if apply hasn't been clicked~~
+- ~~No img image~~
 - Spinner

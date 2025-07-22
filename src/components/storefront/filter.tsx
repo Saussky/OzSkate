@@ -296,7 +296,22 @@ export default function Filter({
           <input
             type="checkbox"
             checked={onSale}
-            onChange={(e) => setOnSale(e.target.checked)}
+            onChange={(e) => {
+              const newValue = e.target.checked;
+              setOnSale(newValue);
+
+              onFilterChange({
+                parentType,
+                childType,
+                maxPrice,
+                onSale: newValue,
+                shoeSize,
+                deckSize,
+                brands,
+                shops,
+                searchTerm,
+              });
+            }}
             className="mr-1"
           />
           On Sale
