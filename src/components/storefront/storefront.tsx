@@ -50,8 +50,6 @@ export default function Storefront({ user }: StorefrontProps) {
   const [allBrands, setAllBrands] = useState<string[]>([]);
   const [allShops, setAllShops] = useState<string[]>([]);
 
-  // TODO: Use
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -132,15 +130,40 @@ export default function Storefront({ user }: StorefrontProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            admin={user?.admin || false}
-            product={product}
-          />
-        ))}
-      </div>
+      {isPending ? (
+        <div className="col-span-full flex justify-center items-center h-64">
+          <svg
+            className="w-12 h-12 animate-spin text-gray-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+          </svg>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {products.map((productItem) => (
+            <ProductCard
+              key={productItem.id}
+              admin={Boolean(user?.admin)}
+              product={productItem}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="flex mt-3 w-full justify-end">
         <Pagination
