@@ -3,11 +3,12 @@
 import { prisma } from '@/lib/prisma';
 import { transformProductsForUpdate, transformProducts } from './transform';
 import { fetchShopifyProducts } from './fetch';
-import type {
+import {
   product as ProductModel,
   variant as VariantModel,
   shop as ShopModel,
   VendorRule as VendorRuleModel,
+  Prisma,
 } from '@prisma/client';
 
 type ProductWithVariants = ProductModel & { variants: VariantModel[] };
@@ -345,15 +346,31 @@ async function updateLocalProduct(
   freshProduct: any,
   shopName: string
 ): Promise<boolean> {
-  if (localProduct.cheapestPrice === freshProduct.cheapestPrice) {
-    return false;
-  }
+  const priceChanged =
+    localProduct.cheapestPrice !== freshProduct.cheapestPrice;
+  const imageChanged = imagesAreDifferent(
+    localProduct.image,
+    freshProduct.image
+  );
+
+  if (!priceChanged && !imageChanged) return false;
 
   const oldPrice = localProduct.cheapestPrice;
 
   await prisma.product.update({
     where: { id: localProduct.id },
     data: { cheapestPrice: freshProduct.cheapestPrice },
+  });
+
+  const dataToUpdate: ProductUpdateData = {};
+
+  if (priceChanged) dataToUpdate.cheapestPrice = freshProduct.cheapestPrice;
+  if (imageChanged)
+    dataToUpdate.image = normaliseImageForPrisma(freshProduct.image);
+
+  await prisma.product.update({
+    where: { id: localProduct.id },
+    data: dataToUpdate,
   });
 
   log.info(
@@ -533,4 +550,36 @@ async function updateVariants(
   }
 
   return variantsMutated;
+}
+
+type ProductUpdateData = Pick<
+  Prisma.productUpdateInput,
+  'cheapestPrice' | 'image'
+>;
+
+function stableStringify(value: unknown): string {
+  return JSON.stringify(value, Object.keys(value as object).sort());
+}
+
+function imagesAreDifferent(
+  existingImage: Prisma.JsonValue | null | undefined,
+  incomingImage: unknown
+): boolean {
+  // Handle both null/undefined and JSON objects
+  const existingString =
+    existingImage == null ? 'null' : stableStringify(existingImage);
+  const incomingString =
+    incomingImage == null ? 'null' : stableStringify(incomingImage);
+  return existingString !== incomingString;
+}
+
+function normaliseImageForPrisma(
+  incoming: unknown
+): Prisma.InputJsonValue | Prisma.NullableJsonNullValueInput {
+  // If you want to store JSON null when there is no image, use Prisma.JsonNull.
+  // If you actually want DB NULL, use Prisma.DbNull instead.
+  if (incoming === null || incoming === undefined) {
+    return Prisma.JsonNull;
+  }
+  return incoming as Prisma.InputJsonValue;
 }
