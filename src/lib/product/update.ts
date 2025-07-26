@@ -373,6 +373,10 @@ async function updateLocalProduct(
     data: dataToUpdate,
   });
 
+  if (!priceChanged && imageChanged) {
+    return false;
+  }
+
   log.info(
     `Price updated for "${localProduct.title}" → ${freshProduct.cheapestPrice}`
   );

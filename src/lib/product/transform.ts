@@ -9,27 +9,7 @@ export const transformProducts = (
   shopId: number
 ): Prisma.productUncheckedCreateInput[] => {
   return allPaginatedProducts.map((product) => {
-    let firstImage = null;
-
-    if (
-      product.images &&
-      Array.isArray(product.images) &&
-      product.images.length > 0
-    ) {
-      const firstImageCandidate = product.images[0];
-      if (
-        firstImageCandidate &&
-        typeof firstImageCandidate.src === 'string' &&
-        typeof firstImageCandidate.width === 'number' &&
-        typeof firstImageCandidate.height === 'number'
-      ) {
-        firstImage = {
-          src: firstImageCandidate.src,
-          width: firstImageCandidate.width,
-          height: firstImageCandidate.height,
-        };
-      }
-    }
+    const firstImage = getProductImage(product.images);
 
     const tagsArray = Array.isArray(product.tags)
       ? product.tags.map((tag: string) => tag.trim())
@@ -85,6 +65,7 @@ export const transformProductsForUpdate = async (
   {
     id: string;
     cheapestPrice: number | null;
+    image: any;
     variants: Array<{
       id: string;
       price: number;
@@ -111,6 +92,7 @@ export const transformProductsForUpdate = async (
 
       return {
         id: product.id.toString(),
+        image: getProductImage(product.images),
         cheapestPrice,
         variants,
       };
@@ -122,9 +104,7 @@ export const transformProductsForUpdate = async (
  * Transforms raw variant data into a minimal shape for updates.
  * Extracts only the variant id, price, and compareAtPrice.
  */
-export async function transformVariantsForUpdate(
-  variants: any[]
-): Promise<
+export async function transformVariantsForUpdate(variants: any[]): Promise<
   Array<{
     id: string;
     price: number;
@@ -144,4 +124,26 @@ export async function transformVariantsForUpdate(
       featuredImage: processFeaturedImage(variant.featuredImage), // TODO: Check if the image changed somehow
     }))
   );
+}
+
+function getProductImage(productImages: any) {
+  if (
+    productImages &&
+    Array.isArray(productImages) &&
+    productImages.length > 0
+  ) {
+    const firstImageCandidate = productImages[0];
+    if (
+      firstImageCandidate &&
+      typeof firstImageCandidate.src === 'string' &&
+      typeof firstImageCandidate.width === 'number' &&
+      typeof firstImageCandidate.height === 'number'
+    ) {
+      return {
+        src: firstImageCandidate.src,
+        width: firstImageCandidate.width,
+        height: firstImageCandidate.height,
+      };
+    }
+  }
 }
