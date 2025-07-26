@@ -374,11 +374,12 @@ async function updateLocalProduct(
   });
 
   if (!priceChanged && imageChanged) {
+    log.info(`Image update for ${localProduct.title}`);
     return false;
   }
 
   log.info(
-    `Price updated for "${localProduct.title}" → ${freshProduct.cheapestPrice}`
+    `Price updated for "${localProduct.title}" from ${oldPrice} to ${freshProduct.cheapestPrice}`
   );
 
   await prisma.productUpdateLog.create({
