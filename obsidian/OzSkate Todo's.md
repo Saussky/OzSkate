@@ -191,8 +191,17 @@ TODO 15/7
 - ~~Changing sort order will remove the sale checkbox if apply hasn't been clicked~~
 - ~~No img image~~
 - ~~Spinner for product cards~~
-- Update images if they are missing
+- ~~Update images if they are missing
 	- -TEST THIS
 		- broke everything
 - Use ig logo in footer
-- Product update from cron job not updating prices or something?
+- ~~Product update from cron job not updating prices or something?
+
+TODO 27/7
+- change analytic time from 30 minutes to something longer
+- image size for placeholder 
+	- and some products too zoomed in
+- Deselect a store or brand
+- Get Tara to test again on phone?
+- post it on slap
+- 
