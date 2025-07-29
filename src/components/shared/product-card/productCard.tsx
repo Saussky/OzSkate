@@ -16,6 +16,23 @@ interface ProductCardProps {
 const cdnLoader: ImageLoader = ({ src, width, quality }) =>
   `${src}?w=${width}&q=${quality ?? 70}`;
 
+type ObjectFit = 'cover' | 'contain';
+
+function chooseObjectFit(
+  src: string,
+  dims?: { width: number; height: number }
+): ObjectFit {
+  if (src.includes('/noimg')) return 'contain';
+
+  if (dims?.width && dims?.height) {
+    const ratio = dims.width / dims.height;
+    // Treat images that are very wide or very tall as special cases.
+    if (ratio > 1.4 || ratio < 0.7) return 'contain';
+  }
+
+  return 'cover';
+}
+
 // TODO: Implement string parent product type types
 export default function ProductCard({ admin, product }: ProductCardProps) {
   const {
@@ -39,7 +56,13 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     : typeof tags === 'string' && tags.length > 0
     ? tags.split(',').map((t) => t.trim())
     : [];
+
   const displaySrc: string = image?.src ?? '/noimg.png';
+  const dimensions =
+    image && typeof image.width === 'number' && typeof image.height === 'number'
+      ? { width: image.width, height: image.height }
+      : undefined;
+  const objectFit: ObjectFit = chooseObjectFit(displaySrc, dimensions);
   const productUrl = shop.url + '/products/' + handle;
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -119,6 +142,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
           objectFit="cover"
           className="rounded"
           sizes="(max-width:768px) 50vw, 200px"
+          style={{ objectFit }}
         />
       </Link>
 

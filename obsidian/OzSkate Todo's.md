@@ -204,4 +204,4 @@ TODO 27/7
 - Deselect a store or brand
 - Get Tara to test again on phone?
 - post it on slap
-- taller dropdowns
+- ~~taller dropdowns~~
