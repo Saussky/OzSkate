@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -11,13 +12,20 @@ export default function Footer() {
           patrick@ozskate.com.au
         </a>
       </span>
+
       <Link
         href="https://www.instagram.com/ozskate.com.au"
         target="_blank"
         rel="noopener noreferrer"
-        className="underline"
+        className="flex items-center hover:opacity-80"
       >
-        Instagram
+        <Image
+          src="/instagram.svg"
+          alt="OzSkate Instagram"
+          width={20}
+          height={20}
+          priority
+        />
       </Link>
     </footer>
   );
