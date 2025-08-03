@@ -9,6 +9,7 @@ import { getFilteredVendors, getPaginatedProducts } from './actions';
 import { getShopNames } from '../admin/admin/actions';
 import useStoreFrontQueryParams from '@/lib/hooks';
 import { SortOption } from '@/lib/product/filter/buildClause';
+import Button from '../ui/button';
 // import MobileProductCard from '../shared/product-card/mobileProductCard';
 
 type ImageJson = {
@@ -51,6 +52,16 @@ export default function Storefront({ user }: StorefrontProps) {
   const [allShops, setAllShops] = useState<string[]>([]);
 
   const [isPending, startTransition] = useTransition();
+
+  const [isMobileUA, setIsMobileUA] = useState<boolean>(false);
+  const [filtersVisibleOnMobile, setFiltersVisibleOnMobile] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const mobileRegex = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i;
+    setIsMobileUA(mobileRegex.test(ua));
+  }, []);
 
   useEffect(() => {
     setQueryParams({ filters, sortOption, page: currentPage });
@@ -109,18 +120,30 @@ export default function Storefront({ user }: StorefrontProps) {
     setCurrentPage(1);
   };
 
+  const toggleMobileFilters = () => setFiltersVisibleOnMobile((prev) => !prev);
+
   return (
     <div className="p-6 mt-1 bg-gray-100">
       <div className="flex flex-col space-y-1 mb-3">
-        <Filter
-          onFilterChange={handleFilterChange}
-          allBrands={allBrands}
-          allShops={allShops}
-          initialFilters={queryParams.filters}
-          onSortChange={handleSortChange}
-          sortOption={sortOption}
-        />
+        {isMobileUA && (
+          <div className="self-start">
+            <Button variant="smart" onClick={toggleMobileFilters}>
+              {filtersVisibleOnMobile ? 'Hide Filters' : 'Show Filters'}
+            </Button>
+          </div>
+        )}
 
+        {/* Filters are always shown on desktop; on mobile they’re conditional */}
+        {(!isMobileUA || filtersVisibleOnMobile) && (
+          <Filter
+            onFilterChange={handleFilterChange}
+            allBrands={allBrands}
+            allShops={allShops}
+            initialFilters={queryParams.filters}
+            onSortChange={handleSortChange}
+            sortOption={sortOption}
+          />
+        )}
         <div className="flex justify-between h-6 ml-auto">
           <Pagination
             currentPage={currentPage}
