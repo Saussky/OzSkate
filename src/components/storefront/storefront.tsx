@@ -10,7 +10,7 @@ import { getShopNames } from '../admin/admin/actions';
 import useStoreFrontQueryParams from '@/lib/hooks';
 import { SortOption } from '@/lib/product/filter/buildClause';
 import Button from '../ui/button';
-// import MobileProductCard from '../shared/product-card/mobileProductCard';
+import ProductCardSkeleton from '../shared/product-card/productCardSkeleton';
 
 type ImageJson = {
   src: string;
@@ -154,27 +154,10 @@ export default function Storefront({ user }: StorefrontProps) {
       </div>
 
       {isPending ? (
-        <div className="col-span-full flex justify-center items-center h-64">
-          <svg
-            className="w-12 h-12 animate-spin text-gray-600"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </svg>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 10 }).map((unusedItem, itemIndex) => (
+            <ProductCardSkeleton key={itemIndex} />
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

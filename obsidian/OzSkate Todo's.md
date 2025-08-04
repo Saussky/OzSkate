@@ -202,9 +202,12 @@ TODO 27/7
 - ~~image size for placeholder 
 	- ~~and some products too zoomed in
 - Deselect a store or brand
+	-Maybe on the product card itself?
 - ~~Use ig logo~~
-- Get Tara to test again on phone?
-- on mobile, have filters drop down if button pressed, takes up too much space otherwise
+- ~~on mobile, have filters drop down if button pressed, takes up too much space otherwise~~
 - use badge like thing to do 'new products', 'newest on sale', 'dunks', 'aus'
+- test on mobile
+- show filters button probably need styling
+- ~~loading skeletons instead of spinner~~
 - post it on slap
 - ~~taller dropdowns~~
