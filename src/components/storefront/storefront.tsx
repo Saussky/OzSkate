@@ -133,7 +133,6 @@ export default function Storefront({ user }: StorefrontProps) {
           </div>
         )}
 
-        {/* Filters are always shown on desktop; on mobile they’re conditional */}
         {(!isMobileUA || filtersVisibleOnMobile) && (
           <Filter
             onFilterChange={handleFilterChange}
