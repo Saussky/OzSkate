@@ -207,7 +207,7 @@ TODO 27/7
 - ~~on mobile, have filters drop down if button pressed, takes up too much space otherwise~~
 - use badge like thing to do 'new products', 'newest on sale', 'dunks', 'aus'
 - test on mobile
-- show filters button probably need styling
+- ~~show filters button probably need styling~~
 - ~~loading skeletons instead of spinner~~
 - post it on slap
 - ~~taller dropdowns~~

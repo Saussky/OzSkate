@@ -11,6 +11,7 @@ import useStoreFrontQueryParams from '@/lib/hooks';
 import { SortOption } from '@/lib/product/filter/buildClause';
 import Button from '../ui/button';
 import ProductCardSkeleton from '../shared/product-card/productCardSkeleton';
+import QuickLinksSelect from './quickLinks';
 
 type ImageJson = {
   src: string;
@@ -122,14 +123,34 @@ export default function Storefront({ user }: StorefrontProps) {
 
   const toggleMobileFilters = () => setFiltersVisibleOnMobile((prev) => !prev);
 
+  // TODO: Newest Products doesn't show correctly as selected
+  // TODO: Doesn't clear out the other filters first
+  const handleQuickLinkSelect = useCallback(
+    (filterChanges: Partial<FilterOption>, newSort?: SortOption) => {
+      const mergedFilters: FilterOption = { ...filters, ...filterChanges };
+
+      setFilters(mergedFilters);
+      setSortOption(newSort ?? sortOption);
+      setCurrentPage(1);
+
+      setQueryParams({
+        filters: mergedFilters,
+        sortOption: newSort ?? sortOption,
+        page: 1,
+      });
+    },
+    [filters, sortOption, setQueryParams]
+  );
+
   return (
     <div className="p-6 mt-1 bg-gray-100">
       <div className="flex flex-col space-y-1 mb-3">
         {isMobileUA && (
-          <div className="self-start">
+          <div className="flex gap-4 items-center">
             <Button variant="smart" onClick={toggleMobileFilters}>
               {filtersVisibleOnMobile ? 'Hide Filters' : 'Show Filters'}
             </Button>
+            <QuickLinksSelect onSelect={handleQuickLinkSelect} />
           </div>
         )}
 
