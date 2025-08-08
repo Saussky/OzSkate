@@ -127,6 +127,7 @@ export default function Storefront({ user }: StorefrontProps) {
   // TODO: Doesn't clear out the other filters first
   const handleQuickLinkSelect = useCallback(
     (filterChanges: Partial<FilterOption>, newSort?: SortOption) => {
+      //TODO: Error
       const mergedFilters: FilterOption = { ...filters, ...filterChanges };
 
       setFilters(mergedFilters);
@@ -146,7 +147,7 @@ export default function Storefront({ user }: StorefrontProps) {
     <div className="p-6 mt-1 bg-gray-100">
       <div className="flex flex-col space-y-1 mb-3">
         {isMobileUA && (
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center mb-2">
             <Button variant="smart" onClick={toggleMobileFilters}>
               {filtersVisibleOnMobile ? 'Hide Filters' : 'Show Filters'}
             </Button>
@@ -155,14 +156,16 @@ export default function Storefront({ user }: StorefrontProps) {
         )}
 
         {(!isMobileUA || filtersVisibleOnMobile) && (
-          <Filter
-            onFilterChange={handleFilterChange}
-            allBrands={allBrands}
-            allShops={allShops}
-            initialFilters={queryParams.filters}
-            onSortChange={handleSortChange}
-            sortOption={sortOption}
-          />
+          <div className="sm:mb-10">
+            <Filter
+              onFilterChange={handleFilterChange}
+              allBrands={allBrands}
+              allShops={allShops}
+              initialFilters={queryParams.filters}
+              onSortChange={handleSortChange}
+              sortOption={sortOption}
+            />
+          </div>
         )}
         <div className="flex justify-between h-6 ml-auto">
           <Pagination
