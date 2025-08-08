@@ -127,9 +127,15 @@ export default function Storefront({ user }: StorefrontProps) {
   // TODO: Doesn't clear out the other filters first
   const handleQuickLinkSelect = useCallback(
     (filterChanges: Partial<FilterOption>, newSort?: SortOption) => {
-      //TODO: Error
-      const mergedFilters: FilterOption = { ...filters, ...filterChanges };
+      const mergedFilters: FilterOption = { ...filters };
 
+      for (const [filterKey, filterValue] of Object.entries(filterChanges)) {
+        if (filterValue !== undefined) {
+          mergedFilters[filterKey] = filterValue;
+        } else {
+          delete mergedFilters[filterKey]; // drop the key if undefined
+        }
+      }
       setFilters(mergedFilters);
       setSortOption(newSort ?? sortOption);
       setCurrentPage(1);
