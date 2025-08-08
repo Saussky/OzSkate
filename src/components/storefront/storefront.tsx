@@ -124,29 +124,23 @@ export default function Storefront({ user }: StorefrontProps) {
   const toggleMobileFilters = () => setFiltersVisibleOnMobile((prev) => !prev);
 
   // TODO: Newest Products doesn't show correctly as selected
-  // TODO: Doesn't clear out the other filters first
   const handleQuickLinkSelect = useCallback(
     (filterChanges: Partial<FilterOption>, newSort?: SortOption) => {
-      const mergedFilters: FilterOption = { ...filters };
+      const newFilters: FilterOption = Object.fromEntries(
+        Object.entries(filterChanges).filter(([, value]) => value !== undefined)
+      ) as FilterOption;
 
-      for (const [filterKey, filterValue] of Object.entries(filterChanges)) {
-        if (filterValue !== undefined) {
-          mergedFilters[filterKey] = filterValue;
-        } else {
-          delete mergedFilters[filterKey]; // drop the key if undefined
-        }
-      }
-      setFilters(mergedFilters);
+      setFilters(newFilters);
       setSortOption(newSort ?? sortOption);
       setCurrentPage(1);
 
       setQueryParams({
-        filters: mergedFilters,
+        filters: newFilters,
         sortOption: newSort ?? sortOption,
         page: 1,
       });
     },
-    [filters, sortOption, setQueryParams]
+    [sortOption, setQueryParams]
   );
 
   return (

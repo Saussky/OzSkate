@@ -1,22 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { FilterOption } from '@/lib/types';
 import { SortOption } from '@/lib/product/filter/buildClause';
 
-type QuickLinkKey = 'recently-on-sale' | 'newest-products' | 'sb-dunks';
+type QuickLinkKey = 'recently-on-sale' | 'newest-products' | 'sb-dunks' | '';
 
-const QUICK_LINKS: { label: string; value: QuickLinkKey }[] = [
+const QUICK_LINKS: { label: string; value: Exclude<QuickLinkKey, ''> }[] = [
   { label: 'Recently on Sale', value: 'recently-on-sale' },
   { label: 'Newest Products', value: 'newest-products' },
   { label: 'SB Dunks', value: 'sb-dunks' },
 ];
 
 interface QuickLinksSelectProps {
-  /**
-   * Receives the filter fields to update and (optionally) a sort option.
-   * The caller is responsible for merging these into state + query params.
-   */
   onSelect: (
     filterChanges: Partial<FilterOption>,
     newSort?: SortOption
@@ -24,14 +20,18 @@ interface QuickLinksSelectProps {
 }
 
 export default function QuickLinksSelect({ onSelect }: QuickLinksSelectProps) {
+  const [selectedQuickLink, setSelectedQuickLink] = useState<QuickLinkKey>('');
+
   return (
     <select
-      defaultValue=""
+      aria-label="Quick Links"
+      value={selectedQuickLink}
       className="border border-gray-400 bg-white rounded px-3 py-1 text-sm"
       onChange={(event) => {
-        const selected = event.target.value as QuickLinkKey;
+        const chosen = event.target.value as QuickLinkKey;
+        setSelectedQuickLink(chosen);
 
-        switch (selected) {
+        switch (chosen) {
           case 'recently-on-sale':
             onSelect({ onSale: true }, 'last-updated');
             break;
@@ -45,16 +45,14 @@ export default function QuickLinksSelect({ onSelect }: QuickLinksSelectProps) {
             break;
 
           default:
-            return;
+            break;
         }
-
-        // reset back to placeholder after the action
-        event.currentTarget.selectedIndex = 0;
       }}
     >
       <option value="" disabled>
         Quick Links
       </option>
+
       {QUICK_LINKS.map(({ label, value }) => (
         <option key={value} value={value}>
           {label}
