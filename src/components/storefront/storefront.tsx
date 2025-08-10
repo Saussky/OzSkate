@@ -12,6 +12,10 @@ import { SortOption } from '@/lib/product/filter/buildClause';
 import Button from '../ui/button';
 import ProductCardSkeleton from '../shared/product-card/productCardSkeleton';
 import QuickLinksSelect from './quickLinks';
+import {
+  OneColumnIcon,
+  TwoColumnIcon,
+} from '../shared/product-card/gridColSelectionIcons';
 
 type ImageJson = {
   src: string;
@@ -39,6 +43,8 @@ interface StorefrontProps {
   user: User | null;
 }
 
+type MobileGridColumnsOption = 1 | 2;
+
 export default function Storefront({ user }: StorefrontProps) {
   const { queryParams, setQueryParams } = useStoreFrontQueryParams();
   const [filters, setFilters] = useState<FilterOption>(queryParams.filters);
@@ -54,11 +60,38 @@ export default function Storefront({ user }: StorefrontProps) {
 
   const [isPending, startTransition] = useTransition();
 
-  const [isMobileUA, setIsMobileUA] = useState<boolean>(false);
+  const [isMobileUA, setIsMobileUA] = useState<boolean | undefined>(undefined);
   const [filtersVisibleOnMobile, setFiltersVisibleOnMobile] =
     useState<boolean>(false);
 
   const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
+  const [mobileGridColumns, setMobileGridColumns] = useState<
+    MobileGridColumnsOption | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (isMobileUA === undefined) return;
+    if (!isMobileUA) {
+      setMobileGridColumns(undefined);
+      return;
+    }
+
+    const saved = localStorage.getItem('storefront.mobileGridColumns');
+    if (saved === '1' || saved === '2') {
+      setMobileGridColumns(Number(saved) as MobileGridColumnsOption);
+    } else {
+      setMobileGridColumns(2);
+    }
+  }, [isMobileUA]);
+
+  useEffect(() => {
+    if (isMobileUA && mobileGridColumns !== undefined) {
+      localStorage.setItem(
+        'storefront.mobileGridColumns',
+        String(mobileGridColumns)
+      );
+    }
+  }, [isMobileUA, mobileGridColumns]);
 
   // show button after user scrolls ~300px
   useEffect(() => {
@@ -169,6 +202,18 @@ export default function Storefront({ user }: StorefrontProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleMobileGridColumnsChange = (
+    desiredColumns: MobileGridColumnsOption
+  ) => {
+    setMobileGridColumns(desiredColumns);
+  };
+
+  const mobileCols = mobileGridColumns ?? 2;
+  const gridClassName =
+    mobileCols === 1
+      ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'
+      : 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+
   return (
     <div className="p-6 mt-1 bg-gray-100">
       <div className="flex flex-col space-y-1 mb-3">
@@ -193,7 +238,30 @@ export default function Storefront({ user }: StorefrontProps) {
             />
           </div>
         )}
-        <div className="flex justify-between h-6 ml-auto">
+        <div className="flex items-center justify-between h-6 ml-auto gap-3">
+          {isMobileUA && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="smart"
+                onClick={() => handleMobileGridColumnsChange(1)}
+                aria-pressed={mobileGridColumns === 1}
+                className={mobileGridColumns === 1 ? 'ring-1 ring-black' : ''}
+                title="Show 1 item per row"
+              >
+                <OneColumnIcon />
+              </Button>
+              <Button
+                variant="smart"
+                onClick={() => handleMobileGridColumnsChange(2)}
+                aria-pressed={mobileGridColumns === 2}
+                className={mobileGridColumns === 2 ? 'ring-1 ring-black' : ''}
+                title="Show 2 items per row"
+              >
+                <TwoColumnIcon />
+              </Button>
+            </div>
+          )}
+
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -203,13 +271,13 @@ export default function Storefront({ user }: StorefrontProps) {
       </div>
 
       {isPending ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className={gridClassName}>
           {Array.from({ length: 10 }).map((unusedItem, itemIndex) => (
             <ProductCardSkeleton key={itemIndex} />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className={gridClassName}>
           {products.map((productItem) => (
             <ProductCard
               key={productItem.id}

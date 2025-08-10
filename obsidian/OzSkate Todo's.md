@@ -214,7 +214,7 @@ TODO 27/7
 - post it on slap
 - ~~taller dropdowns~~
 - ~~on sale price show normal pricing crossed out~~
-- smaller limit mobile
-- hovers back to top scroll for mobile
-	option to see two items or 4 items
+- ~~smaller limit mobile~~
+- ~~hovers back to top scroll for mobile~~
+	option to see two items or 4~ items
 - remove login box
