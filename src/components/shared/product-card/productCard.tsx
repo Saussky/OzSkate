@@ -7,6 +7,7 @@ import { setProductTypes } from './actions';
 import ProductEditMenu from './product-menu/menu';
 import { ExtendedProduct } from '@/components/storefront/storefront';
 import Link from 'next/link';
+import { getOriginalSalePriceForDisplay, formatCurrency } from './priceDisplay';
 
 interface ProductCardProps {
   product: ExtendedProduct;
@@ -85,6 +86,22 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     setMenuOpen(false);
   }
 
+  const priceDisplay = () => {
+    const originalSalePrice = getOriginalSalePriceForDisplay(product);
+    const cheapestPriceDisplay = formatCurrency(cheapestPrice);
+
+    return (
+      <div className="mt-1 flex items-baseline gap-2">
+        {originalSalePrice !== null && (
+          <span className="line-through text-gray-400">
+            {formatCurrency(originalSalePrice)}
+          </span>
+        )}
+        <span className="text-gray-600">{cheapestPriceDisplay}</span>
+      </div>
+    );
+  };
+
   return (
     <div
       className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group"
@@ -110,10 +127,12 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
                   d="M3 9l9-7 9 7v11a2 2 0 01-2 2h-4a2 2 0 01-2-2V12H9v8a2 2 0 01-2 2H3a2 2 0 01-2-2V9z"
                 />
               </svg>
+
               <span className="text-sm font-semibold">
                 x{allStorePrices.length}
               </span>
             </div>
+
             <div className="absolute right-0 mt-1 hidden group-hover:block bg-white border border-gray-300 rounded shadow-md p-2 flex-col gap-1 max-h-32 overflow-y-auto">
               {allStorePrices.map((store) => (
                 <div key={store.shopId} className="text-xs">
@@ -149,7 +168,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
       <h2 className="mt-2 text-xl font-bold text-gray-800">{title}</h2>
 
       <div className="flex justify-between items-center">
-        <p className="text-gray-600 mt-1">${cheapestPrice}</p>
+        {priceDisplay()}
 
         <div className="relative inline-block mt-2">
           {admin && (

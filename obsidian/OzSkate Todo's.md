@@ -206,8 +206,9 @@ TODO 27/7
 - ~~Use ig logo~~
 - ~~on mobile, have filters drop down if button pressed, takes up too much space otherwise~~
 - use badge like thing to do 'new products', 'newest on sale', 'dunks', 'aus'
-	- have basic filters applying on mobile
-- test on mobile
+	- ~~have basic filters applying on mobile~~
+		- ~~Add clear quick filters
+- ~~test on mobile~~
 - ~~show filters button probably need styling~~
 - ~~loading skeletons instead of spinner~~
 - post it on slap
