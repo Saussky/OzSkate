@@ -58,6 +58,21 @@ export default function Storefront({ user }: StorefrontProps) {
   const [filtersVisibleOnMobile, setFiltersVisibleOnMobile] =
     useState<boolean>(false);
 
+  const [showScrollToTop, setShowScrollToTop] = useState<boolean>(false);
+
+  // show button after user scrolls ~300px
+  useEffect(() => {
+    const handleWindowScroll = () => {
+      const hasScrolledDown = window.scrollY > 300;
+      setShowScrollToTop(hasScrolledDown);
+    };
+
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+    handleWindowScroll(); // run once on mount to set initial state
+
+    return () => window.removeEventListener('scroll', handleWindowScroll);
+  }, []);
+
   useEffect(() => {
     const ua = navigator.userAgent;
     const mobileRegex = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i;
@@ -71,7 +86,15 @@ export default function Storefront({ user }: StorefrontProps) {
   const loadProducts = useCallback(
     (page: number) => {
       startTransition(async () => {
-        const data = await getPaginatedProducts(page, 40, filters, sortOption);
+        let limit = 40;
+        if (isMobileUA) limit = limit - 20;
+
+        const data = await getPaginatedProducts(
+          page,
+          limit,
+          filters,
+          sortOption
+        );
         const transformed: ExtendedProduct[] = data.mergedProducts.map((p) => ({
           ...p,
           image: p.image as ImageJson | null, // TODO: Why are we doing this the types are f'ed anyway
@@ -81,7 +104,7 @@ export default function Storefront({ user }: StorefrontProps) {
         setCurrentPage(page);
       });
     },
-    [filters, sortOption]
+    [filters, sortOption, isMobileUA]
   );
 
   // Always reset to first page when filters or sort changes
@@ -142,6 +165,10 @@ export default function Storefront({ user }: StorefrontProps) {
     [sortOption, setQueryParams]
   );
 
+  const handleScrollToTopClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="p-6 mt-1 bg-gray-100">
       <div className="flex flex-col space-y-1 mb-3">
@@ -200,6 +227,17 @@ export default function Storefront({ user }: StorefrontProps) {
           onPageChange={handlePageChange}
         />
       </div>
+
+      {isMobileUA && showScrollToTop && (
+        <Button
+          variant="smart"
+          onClick={handleScrollToTopClick}
+          className="fixed bottom-4 right-4 z-50 shadow-md"
+          aria-label="Scroll to top"
+        >
+          Scroll to top
+        </Button>
+      )}
     </div>
   );
 }

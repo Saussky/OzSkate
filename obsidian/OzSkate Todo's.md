@@ -213,6 +213,8 @@ TODO 27/7
 - ~~loading skeletons instead of spinner~~
 - post it on slap
 - ~~taller dropdowns~~
-- on sale price show normal pricing crossed out
+- ~~on sale price show normal pricing crossed out~~
+- smaller limit mobile
 - hovers back to top scroll for mobile
-	- option to see two items or 4 items
+	option to see two items or 4 items
+- remove login box
