@@ -4,9 +4,17 @@ import React, { useState } from 'react';
 import { FilterOption } from '@/lib/types';
 import { SortOption } from '@/lib/product/filter/buildClause';
 
-type QuickLinkKey = 'recently-on-sale' | 'newest-products' | 'sb-dunks' | '';
+type QuickLinkKey =
+  | '__clear__'
+  | 'recently-on-sale'
+  | 'newest-products'
+  | 'sb-dunks'
+  | '';
 
-const QUICK_LINKS: { label: string; value: Exclude<QuickLinkKey, ''> }[] = [
+const QUICK_LINKS: {
+  label: string;
+  value: Exclude<QuickLinkKey, '__clear__' | ''>;
+}[] = [
   { label: 'Recently on Sale', value: 'recently-on-sale' },
   { label: 'Newest Products', value: 'newest-products' },
   { label: 'SB Dunks', value: 'sb-dunks' },
@@ -32,6 +40,10 @@ export default function QuickLinksSelect({ onSelect }: QuickLinksSelectProps) {
         setSelectedQuickLink(chosen);
 
         switch (chosen) {
+          case '__clear__':
+            onSelect({}, undefined);
+            break;
+
           case 'recently-on-sale':
             onSelect({ onSale: true }, 'last-updated');
             break;
@@ -43,15 +55,14 @@ export default function QuickLinksSelect({ onSelect }: QuickLinksSelectProps) {
           case 'sb-dunks':
             onSelect({ brands: ['Nike SB'], searchTerm: 'dunk' });
             break;
-
-          default:
-            break;
         }
       }}
     >
       <option value="" disabled>
-        Quick Links
+        Quick Filters
       </option>
+
+      <option value="__clear__">Clear Filters</option>
 
       {QUICK_LINKS.map(({ label, value }) => (
         <option key={value} value={value}>

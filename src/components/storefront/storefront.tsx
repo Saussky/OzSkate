@@ -123,7 +123,6 @@ export default function Storefront({ user }: StorefrontProps) {
 
   const toggleMobileFilters = () => setFiltersVisibleOnMobile((prev) => !prev);
 
-  // TODO: Newest Products doesn't show correctly as selected
   const handleQuickLinkSelect = useCallback(
     (filterChanges: Partial<FilterOption>, newSort?: SortOption) => {
       const newFilters: FilterOption = Object.fromEntries(
