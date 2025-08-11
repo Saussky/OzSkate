@@ -113,9 +113,11 @@ export default function LoginBox({ initialUser }: LoginBoxProps) {
             </Button>
 
             <Button
-              onClick={() => router.push('/signup')}
+              // onClick={() => router.push('/signup')}
+              onClick={() => {}}
               variant="secondary"
               size="small"
+              disabled
             >
               Sign Up
             </Button>

@@ -216,5 +216,5 @@ TODO 27/7
 - ~~on sale price show normal pricing crossed out~~
 - ~~smaller limit mobile~~
 - ~~hovers back to top scroll for mobile~~
-	option to see two items or 4~ items
+	~~option to see two items or 4~ items~~
 - remove login box
