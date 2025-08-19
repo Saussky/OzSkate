@@ -194,7 +194,7 @@ TODO 15/7
 - ~~Update images if they are missing
 	- -TEST THIS
 		- broke everything
-- Use ig logo in footer
+- ~~Use ig logo in footer~~
 - ~~Product update from cron job not updating prices or something?
 
 TODO 27/7

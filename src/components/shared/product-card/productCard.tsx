@@ -8,6 +8,7 @@ import ProductEditMenu from './product-menu/menu';
 import { ExtendedProduct } from '@/components/storefront/storefront';
 import Link from 'next/link';
 import { getOriginalSalePriceForDisplay, formatCurrency } from './priceDisplay';
+import { Badge } from '@/components/ui/badge';
 
 interface ProductCardProps {
   product: ExtendedProduct;
@@ -107,7 +108,11 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
       className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group"
       style={{ contentVisibility: 'auto', containIntrinsicSize: '700px' }}
     >
-      <p>{shop.name}</p>
+      <div className="absolute left-2 top-2 z-20">
+        <Badge variant="secondary" className="shadow-sm">
+          {shop.name}
+        </Badge>
+      </div>
 
       {allStorePrices && allStorePrices.length > 1 && (
         <div className="absolute top-2 right-2 z-20">
