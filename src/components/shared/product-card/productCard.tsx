@@ -108,11 +108,9 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
       className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group"
       style={{ contentVisibility: 'auto', containIntrinsicSize: '700px' }}
     >
-      <div className="absolute left-2 top-2 z-20">
-        <Badge variant="secondary" className="shadow-sm">
-          {shop.name}
-        </Badge>
-      </div>
+      <Badge variant="outline" className="shadow-sm mb-2">
+        {shop.name}
+      </Badge>
 
       {allStorePrices && allStorePrices.length > 1 && (
         <div className="absolute top-2 right-2 z-20">
