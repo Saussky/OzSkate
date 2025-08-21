@@ -108,7 +108,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
       className="border rounded-lg shadow-md p-4 h-full w-full bg-white relative group"
       style={{ contentVisibility: 'auto', containIntrinsicSize: '700px' }}
     >
-      <Badge variant="outline" className="shadow-sm mb-2">
+      <Badge href="/" cancelHref="/" className="shadow-sm mb-2">
         {shop.name}
       </Badge>
 

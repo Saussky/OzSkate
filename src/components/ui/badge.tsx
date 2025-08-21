@@ -1,55 +1,66 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 
-type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
-
-const baseClasses =
-  'inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 gap-1 overflow-hidden transition-[color,box-shadow] ' +
-  '[&>svg]:size-3 [&>svg]:pointer-events-none ' +
-  'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring ' +
-  'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive';
-
-const variantClasses: Record<BadgeVariant, string> = {
-  default:
-    'border-transparent bg-primary text-primary-foreground hover:bg-primary/90',
-  secondary:
-    'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/90',
-  destructive:
-    'border-transparent bg-destructive text-white hover:bg-destructive/90 ' +
-    'focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
-  outline: 'text-foreground hover:bg-accent hover:text-accent-foreground',
+type BadgeProps = {
+  href: string;
+  cancelHref?: string;
+  className?: string;
+  children: React.ReactNode;
 };
 
-// Tiny local class merger to avoid extra deps.
-function mergeClassNames(...classNames: Array<string | undefined>): string {
-  return classNames.filter(Boolean).join(' ');
-}
+const wrapperClasses = 'group relative inline-flex items-center';
 
-// Polymorphic props using a type alias (not interface) to support generics cleanly.
-type PolymorphicBadgeProps<GenericElement extends React.ElementType> = {
-  as?: GenericElement;
-  variant?: BadgeVariant;
-  className?: string;
-} & Omit<React.ComponentPropsWithoutRef<GenericElement>, 'as' | 'color'>;
+const mainLinkClasses =
+  'inline-flex items-center rounded-md border border-border px-2 py-0.5 text-xs font-medium ' +
+  'whitespace-nowrap shrink-0 gap-1 overflow-hidden transition-all duration-200 ' +
+  'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring ' +
+  'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive ' +
+  'text-foreground group-hover:bg-accent group-hover:text-accent-foreground ' +
+  'group-hover:pr-6';
 
-export function Badge<GenericElement extends React.ElementType = 'span'>({
-  as,
-  variant = 'default',
+const cancelLinkClasses =
+  'absolute right-1 top-1/2 -translate-y-1/2 z-10 ' +
+  'opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-150 ' +
+  'translate-x-1 group-hover:translate-x-0 ' +
+  'text-black dark:text-black pointer-events-auto';
+
+export function Badge({
+  href,
+  cancelHref,
   className,
   children,
-  ...restProps
-}: PolymorphicBadgeProps<GenericElement>): JSX.Element {
-  const Component = (as ?? 'span') as React.ElementType;
-  const combinedClassName = mergeClassNames(
-    baseClasses,
-    variantClasses[variant],
-    className
-  );
-
+}: BadgeProps): JSX.Element {
   return (
-    <Component data-slot="badge" className={combinedClassName} {...restProps}>
-      {children}
-    </Component>
+    <span className={`${wrapperClasses} ${className ?? ''}`}>
+      <Link href={href} className={mainLinkClasses} data-slot="badge">
+        {children}
+      </Link>
+
+      {cancelHref ? (
+        <Link
+          href={cancelHref}
+          onClick={(mouseEvent) => {
+            mouseEvent.stopPropagation();
+          }}
+          aria-label="Remove store filter"
+          className={cancelLinkClasses}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 12 12"
+            className="w-3 h-3 block"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            vectorEffect="non-scaling-stroke"
+          >
+            <line x1="2" y1="2" x2="10" y2="10" />
+            <line x1="10" y1="2" x2="2" y2="10" />
+          </svg>
+        </Link>
+      ) : null}
+    </span>
   );
 }
