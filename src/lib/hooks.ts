@@ -12,6 +12,7 @@ const defaultFilters: FilterOption = {
   deckSize: null,
   brands: [],
   shops: [],
+  notShops: [],
   searchTerm: '',
 };
 
@@ -45,6 +46,7 @@ export default function useStoreFrontQueryParams() {
         : defaultFilters.deckSize,
       brands: searchParams.getAll('brands') ?? defaultFilters.brands,
       shops: searchParams.getAll('shops') ?? defaultFilters.shops,
+      notShops: searchParams.getAll('notShops') ?? defaultFilters.notShops,
       searchTerm: searchParams.get('searchTerm') ?? defaultFilters.searchTerm,
     };
 

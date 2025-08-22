@@ -27,10 +27,24 @@ export const buildWhereClause = async (filters: FilterOption = {}) => {
     };
   }
 
-  if (filters.shops && (filters.shops as string[]).length > 0) {
-    whereClause.shop = {
-      name: { in: filters.shops as string[] },
-    };
+  const includedShops = Array.isArray(filters.shops) ? filters.shops : [];
+  const excludedShops = Array.isArray(filters.notShops) ? filters.notShops : [];
+
+  // Build a relation filter for shop based on include/exclude presence.
+  // If both are present, we AND them together.
+  if (includedShops.length > 0 || excludedShops.length > 0) {
+    const shopConditions: any[] = [];
+
+    if (includedShops.length > 0) {
+      shopConditions.push({ name: { in: includedShops } });
+    }
+
+    if (excludedShops.length > 0) {
+      shopConditions.push({ name: { notIn: excludedShops } });
+    }
+
+    whereClause.shop =
+      shopConditions.length === 1 ? shopConditions[0] : { AND: shopConditions };
   }
 
   if (filters.searchTerm) {

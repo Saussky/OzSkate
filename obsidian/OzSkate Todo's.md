@@ -211,10 +211,18 @@ TODO 27/7
 - ~~test on mobile~~
 - ~~show filters button probably need styling~~
 - ~~loading skeletons instead of spinner~~
-- post it on slap
+- ~~post it on slap~~
 - ~~taller dropdowns~~
 - ~~on sale price show normal pricing crossed out~~
 - ~~smaller limit mobile~~
 - ~~hovers back to top scroll for mobile~~
 	~~option to see two items or 4~ items~~
-- remove login box
+- ~~remove login box~~
+
+
+TODO 21/8
+- Finish store badge hrefs
+	- Deselect a store
+		- Tip on hover?
+- Make marketing plan
+	- Advertise on skatermaps, and ig?
