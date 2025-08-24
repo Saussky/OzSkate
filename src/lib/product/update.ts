@@ -277,9 +277,15 @@ async function filterUpdatedFreshProducts(
 async function insertFreshProducts(
   newRawProducts: any[],
   shopId: number,
-  shopName: string // <--- pass shop name for logging
+  shopName: string
 ): Promise<number> {
-  const transformed = transformProducts(newRawProducts, shopId);
+  // Middle store sells vinyls, this will skip them
+  const filteredRawProducts = newRawProducts.filter(
+    (raw) => raw.product_type !== 'Vinyl LP'
+  );
+
+  const transformed = transformProducts(filteredRawProducts, shopId);
+
   let inserted = 0;
 
   for (const productData of transformed) {
