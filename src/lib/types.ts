@@ -51,14 +51,14 @@ export type ChildType = ChildTypePerParent[keyof ChildTypePerParent];
 
 // export type FilterOption = Record<string, string | string[] | number | boolean | null>
 export interface FilterOption {
-  parentType?: string;
+  parentType?: string | null;
   childType?: string;
   vendor?: string;
   brands?: string[] | undefined;
   shops?: string[] | undefined; // include only these shops
   notShops?: string[] | undefined; // exclude these shops
   searchTerm?: string;
-  maxPrice?: string | number;
+  maxPrice?: string | number | null;
   shoeSize?: string | number | null;
   deckSize?: string | number | null;
   onSale?: boolean;
