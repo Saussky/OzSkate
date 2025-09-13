@@ -227,6 +227,7 @@ TODO 21/8
 - Make marketing plan
 	- Advertise on skatermaps, and ig?
 - Fix the records being displayed by middle store
+- Investigate why lofi keeps appearing in last updated on sale
 -
 
 vic gov enagge submission ids

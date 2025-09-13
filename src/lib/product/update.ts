@@ -342,61 +342,70 @@ function buildProductsMap(products: any[]): Map<string, any> {
   return map;
 }
 
-/**
- * Update a single product's cheapest price if necessary.
- *
- * @returns `true` if the cheapest price changed.
- */
 async function updateLocalProduct(
   localProduct: ProductModel,
   freshProduct: any,
   shopName: string
 ): Promise<boolean> {
-  const priceChanged =
+  const priceChanged: boolean =
     localProduct.cheapestPrice !== freshProduct.cheapestPrice;
-  const imageChanged = imagesAreDifferent(
+
+  const imageChanged: boolean = imagesAreDifferent(
     localProduct.image,
     freshProduct.image
   );
 
-  if (!priceChanged && !imageChanged) return false;
-
-  const oldPrice = localProduct.cheapestPrice;
-
-  await prisma.product.update({
-    where: { id: localProduct.id },
-    data: { cheapestPrice: freshProduct.cheapestPrice },
-  });
-
-  const dataToUpdate: ProductUpdateData = {};
-
-  if (priceChanged) dataToUpdate.cheapestPrice = freshProduct.cheapestPrice;
-  if (imageChanged)
-    dataToUpdate.image = normaliseImageForPrisma(freshProduct.image);
-
-  await prisma.product.update({
-    where: { id: localProduct.id },
-    data: dataToUpdate,
-  });
-
-  if (!priceChanged && imageChanged) {
-    log.info(`Image update for ${localProduct.title}`);
+  // If neither price nor image changed, do not touch the row → updatedAt stays the same.
+  if (!priceChanged && !imageChanged) {
     return false;
   }
 
+  const updateData: ProductUpdateData = {};
+
+  if (priceChanged) {
+    updateData.cheapestPrice = freshProduct.cheapestPrice;
+  }
+
+  if (imageChanged) {
+    updateData.image = normaliseImageForPrisma(freshProduct.image);
+  }
+
+  await prisma.product.update({
+    where: { id: localProduct.id },
+    data: updateData,
+  });
+
+  // If it was only an image change, log and exit without counting as a price change.
+  if (!priceChanged && imageChanged) {
+    log.info(`Image updated for "${localProduct.title}"`);
+    await prisma.productUpdateLog.create({
+      data: {
+        shopId: localProduct.shopId,
+        shopName,
+        productId: localProduct.id,
+        productTitle: localProduct.title,
+        changeType: 'VARIANT_UPDATED', // or consider a dedicated IMAGE_UPDATED if you add it
+        description: `Primary image updated for "${localProduct.title}".`,
+      },
+    });
+    return false;
+  }
+
+  // Price changed → log it and return true so the caller increments the counter.
+  const previousPrice = localProduct.cheapestPrice;
   log.info(
-    `Price updated for "${localProduct.title}" from ${oldPrice} to ${freshProduct.cheapestPrice}`
+    `Price updated for "${localProduct.title}" from ${previousPrice} to ${freshProduct.cheapestPrice}`
   );
 
   await prisma.productUpdateLog.create({
     data: {
       shopId: localProduct.shopId,
-      shopName: shopName,
+      shopName,
       productId: localProduct.id,
       productTitle: localProduct.title,
       changeType: 'PRICE_CHANGED',
       description: `Cheapest price for "${localProduct.title}" changed from ${
-        oldPrice ?? 'NULL'
+        previousPrice ?? 'NULL'
       } to ${freshProduct.cheapestPrice}.`,
     },
   });
