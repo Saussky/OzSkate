@@ -12,6 +12,7 @@ type BadgeProps = {
 
 const wrapperClasses = 'group relative inline-flex items-center';
 
+//ToDO: remove group hover I think
 const mainLinkClasses =
   'inline-flex items-center rounded-md border border-border px-2 py-0.5 text-xs font-medium ' +
   'whitespace-nowrap shrink-0 gap-1 overflow-hidden transition-all duration-200 ' +
