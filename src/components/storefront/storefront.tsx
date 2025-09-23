@@ -227,7 +227,7 @@ export default function Storefront({ user }: StorefrontProps) {
         )}
 
         {(!isMobileUA || filtersVisibleOnMobile) && (
-          <div className="sm:mb-10">
+          <div className="sm:mb-10 md:mb-0">
             <Filter
               onFilterChange={handleFilterChange}
               allBrands={allBrands}
@@ -238,6 +238,7 @@ export default function Storefront({ user }: StorefrontProps) {
             />
           </div>
         )}
+
         <div className="flex items-center justify-between h-6 ml-auto gap-3">
           {isMobileUA && (
             <div className="flex items-center gap-2">
