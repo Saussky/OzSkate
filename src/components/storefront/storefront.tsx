@@ -113,8 +113,10 @@ export default function Storefront({ user }: StorefrontProps) {
   }, []);
 
   useEffect(() => {
-    setQueryParams({ filters, sortOption, page: currentPage });
-  }, [filters, sortOption, currentPage, setQueryParams]);
+    setFilters(queryParams.filters);
+    setSortOption(queryParams.sortOption as SortOption);
+    setCurrentPage(queryParams.page);
+  }, [queryParams]);
 
   const loadProducts = useCallback(
     (page: number) => {

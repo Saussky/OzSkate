@@ -96,6 +96,7 @@ export default function useStoreFrontQueryParams() {
         query.set('page', String(page));
       }
 
+      //TODO: Router replace instead?
       router.push(query.toString() ? `?${query.toString()}` : '?');
     },
     [router]
