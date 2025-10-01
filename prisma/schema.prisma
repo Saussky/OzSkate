@@ -58,7 +58,7 @@ model product {
   image       Json?
   variants    variant[] // One-to-many relationship with Variant
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt         DateTime @updatedAt
   shopifyUpdatedAt  DateTime
   publishedAt DateTime
 
@@ -78,7 +78,7 @@ model product {
   @@index([parentType])
   @@index([childType])
   @@index([createdAt])
-  @@index([updatedAt])
+  @@index([shopifyUpdatedAt])
 }
 
 
@@ -170,4 +170,3 @@ enum UpdateType {
   VARIANT_UPDATED
   SALE_STATUS_CHANGED
 }
-
