@@ -16,7 +16,7 @@ export interface ProductMeta {
   childType: string | null;
   tags: string[];
   createdAt: Date | string;
-  updatedAt: Date | string;
+  shopifyUpdatedAt: Date | string;
   variantsCount: number;
 }
 
@@ -38,7 +38,7 @@ export default function ProductEditMenu({
   parentType,
   childType,
   createdAt,
-  updatedAt,
+  shopifyUpdatedAt,
   variantsCount,
   menuOpen,
   onClose,
@@ -129,7 +129,7 @@ export default function ProductEditMenu({
           childType={childType}
           tags={tags}
           createdAt={createdAt}
-          updatedAt={updatedAt}
+          shopifyUpdatedAt={shopifyUpdatedAt}
           variantsCount={variantsCount}
           id={id}
         />

@@ -106,7 +106,7 @@ export const buildOrderByClause = async (
       break;
 
     case 'last-updated':
-      orderBy.push({ updatedAt: 'desc' });
+      orderBy.push({ shopifyUpdatedAt: 'desc' });
       break;
 
     case 'latest':

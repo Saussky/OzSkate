@@ -162,12 +162,12 @@ async function processShopUpdates(
 
   const allFreshIds = new Set(freshRawProducts.map((raw) => raw.id.toString()));
 
-  const localUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
+  const localShopifyUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
 
   const { updatedProducts: freshToTransform, insertedCount } =
     await filterUpdatedFreshProducts(
       freshRawProducts,
-      localUpdatedAtMap,
+      localShopifyUpdatedAtMap,
       shop.id,
       shop.name
     );
@@ -227,17 +227,17 @@ async function processShopUpdates(
 }
 
 /**
- * Return a map of product ID → updatedAt for quick comparison.
+ * Return a map of product ID → shopifyUpdatedAt for quick comparison.
  */
 async function getLocalProductsBriefMap(
   shopId: number
 ): Promise<Map<string, Date>> {
   const brief = await prisma.product.findMany({
     where: { shopId },
-    select: { id: true, updatedAt: true },
+    select: { id: true, shopifyUpdatedAt: true },
   });
 
-  return new Map(brief.map((p) => [p.id, p.updatedAt]));
+  return new Map(brief.map((p) => [p.id, p.shopifyUpdatedAt]));
 }
 
 /**
@@ -246,21 +246,26 @@ async function getLocalProductsBriefMap(
  */
 async function filterUpdatedFreshProducts(
   freshRawProducts: any[],
-  localUpdatedAtMap: Map<string, Date>,
+  localShopifyUpdatedAtMap: Map<string, Date>,
   shopId: number,
   shopName: string
 ): Promise<{ updatedProducts: any[]; insertedCount: number }> {
   const newProducts: any[] = [];
 
   const updatedProducts = freshRawProducts.filter((raw) => {
-    const localUpdatedAt = localUpdatedAtMap.get(raw.id.toString());
+    const localShopifyUpdatedAt = localShopifyUpdatedAtMap.get(
+      raw.id.toString()
+    );
 
-    if (!localUpdatedAt) {
+    if (!localShopifyUpdatedAt) {
       newProducts.push(raw);
       return true;
     }
 
-    return new Date(raw.updated_at).getTime() !== localUpdatedAt.getTime();
+    return (
+      new Date(raw.updated_at).getTime() !==
+      localShopifyUpdatedAt.getTime()
+    );
   });
 
   const insertedCount = await insertFreshProducts(
@@ -355,10 +360,14 @@ async function updateLocalProduct(
     freshProduct.image
   );
 
-  // If neither price nor image changed, do not touch the row → updatedAt stays the same.
-  if (!priceChanged && !imageChanged) {
-    return false;
-  }
+  const freshShopifyUpdatedAt = new Date(freshProduct.shopifyUpdatedAt);
+  const isValidShopifyUpdatedAt = !Number.isNaN(
+    freshShopifyUpdatedAt.getTime()
+  );
+  const shopifyUpdatedAtChanged: boolean =
+    isValidShopifyUpdatedAt &&
+    localProduct.shopifyUpdatedAt.getTime() !==
+      freshShopifyUpdatedAt.getTime();
 
   const updateData: ProductUpdateData = {};
 
@@ -370,24 +379,33 @@ async function updateLocalProduct(
     updateData.image = normaliseImageForPrisma(freshProduct.image);
   }
 
+  if (shopifyUpdatedAtChanged) {
+    updateData.shopifyUpdatedAt = freshShopifyUpdatedAt;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return false;
+  }
+
   await prisma.product.update({
     where: { id: localProduct.id },
     data: updateData,
   });
 
-  // If it was only an image change, log and exit without counting as a price change.
-  if (!priceChanged && imageChanged) {
-    log.info(`Image updated for "${localProduct.title}"`);
-    await prisma.productUpdateLog.create({
-      data: {
-        shopId: localProduct.shopId,
-        shopName,
-        productId: localProduct.id,
-        productTitle: localProduct.title,
-        changeType: 'VARIANT_UPDATED', // or consider a dedicated IMAGE_UPDATED if you add it
-        description: `Primary image updated for "${localProduct.title}".`,
-      },
-    });
+  if (!priceChanged) {
+    if (imageChanged) {
+      log.info(`Image updated for "${localProduct.title}"`);
+      await prisma.productUpdateLog.create({
+        data: {
+          shopId: localProduct.shopId,
+          shopName,
+          productId: localProduct.id,
+          productTitle: localProduct.title,
+          changeType: 'VARIANT_UPDATED', // or consider a dedicated IMAGE_UPDATED if you add it
+          description: `Primary image updated for "${localProduct.title}".`,
+        },
+      });
+    }
     return false;
   }
 
@@ -574,7 +592,7 @@ async function updateVariants(
 
 type ProductUpdateData = Pick<
   Prisma.productUpdateInput,
-  'cheapestPrice' | 'image'
+  'cheapestPrice' | 'image' | 'shopifyUpdatedAt'
 >;
 
 function stableStringify(value: unknown): string {

@@ -15,7 +15,7 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
   parentType,
   childType,
   createdAt,
-  updatedAt,
+  shopifyUpdatedAt,
   variantsCount,
   onBack,
   onClose,
@@ -42,7 +42,7 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
         <strong>Created:</strong> {new Date(createdAt).toLocaleString()}
       </li>
       <li>
-        <strong>Updated:</strong> {new Date(updatedAt).toLocaleString()}
+        <strong>Updated:</strong> {new Date(shopifyUpdatedAt).toLocaleString()}
       </li>
       <li>
         <strong>Variants:</strong> {variantsCount}

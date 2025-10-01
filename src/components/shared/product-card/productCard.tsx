@@ -48,7 +48,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     childType,
     tags,
     createdAt,
-    updatedAt,
+    shopifyUpdatedAt,
     variants,
     allStorePrices,
   } = product;
@@ -194,7 +194,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
                   childType={childType}
                   tags={normalisedTags}
                   createdAt={createdAt}
-                  updatedAt={updatedAt}
+                  shopifyUpdatedAt={shopifyUpdatedAt}
                   variantsCount={variants?.length || 0}
                   selectedParent={selectedParent}
                   setSelectedParent={setSelectedParent}

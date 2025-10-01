@@ -39,7 +39,7 @@ export const transformProducts = (
       description: product.body_html || null,
       publishedAt: new Date(product.published_at),
       createdAt: new Date(product.created_at),
-      updatedAt: new Date(product.updated_at), // TODO: Use this value when updating product
+      shopifyUpdatedAt: new Date(product.updated_at),
       vendor: product.vendor,
       productType: product.product_type,
       parentType,
@@ -57,7 +57,7 @@ export const transformProducts = (
 
 /**
  * Transforms the raw fresh products into a minimal shape needed for updates.
- * Only extracts the product id, cheapestPrice, and variants (with price and compareAtPrice).
+ * Only extracts the product id, Shopify updated timestamp, cheapestPrice, and variants (with price and compareAtPrice).
  */
 export const transformProductsForUpdate = async (
   allPaginatedProducts: any[]
@@ -66,6 +66,7 @@ export const transformProductsForUpdate = async (
     id: string;
     cheapestPrice: number | null;
     image: any;
+    shopifyUpdatedAt: Date;
     variants: Array<{
       id: string;
       price: number;
@@ -94,6 +95,7 @@ export const transformProductsForUpdate = async (
         id: product.id.toString(),
         image: getProductImage(product.images),
         cheapestPrice,
+        shopifyUpdatedAt: new Date(product.updated_at),
         variants,
       };
     })
