@@ -59,6 +59,7 @@ model product {
   variants    variant[] // One-to-many relationship with Variant
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  shopifyUpdatedAt  DateTime
   publishedAt DateTime
 
   onSale             Boolean
