@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import Filter from '@/components/storefront/filter';
 import { product, shop, variant } from '@prisma/client';
 import { FilterOption, User } from '@/lib/types';
@@ -68,6 +68,17 @@ export default function Storefront({ user }: StorefrontProps) {
   const [mobileGridColumns, setMobileGridColumns] = useState<
     MobileGridColumnsOption | undefined
   >(undefined);
+
+  const topSentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isPending) return;
+
+    topSentinelRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }, [currentPage, isPending]);
 
   useEffect(() => {
     if (isMobileUA === undefined) return;
@@ -218,6 +229,7 @@ export default function Storefront({ user }: StorefrontProps) {
 
   return (
     <div className="p-6 mt-1 bg-gray-100">
+      <div ref={topSentinelRef} aria-hidden="true" />
       <div className="flex flex-col space-y-1 mb-3">
         {isMobileUA && (
           <div className="flex gap-4 items-center mb-2">
