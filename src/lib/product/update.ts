@@ -123,23 +123,6 @@ export async function refreshSaleStatuses(): Promise<void> {
           on_sale_variant_id: saleVariantId,
         },
       });
-
-      log.info(
-        `Sale status updated for "${productRecord.title}" → ${isOnSale}`
-      );
-
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: productRecord.shop.id,
-          shopName: productRecord.shop.name,
-          productId: productRecord.id,
-          productTitle: productRecord.title,
-          changeType: 'SALE_STATUS_CHANGED',
-          description: `Sale status for "${productRecord.title}" changed to ${
-            isOnSale ? 'ON SALE' : 'OFF SALE'
-          }.`,
-        },
-      });
     }
   }
 
@@ -162,14 +145,23 @@ async function processShopUpdates(
 
   const allFreshIds = new Set(freshRawProducts.map((raw) => raw.id.toString()));
 
-  const localShopifyUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
+  // const localShopifyUpdatedAtMap = await getLocalProductsBriefMap(shop.id);
+
+  // const { updatedProducts: freshToTransform, insertedCount } =
+  //   await filterUpdatedFreshProducts(
+  //     freshRawProducts,
+  //     localShopifyUpdatedAtMap,
+  //     shop.id,
+  //     shop.name
+  //   );
+
+  const localCheapestMap = await getLocalProductsCheapestMap(shop.id);
 
   const { updatedProducts: freshToTransform, insertedCount } =
-    await filterUpdatedFreshProducts(
+    await filterUpdatedFreshProductsByPrice(
       freshRawProducts,
-      localShopifyUpdatedAtMap,
-      shop.id,
-      shop.name
+      localCheapestMap,
+      shop.id
     );
 
   if (freshToTransform.length === 0) {
@@ -191,17 +183,6 @@ async function processShopUpdates(
 
   for (const localProduct of localProducts) {
     if (!allFreshIds.has(localProduct.id)) {
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: shop.id,
-          shopName: shop.name,
-          productId: localProduct.id,
-          productTitle: localProduct.title,
-          changeType: 'PRODUCT_DELETED',
-          description: `Product "${localProduct.title}" removed from shop "${shop.name}" (no longer in feed).`,
-        },
-      });
-
       await prisma.product.delete({ where: { id: localProduct.id } });
       log.info(`Deleted product "${localProduct.title}" (no longer in feed)`);
 
@@ -211,7 +192,7 @@ async function processShopUpdates(
     const freshProduct = freshProductMap.get(localProduct.id);
     if (!freshProduct) continue;
 
-    if (await updateLocalProduct(localProduct, freshProduct, shop.name)) {
+    if (await updateLocalProduct(localProduct, freshProduct)) {
       priceChanged += 1;
     }
 
@@ -219,60 +200,56 @@ async function processShopUpdates(
       localProduct,
       localProduct.variants,
       freshProduct.variants ?? [],
-      shop.name
+      shop.name,
+      freshProduct.shopifyUpdatedAt
     );
   }
 
   return { inserted: insertedCount, priceChanged };
 }
 
-/**
- * Return a map of product ID → shopifyUpdatedAt for quick comparison.
- */
-async function getLocalProductsBriefMap(
+async function getLocalProductsCheapestMap(
   shopId: number
-): Promise<Map<string, Date>> {
+): Promise<Map<string, number | null>> {
   const brief = await prisma.product.findMany({
     where: { shopId },
-    select: { id: true, shopifyUpdatedAt: true },
+    select: { id: true, cheapestPrice: true },
   });
-
-  return new Map(brief.map((p) => [p.id, p.shopifyUpdatedAt]));
+  return new Map(brief.map((p) => [String(p.id), p.cheapestPrice]));
 }
 
-/**
- * Split fresh products into those that are new and those
- * that need updating.
- */
-async function filterUpdatedFreshProducts(
+async function filterUpdatedFreshProductsByPrice(
   freshRawProducts: any[],
-  localShopifyUpdatedAtMap: Map<string, Date>,
-  shopId: number,
-  shopName: string
+  localCheapestMap: Map<string, number | null>,
+  shopId: number
 ): Promise<{ updatedProducts: any[]; insertedCount: number }> {
   const newProducts: any[] = [];
+  const updatedProducts: any[] = [];
 
-  const updatedProducts = freshRawProducts.filter((raw) => {
-    const localShopifyUpdatedAt = localShopifyUpdatedAtMap.get(
-      raw.id.toString()
-    );
+  for (const raw of freshRawProducts) {
+    const productId = String(raw.id);
+    const localCheapest = localCheapestMap.get(productId);
 
-    if (!localShopifyUpdatedAt) {
+    if (localCheapest == null) {
       newProducts.push(raw);
-      return true;
+      continue;
     }
 
-    return (
-      new Date(raw.updated_at).getTime() !==
-      localShopifyUpdatedAt.getTime()
-    );
-  });
+    // compute the fresh cheapest price from the raw payload
+    const rawVariants = Array.isArray(raw.variants) ? raw.variants : [];
+    const parsedPrices = rawVariants
+      .map((variant: any) => Number(variant.price))
+      .filter((value: number) => Number.isFinite(value));
 
-  const insertedCount = await insertFreshProducts(
-    newProducts,
-    shopId,
-    shopName
-  );
+    const freshCheapest =
+      parsedPrices.length > 0 ? Math.min(...parsedPrices) : null;
+
+    if (freshCheapest !== localCheapest) {
+      updatedProducts.push(raw);
+    }
+  }
+
+  const insertedCount = await insertFreshProducts(newProducts, shopId);
   return { updatedProducts, insertedCount };
 }
 
@@ -281,8 +258,7 @@ async function filterUpdatedFreshProducts(
  */
 async function insertFreshProducts(
   newRawProducts: any[],
-  shopId: number,
-  shopName: string
+  shopId: number
 ): Promise<number> {
   // Middle store sells vinyls, this will skip them
   const filteredRawProducts = newRawProducts.filter(
@@ -316,17 +292,6 @@ async function insertFreshProducts(
         });
       }
     }
-
-    await prisma.productUpdateLog.create({
-      data: {
-        shopId: shopId,
-        shopName: shopName,
-        productId: coreData.id,
-        productTitle: coreData.title,
-        changeType: 'PRODUCT_ADDED',
-        description: `Product "${coreData.title}" added to shop "${shopName}".`,
-      },
-    });
   }
 
   if (inserted > 0) {
@@ -349,86 +314,44 @@ function buildProductsMap(products: any[]): Map<string, any> {
 
 async function updateLocalProduct(
   localProduct: ProductModel,
-  freshProduct: any,
-  shopName: string
+  freshProduct: {
+    cheapestPrice: number | null;
+    shopifyUpdatedAt?: string;
+    image?: unknown;
+  }
 ): Promise<boolean> {
-  const priceChanged: boolean =
+  const priceChanged =
     localProduct.cheapestPrice !== freshProduct.cheapestPrice;
-
-  const imageChanged: boolean = imagesAreDifferent(
+  const imageChanged = imagesAreDifferent(
     localProduct.image,
     freshProduct.image
   );
 
-  const freshShopifyUpdatedAt = new Date(freshProduct.shopifyUpdatedAt);
-  const isValidShopifyUpdatedAt = !Number.isNaN(
-    freshShopifyUpdatedAt.getTime()
-  );
-  const shopifyUpdatedAtChanged: boolean =
-    isValidShopifyUpdatedAt &&
-    localProduct.shopifyUpdatedAt.getTime() !==
-      freshShopifyUpdatedAt.getTime();
-
   const updateData: ProductUpdateData = {};
 
   if (priceChanged) {
-    updateData.cheapestPrice = freshProduct.cheapestPrice;
+    updateData.cheapestPrice = freshProduct.cheapestPrice ?? null;
+
+    if (freshProduct.shopifyUpdatedAt) {
+      const parsed = new Date(freshProduct.shopifyUpdatedAt);
+      if (!Number.isNaN(parsed.getTime())) {
+        updateData.shopifyUpdatedAt = parsed;
+      }
+    }
   }
 
   if (imageChanged) {
     updateData.image = normaliseImageForPrisma(freshProduct.image);
   }
 
-  if (shopifyUpdatedAtChanged) {
-    updateData.shopifyUpdatedAt = freshShopifyUpdatedAt;
-  }
-
-  if (Object.keys(updateData).length === 0) {
-    return false;
-  }
+  if (Object.keys(updateData).length === 0) return false;
 
   await prisma.product.update({
     where: { id: localProduct.id },
     data: updateData,
   });
 
-  if (!priceChanged) {
-    if (imageChanged) {
-      log.info(`Image updated for "${localProduct.title}"`);
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: localProduct.shopId,
-          shopName,
-          productId: localProduct.id,
-          productTitle: localProduct.title,
-          changeType: 'VARIANT_UPDATED', // or consider a dedicated IMAGE_UPDATED if you add it
-          description: `Primary image updated for "${localProduct.title}".`,
-        },
-      });
-    }
-    return false;
-  }
-
-  // Price changed → log it and return true so the caller increments the counter.
-  const previousPrice = localProduct.cheapestPrice;
-  log.info(
-    `Price updated for "${localProduct.title}" from ${previousPrice} to ${freshProduct.cheapestPrice}`
-  );
-
-  await prisma.productUpdateLog.create({
-    data: {
-      shopId: localProduct.shopId,
-      shopName,
-      productId: localProduct.id,
-      productTitle: localProduct.title,
-      changeType: 'PRICE_CHANGED',
-      description: `Cheapest price for "${localProduct.title}" changed from ${
-        previousPrice ?? 'NULL'
-      } to ${freshProduct.cheapestPrice}.`,
-    },
-  });
-
-  return true;
+  return false;
 }
 
 /**
@@ -439,7 +362,8 @@ async function updateVariants(
   productRecord: ProductModel,
   localVariants: VariantModel[],
   freshVariants: any[],
-  shopName: string
+  shopName: string,
+  freshShopifyUpdatedAt?: string
 ): Promise<boolean> {
   let variantsMutated = false;
 
@@ -451,24 +375,7 @@ async function updateVariants(
     const freshVariant = freshMap.get(localVariant.id);
 
     if (!freshVariant) {
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: productRecord.shopId,
-          shopName: shopName,
-          productId: productRecord.id,
-          productTitle: productRecord.title,
-          variantId: localVariant.id,
-          variantTitle: localVariant.title,
-          changeType: 'VARIANT_DELETED',
-          description: `Variant "${localVariant.title}" removed from product "${productRecord.title}".`,
-        },
-      });
-
       await prisma.variant.delete({ where: { id: localVariant.id } });
-
-      log.info(
-        `Deleted variant "${localVariant.title}" (product "${productRecord.title}")`
-      );
 
       variantsMutated = true;
       continue;
@@ -502,24 +409,6 @@ async function updateVariants(
         data: updates,
       });
       variantsMutated = true;
-
-      log.info(
-        `Updated variant "${localVariant.title}" (product "${productRecord.title}")`
-      );
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: productRecord.shopId,
-          shopName: shopName,
-          productId: productRecord.id,
-          productTitle: productRecord.title,
-          variantId: localVariant.id,
-          variantTitle: localVariant.title,
-          changeType: 'VARIANT_UPDATED',
-          description: `Variant "${
-            localVariant.title
-          }" updated (${changedFields.join(', ')}).`,
-        },
-      });
     }
   }
 
@@ -536,22 +425,6 @@ async function updateVariants(
         },
       });
       variantsMutated = true;
-
-      log.info(
-        `Added variant "${freshVariant.title}" to product "${productRecord.title}"`
-      );
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: productRecord.shopId,
-          shopName: shopName,
-          productId: productRecord.id,
-          productTitle: productRecord.title,
-          variantId: freshVariant.id,
-          variantTitle: freshVariant.title,
-          changeType: 'VARIANT_ADDED',
-          description: `Variant "${freshVariant.title}" added to product "${productRecord.title}".`,
-        },
-      });
     }
   }
 
@@ -564,25 +437,21 @@ async function updateVariants(
 
     const newCheapest = _min.price ?? null;
 
-    // At the end of updateVariants, after recalculating newCheapest:
     if (productRecord.cheapestPrice !== newCheapest) {
+      const updateData: Prisma.productUpdateInput = {
+        cheapestPrice: newCheapest,
+      };
+
+      if (freshShopifyUpdatedAt) {
+        const parsed = new Date(freshShopifyUpdatedAt);
+        if (!Number.isNaN(parsed.getTime())) {
+          updateData.shopifyUpdatedAt = parsed;
+        }
+      }
+
       await prisma.product.update({
         where: { id: productRecord.id },
-        data: { cheapestPrice: newCheapest },
-      });
-      log.info(
-        `Cheapest price recalculated for "${productRecord.title}" → ${newCheapest}`
-      );
-
-      await prisma.productUpdateLog.create({
-        data: {
-          shopId: productRecord.shopId,
-          shopName,
-          productId: productRecord.id,
-          productTitle: productRecord.title,
-          changeType: 'PRICE_CHANGED',
-          description: `Cheapest price for "${productRecord.title}" recalculated to ${newCheapest}.`,
-        },
+        data: updateData,
       });
     }
   }
