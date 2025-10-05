@@ -5,7 +5,7 @@ import { ChildType, ParentType } from '@/lib/types';
 
 export async function setProductTypes(
   productId: string,
-  parentType: ParentType, // TODO: Use real types
+  parentType: ParentType,
   childType: ChildType
 ) {
   try {

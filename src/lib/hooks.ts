@@ -87,7 +87,6 @@ export default function useStoreFrontQueryParams() {
           }
         }
       });
-      // TODO: if (key === 'onSale' && value === true) query.set('onSale', 'true');
 
       if (sortOption !== defaultSortOption) {
         query.set('sortOption', sortOption);

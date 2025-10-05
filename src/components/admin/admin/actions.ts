@@ -54,8 +54,6 @@ export async function refreshCounts() {
 
 export async function deleteAllProducts() {
   try {
-    // TODO: Cascading deletes would be better
-    // TODO: Have added cascadin deletes, should be able to test with just product delete
     await prisma.variant.deleteMany();
     await prisma.product.deleteMany();
 

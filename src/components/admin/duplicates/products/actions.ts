@@ -5,19 +5,19 @@ import { checkProductSimilarity } from '@/lib/product/merge';
 import { Prisma } from '@prisma/client';
 
 export async function getPaginatedSuspectedDuplicates(
-  page: number, 
+  page: number,
   pageSize: number
 ): Promise<{
   total: number;
   items: Prisma.ProductDuplicateGetPayload<{
     include: {
       masterProduct: {
-        include: { shop: true }
-      },
+        include: { shop: true };
+      };
       duplicateProduct: {
-        include: { shop: true }
-      }
-    }
+        include: { shop: true };
+      };
+    };
   }>[];
 }> {
   const [total, items] = await prisma.$transaction([
@@ -43,40 +43,44 @@ export async function getPaginatedSuspectedDuplicates(
   return { total, items };
 }
 
-
-export async function rejectDuplicate(masterId: string, duplicateId: string): Promise<void> {
+export async function rejectDuplicate(
+  masterId: string,
+  duplicateId: string
+): Promise<void> {
   // Update the status to 'rejected' for the matching suspected duplicate entry, if it exists
   await prisma.productDuplicate.updateMany({
     where: {
       OR: [
         { masterProductId: masterId, duplicateProductId: duplicateId },
-        { masterProductId: duplicateId, duplicateProductId: masterId }
+        { masterProductId: duplicateId, duplicateProductId: masterId },
       ],
-      status: 'suspected'
+      status: 'suspected',
     },
-    data: { status: 'rejected' }
+    data: { status: 'rejected' },
   });
 
   // No need to remove the record; keeping it as 'rejected' ensures this pair won't be flagged again.
 }
 
-
-export async function mergeProducts(masterId: string, duplicateId: string): Promise<void> {
+export async function mergeProducts(
+  masterId: string,
+  duplicateId: string
+): Promise<void> {
   // Find the duplicate relationship record in either orientation
   const existingRelation = await prisma.productDuplicate.findFirst({
     where: {
       OR: [
         { masterProductId: masterId, duplicateProductId: duplicateId },
-        { masterProductId: duplicateId, duplicateProductId: masterId }
-      ]
-    }
+        { masterProductId: duplicateId, duplicateProductId: masterId },
+      ],
+    },
   });
 
   if (existingRelation) {
     // Update the existing suspected record to confirmed
     await prisma.productDuplicate.update({
       where: { id: existingRelation.id },
-      data: { status: 'confirmed' }
+      data: { status: 'confirmed' },
     });
   } else {
     // If no record exists (e.g. merging found manually), create a new confirmed duplicate entry
@@ -85,8 +89,8 @@ export async function mergeProducts(masterId: string, duplicateId: string): Prom
         masterProductId: masterId,
         duplicateProductId: duplicateId,
         status: 'confirmed',
-        reasons: {},  // no reasons if it was a manual identification
-      }
+        reasons: {}, // no reasons if it was a manual identification
+      },
     });
   }
 
@@ -97,17 +101,16 @@ function groupProductsByChildType(products: any[]): Record<string, any[]> {
   const productsByChildType: Record<string, any[]> = {};
 
   for (const product of products) {
-    const childType = product.childType || "Uncategorised";
+    const childType = product.childType || 'Uncategorised';
     if (!productsByChildType[childType]) {
       productsByChildType[childType] = [];
     }
     productsByChildType[childType].push(product);
   }
 
-  console.log("Grouped products by childType.");
+  console.log('Grouped products by childType.');
   return productsByChildType;
 }
-
 
 function findDuplicatesWithinChildType(products: any[]): {
   product1: any;
@@ -140,14 +143,13 @@ function findDuplicatesWithinChildType(products: any[]): {
   return results;
 }
 
-//TODO: Investigate further
+//TODO: Delete
 export async function markProductsAsSuspectedDuplicates(
-  productAId: string, 
-  productBId: string, 
+  productAId: string,
+  productBId: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _reasons?: Prisma.JsonValue
 ): Promise<void> {
-
   let masterId = productAId;
   let duplicateId = productBId;
 
@@ -163,9 +165,9 @@ export async function markProductsAsSuspectedDuplicates(
     where: {
       OR: [
         { masterProductId: masterId, duplicateProductId: duplicateId },
-        { masterProductId: duplicateId, duplicateProductId: masterId }
-      ]
-    }
+        { masterProductId: duplicateId, duplicateProductId: masterId },
+      ],
+    },
   });
   if (existing) {
     // If a relationship exists, do nothing:
@@ -181,16 +183,15 @@ export async function markProductsAsSuspectedDuplicates(
       duplicateProductId: duplicateId,
       status: 'suspected',
       // reasons: reasons // store similarity reasons if provided
-    }
+    },
   });
 }
 
 export async function checkAllProductsForDuplicates() {
-
   const allProducts = await prisma.product.findMany({
     include: {
-      shop: true,  
-      variants: true 
+      shop: true,
+      variants: true,
     },
     where: {
       // e.g. skip any product that’s already confirmed duplicate (optional)
@@ -206,7 +207,9 @@ export async function checkAllProductsForDuplicates() {
     const results = findDuplicatesWithinChildType(products);
 
     if (results.length > 0) {
-      console.log(`Found ${results.length} potential duplicates in childType: ${childType}`);
+      console.log(
+        `Found ${results.length} potential duplicates in childType: ${childType}`
+      );
 
       for (const { product1, product2, reasons } of results) {
         console.log(
@@ -222,5 +225,5 @@ export async function checkAllProductsForDuplicates() {
     }
   }
 
-  console.log("Duplicate check completed.");
+  console.log('Duplicate check completed.');
 }

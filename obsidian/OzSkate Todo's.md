@@ -235,4 +235,5 @@ TODO 5/10
 - Fix board size and shoe sizes
 - Fix anti shop filter
 - Implement advanced search pop up
-- 
+- Remove duplicate functionality
+- Remove logging functionality

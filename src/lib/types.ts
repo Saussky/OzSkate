@@ -1,7 +1,5 @@
 import { Prisma } from '@prisma/client';
 
-// TODO: Implement master category taxonomy and redo this
-
 export type ParentType =
   | 'Clothing'
   | 'Skateboards'

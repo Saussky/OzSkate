@@ -284,7 +284,6 @@ export default function Filter({
         />
       </div>
 
-      {/* TODO: Mobile styling */}
       <div className="w-full md:w-auto">
         <label
           className="

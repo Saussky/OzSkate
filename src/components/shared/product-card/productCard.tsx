@@ -35,7 +35,6 @@ function chooseObjectFit(
   return 'cover';
 }
 
-// TODO: Implement string parent product type types
 export default function ProductCard({ admin, product }: ProductCardProps) {
   const {
     id,
