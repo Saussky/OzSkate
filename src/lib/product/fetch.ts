@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use server";
-import { prisma } from "@/lib/prisma";
-import { transformProducts } from "./transform";
-import { ignoreVendors } from "../constants";
-
+'use server';
+import { prisma } from '@/lib/prisma';
+import { transformProducts } from './transform';
+import { ignoreVendors } from '../constants';
 
 export async function fetchAllProducts() {
   try {
-    console.log("Starting product import...");
+    console.log('Starting product import...');
 
     const shops = await prisma.shop.findMany();
 
@@ -23,17 +22,19 @@ export async function fetchAllProducts() {
     for (let index = 0; index < shops.length; index++) {
       const shop = shops[index];
       try {
-        console.log(`Processing shop: ${shop.name} ${index + 1}/${shops.length}`);
+        console.log(
+          `Processing shop: ${shop.name} ${index + 1}/${shops.length}`
+        );
         await processShop(shop);
       } catch (error) {
         console.error(`Error processing shop ${shop.name}:`, error);
       }
     }
-    
+
     await markProductsOnSale();
-    console.log("Product import completed.");
+    console.log('Product import completed.');
   } catch (error) {
-    console.error("Error fetching all products:", error);
+    console.error('Error fetching all products:', error);
   }
 }
 
@@ -46,7 +47,7 @@ function shouldIgnoreVendor(vendor: unknown): boolean {
 
 export async function processShop(shop: any) {
   const baseUrl = shop.url + '/products.json';
-  const sinceId = shop.since_id || "0"; 
+  const sinceId = shop.since_id || '0';
 
   const allProducts = await fetchShopifyProducts(baseUrl, sinceId);
 
@@ -56,8 +57,7 @@ export async function processShop(shop: any) {
   }
 
   const filteredProducts = allProducts.filter(
-    (p) =>
-      !shouldIgnoreVendor(p.vendor)
+    (p) => !shouldIgnoreVendor(p.vendor)
   );
 
   if (filteredProducts.length === 0) {
@@ -78,17 +78,19 @@ export async function processShop(shop: any) {
 
     if (Array.isArray(variants)) {
       for (const variant of variants) {
-
         await prisma.variant.upsert({
           where: { id: variant.id },
           update: variant,
-          create: {...variant, shoeSize: variant.shoeSize || null, deckSize: variant.deckSize || null }
-      });
+          create: {
+            ...variant,
+            shoeSize: variant.shoeSize || null,
+            deckSize: variant.deckSize || null,
+          },
+        });
       }
     }
   }
 }
-
 
 export const fetchShopifyProducts = async (
   baseUrl: string,
@@ -103,12 +105,12 @@ export const fetchShopifyProducts = async (
 
     const res = await fetch(url, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:132.0) Gecko/20100101 Firefox/132.0",
-        Accept: "application/json",
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:132.0) Gecko/20100101 Firefox/132.0',
+        Accept: 'application/json',
         ...headers,
       },
-      method: "GET",
+      method: 'GET',
     });
 
     if (!res.ok) {
@@ -120,7 +122,7 @@ export const fetchShopifyProducts = async (
 
     const products = data.products;
     if (!products || products.length === 0) {
-      console.log("No more products to fetch.");
+      console.log('No more products to fetch.');
       break;
     }
 
@@ -146,7 +148,6 @@ export const markProductsOnSale = async () => {
     },
   });
 
-  // TODO: What if multiple variants are on sale??
   for (const product of products) {
     const onSaleVariant = product.variants.find(
       (variant) => variant.compareAtPrice !== null

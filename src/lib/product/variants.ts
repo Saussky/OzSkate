@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//TODO: Jimmy's skate store also has variant colourways and their sizes in it e.g "US 7 / Navy White" & "US 11 / Black/White"
 
 export const processFeaturedImage = (image: unknown) => {
-  if (!image || typeof image !== "object") return null;
+  if (!image || typeof image !== 'object') return null;
   const { src, width, height } = image as {
     src?: unknown;
     width?: unknown;
@@ -10,35 +9,38 @@ export const processFeaturedImage = (image: unknown) => {
   };
 
   if (
-    typeof src === "string" &&
-    typeof width === "number" &&
-    typeof height === "number"
+    typeof src === 'string' &&
+    typeof width === 'number' &&
+    typeof height === 'number'
   ) {
     return { src, width, height };
   }
   return null;
 };
 
-
-//TODO: Come up with extraction logic to be reused for other product types
-function extractShoeSize(variantTitle: string, variantOption: string): number | null {
+function extractShoeSize(
+  variantTitle: string,
+  variantOption: string
+): number | null {
   const combinedString = `${variantTitle} ${variantOption}`.toLowerCase();
   const match = combinedString.match(/(?:us\s*)?(\d+(\.\d+)?)/); // Match sizes with or without 'US'
   return match ? parseFloat(match[1]) : null;
 }
 
-function extractDeckSize(variantTitle: string, variantOption: string): number | null {
+function extractDeckSize(
+  variantTitle: string,
+  variantOption: string
+): number | null {
   const combinedString = `${variantTitle} ${variantOption}`.toLowerCase();
   // Match sizes that are integers or floats with up to 3 decimal places
   const match = combinedString.match(/(?:^|\\s)(\\d+(\\.\\d{1,3})?)(?=\\s|$)/);
   return match ? parseFloat(match[1]) : null;
 }
 
-
 export function transformVariants(
   product: any,
   parentType?: string | null,
-  childType?: string | null,
+  childType?: string | null
 ) {
   return product.variants
     ? product.variants.map((variant: any) => {
@@ -61,23 +63,29 @@ export function transformVariants(
           createdAt: new Date(variant.created_at),
           updatedAt: new Date(variant.updated_at),
         };
-        
+
         if (parentType === 'Shoes') {
-            const shoeSize = extractShoeSize(variant.title || '', variant.option1 || '');
-            return {
-                ...baseVariant,
-                shoeSize: shoeSize || null,
-            };
+          const shoeSize = extractShoeSize(
+            variant.title || '',
+            variant.option1 || ''
+          );
+          return {
+            ...baseVariant,
+            shoeSize: shoeSize || null,
+          };
         }
 
         if (childType === 'Decks') {
-            const deckSize = extractDeckSize(variant.title || '', variant.option1 || '');
-            return {
-                ...baseVariant,
-                deckSize: deckSize || null,
-            }
+          const deckSize = extractDeckSize(
+            variant.title || '',
+            variant.option1 || ''
+          );
+          return {
+            ...baseVariant,
+            deckSize: deckSize || null,
+          };
         }
-        
+
         return baseVariant;
       })
     : [];

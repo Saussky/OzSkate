@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'All Aussie core skateshops in one place',
 };
 
-// TODO: Pass user into the children via context as well
+// TODO: Pass user into the children via context
 export default async function RootLayout({
   children,
 }: Readonly<{

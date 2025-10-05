@@ -230,6 +230,9 @@ TODO 21/8
 - Investigate why lofi keeps appearing in last updated on sale
 -
 
-vic gov enagge submission ids
-**1374605** - moreland
-**1374607** - upfield station
+TODO 5/10
+- Implement board size search
+- Fix board size and shoe sizes
+- Fix anti shop filter
+- Implement advanced search pop up
+- 

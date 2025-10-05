@@ -3,7 +3,6 @@ import { Prisma } from '@prisma/client';
 import { categoriseProduct } from './categorise';
 import { processFeaturedImage, transformVariants } from './variants';
 
-// TODO: Create master category taxonomy, documented
 export const transformProducts = (
   allPaginatedProducts: any[],
   shopId: number
@@ -123,7 +122,7 @@ export async function transformVariantsForUpdate(variants: any[]): Promise<
         ? parseFloat(variant.compare_at_price)
         : null,
       available: variant.available,
-      featuredImage: processFeaturedImage(variant.featuredImage), // TODO: Check if the image changed somehow
+      featuredImage: processFeaturedImage(variant.featuredImage),
     }))
   );
 }
