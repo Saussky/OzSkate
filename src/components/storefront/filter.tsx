@@ -80,31 +80,18 @@ export default function Filter({
   );
 
   useEffect(() => {
-    setParentType(initialFilters.parentType || '');
-    setChildType(initialFilters.childType || '');
-    setMaxPrice(initialFilters.maxPrice || null);
-    setOnSale(initialFilters.onSale || false);
-    setShoeSize(initialFilters.shoeSize || null);
-    setDeckSize(initialFilters.deckSize || null);
+    setParentType((initialFilters.parentType as ParentType | null) ?? null);
+    setChildType(initialFilters.childType ?? '');
+    setMaxPrice(initialFilters.maxPrice ?? null);
+    setOnSale(initialFilters.onSale ?? false);
+    setShoeSize(initialFilters.shoeSize ?? null);
+    setDeckSize(initialFilters.deckSize ?? null);
 
-    //TODO: Overkill
-    // Ensure initialFilters.shop is an array. If not, convert it.
-    setShops(
-      Array.isArray(initialFilters.shops)
-        ? initialFilters.shops
-        : initialFilters.shops
-        ? [initialFilters.shops]
-        : []
-    );
+    // shops/brands are already arrays from useStoreFrontQueryParams
+    setShops(initialFilters.shops ?? []);
+    setBrands(initialFilters.brands ?? []);
 
-    setBrands(
-      Array.isArray(initialFilters.brands)
-        ? initialFilters.brands
-        : initialFilters.brands
-        ? [initialFilters.brands]
-        : []
-    );
-    setSearchTerm(initialFilters.searchTerm || '');
+    setSearchTerm(initialFilters.searchTerm ?? '');
   }, [initialFilters]);
 
   const handleApplyFilters = () => {

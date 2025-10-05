@@ -132,19 +132,25 @@ export default function Storefront({ user }: StorefrontProps) {
   const loadProducts = useCallback(
     (page: number) => {
       startTransition(async () => {
-        let limit = 40;
-        if (isMobileUA) limit = limit - 20;
-
+        const limit = isMobileUA ? 20 : 40;
         const data = await getPaginatedProducts(
           page,
           limit,
           filters,
           sortOption
         );
-        const transformed: ExtendedProduct[] = data.mergedProducts.map((p) => ({
-          ...p,
-          image: p.image as ImageJson | null, // TODO: Why are we doing this the types are f'ed anyway
+
+        const transformed = data.mergedProducts.map((productItem) => ({
+          ...productItem,
+          // Prisma’s JSON fields come through as `unknown`
+          image:
+            productItem.image &&
+            typeof productItem.image === 'object' &&
+            'src' in productItem.image
+              ? (productItem.image as ImageJson)
+              : null,
         }));
+
         setProducts(transformed);
         setTotalPages(data.totalPages);
         setCurrentPage(page);
