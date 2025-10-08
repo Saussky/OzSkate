@@ -237,3 +237,4 @@ TODO 5/10
 - Implement advanced search pop up
 - Remove duplicate functionality
 - Remove logging functionality
+- [x] Fix query params not in the url

@@ -94,11 +94,16 @@ export default function useStoreFrontQueryParams() {
       if (page !== defaultPage) {
         query.set('page', String(page));
       }
+      const nextQueryString = query.toString();
+      const currentQueryString = searchParams.toString();
 
-      //TODO: Router replace instead?
-      router.push(query.toString() ? `?${query.toString()}` : '?');
+      if (currentQueryString === nextQueryString) {
+        return;
+      }
+
+      router.push(nextQueryString ? `?${nextQueryString}` : '?');
     },
-    [router]
+    [router, searchParams]
   );
 
   return {

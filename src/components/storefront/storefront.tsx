@@ -184,16 +184,31 @@ export default function Storefront({ user }: StorefrontProps) {
 
   const handlePageChange = (page: number) => {
     loadProducts(page);
+    setQueryParams({
+      filters,
+      sortOption,
+      page,
+    });
   };
 
   const handleFilterChange = (newFilters: FilterOption) => {
     setFilters(newFilters);
     setCurrentPage(1);
+    setQueryParams({
+      filters: newFilters,
+      sortOption,
+      page: 1,
+    });
   };
 
   const handleSortChange = (option: SortOption) => {
     setSortOption(option);
     setCurrentPage(1);
+    setQueryParams({
+      filters,
+      sortOption: option,
+      page: 1,
+    });
   };
 
   const toggleMobileFilters = () => setFiltersVisibleOnMobile((prev) => !prev);
