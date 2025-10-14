@@ -159,10 +159,9 @@ export default function Storefront({ user }: StorefrontProps) {
     [filters, sortOption, isMobileUA]
   );
 
-  // Always reset to first page when filters or sort changes
   useEffect(() => {
-    loadProducts(1);
-  }, [filters, sortOption, loadProducts]);
+    loadProducts(currentPage);
+  }, [currentPage, loadProducts]);
 
   useEffect(() => {
     const loadVendors = async () => {
@@ -183,7 +182,7 @@ export default function Storefront({ user }: StorefrontProps) {
   }, []);
 
   const handlePageChange = (page: number) => {
-    loadProducts(page);
+    setCurrentPage(page);
     setQueryParams({
       filters,
       sortOption,
