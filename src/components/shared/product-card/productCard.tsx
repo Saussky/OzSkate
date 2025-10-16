@@ -50,6 +50,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
     shopifyUpdatedAt,
     variants,
     allStorePrices,
+    vendor,
   } = product;
 
   const normalisedTags: string[] = Array.isArray(tags)
@@ -194,6 +195,7 @@ export default function ProductCard({ admin, product }: ProductCardProps) {
                   tags={normalisedTags}
                   createdAt={createdAt}
                   shopifyUpdatedAt={shopifyUpdatedAt}
+                  vendor={vendor}
                   variantsCount={variants?.length || 0}
                   selectedParent={selectedParent}
                   setSelectedParent={setSelectedParent}

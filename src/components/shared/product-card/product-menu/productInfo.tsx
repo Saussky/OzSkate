@@ -17,6 +17,7 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
   createdAt,
   shopifyUpdatedAt,
   variantsCount,
+  vendor,
   onBack,
   onClose,
 }) => (
@@ -28,6 +29,9 @@ const ProductInfoView: React.FC<ProductInfoViewProps> = ({
       </li>
       <li>
         <strong>Handle:</strong> {handle}
+      </li>
+      <li>
+        <strong>Vendor:</strong> {vendor}
       </li>
       <li>
         <strong>Tags:</strong> {tags.join(', ') || '—'}
